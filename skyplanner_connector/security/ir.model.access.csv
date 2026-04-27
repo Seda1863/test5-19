@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_skyplanner_mapping_user,skyplanner.mapping.user,model_skyplanner_mapping,skyplanner_connector.group_skyplanner_user,1,0,0,0
+access_skyplanner_mapping_manager,skyplanner.mapping.manager,model_skyplanner_mapping,skyplanner_connector.group_skyplanner_manager,1,1,1,1
+access_skyplanner_sync_log_user,skyplanner.sync.log.user,model_skyplanner_sync_log,skyplanner_connector.group_skyplanner_user,1,0,0,0
+access_skyplanner_sync_log_manager,skyplanner.sync.log.manager,model_skyplanner_sync_log,skyplanner_connector.group_skyplanner_manager,1,1,1,1
+access_skyplanner_simulate_wizard_user,skyplanner.simulate.wizard.user,model_skyplanner_simulate_wizard,skyplanner_connector.group_skyplanner_user,1,1,1,1
+access_skyplanner_sync_jobs,skyplanner.sync.jobs,model_skyplanner_sync_jobs,skyplanner_connector.group_skyplanner_manager,1,0,0,0
+access_skyplanner_planner,skyplanner.planner,model_skyplanner_planner,skyplanner_connector.group_skyplanner_user,1,0,0,0

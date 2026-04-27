@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Root menu under Manufacturing -->
+    <menuitem id="menu_skyplanner_root"
+              name="SkyPlanner APS"
+              parent="mrp.menu_mrp_root"
+              sequence="99"
+              groups="skyplanner_connector.group_skyplanner_user"/>
+
+    <menuitem id="menu_skyplanner_mappings"
+              name="ID Mappings"
+              parent="menu_skyplanner_root"
+              action="action_skyplanner_mapping"
+              sequence="10"
+              groups="skyplanner_connector.group_skyplanner_manager"/>
+
+    <menuitem id="menu_skyplanner_sync_log"
+              name="Sync Logs"
+              parent="menu_skyplanner_root"
+              action="action_skyplanner_sync_log"
+              sequence="20"
+              groups="skyplanner_connector.group_skyplanner_manager"/>
+</odoo>

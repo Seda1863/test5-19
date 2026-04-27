@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_skyplanner" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.skyplanner</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="mrp.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='mrp']" position="after">
+                <div id="skyplanner" class="app_settings_block"
+                     groups="skyplanner_connector.group_skyplanner_manager">
+                    <h2>SkyPlanner APS</h2>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">API Connection</span>
+                                <div class="content-group">
+                                    <div class="row">
+                                        <label string="API Token"
+                                               for="skyplanner_api_token"
+                                               class="col-lg-4 o_light_label"/>
+                                        <field name="skyplanner_api_token"
+                                               password="True"
+                                               class="col-lg-8"/>
+                                    </div>
+                                    <div class="row">
+                                        <label string="Base URL"
+                                               for="skyplanner_base_url"
+                                               class="col-lg-4 o_light_label"/>
+                                        <field name="skyplanner_base_url"
+                                               class="col-lg-8"/>
+                                    </div>
+                                    <div class="row">
+                                        <label string="Default Customer ID"
+                                               for="skyplanner_default_customer_id"
+                                               class="col-lg-4 o_light_label"/>
+                                        <field name="skyplanner_default_customer_id"
+                                               class="col-lg-8"/>
+                                    </div>
+                                    <div class="row">
+                                        <label string="API Timeout (sec)"
+                                               for="skyplanner_timeout"
+                                               class="col-lg-4 o_light_label"/>
+                                        <field name="skyplanner_timeout"
+                                               class="col-lg-8"/>
+                                    </div>
+                                    <div class="row">
+                                        <label string="Auto Export after Push"
+                                               for="skyplanner_auto_export"
+                                               class="col-lg-4 o_light_label"/>
+                                        <field name="skyplanner_auto_export"
+                                               class="col-lg-8"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

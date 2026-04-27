@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_skyplanner_mapping_list" model="ir.ui.view">
+        <field name="name">skyplanner.mapping.list</field>
+        <field name="model">skyplanner.mapping</field>
+        <field name="arch" type="xml">
+            <list string="SkyPlanner Mappings" create="0" edit="0">
+                <field name="odoo_model"/>
+                <field name="odoo_id"/>
+                <field name="mapping_type"/>
+                <field name="skyplanner_id"/>
+                <field name="external_id"/>
+                <field name="write_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_skyplanner_mapping" model="ir.actions.act_window">
+        <field name="name">ID Mappings</field>
+        <field name="res_model">skyplanner.mapping</field>
+        <field name="view_mode">list</field>
+    </record>
+</odoo>
