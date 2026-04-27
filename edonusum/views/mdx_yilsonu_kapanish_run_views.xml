@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ── Liste görünümü ─────────────────────────────────────────────── -->
+    <record id="view_mdx_yilsonu_kapanish_run_list" model="ir.ui.view">
+        <field name="name">mdx.yilsonu.kapanish.run.list</field>
+        <field name="model">mdx.yilsonu.kapanish.run</field>
+        <field name="arch" type="xml">
+            <list string="Dönem Sonu Kapanış Kayıtları"
+                  decoration-success="all_posted"
+                  decoration-warning="has_draft">
+                <field name="period_label" string="Dönem"/>
+                <field name="date_from" string="Başlangıç"/>
+                <field name="date_to" string="Bitiş"/>
+                <field name="company_id" string="Şirket" optional="show"
+                       groups="base.group_multi_company"/>
+                <field name="journal_id" string="Yevmiye Defteri" optional="show"/>
+                <field name="step_yansitma_done" string="Yansıtma" widget="boolean"/>
+                <field name="step_kapanish_done" string="Kapatma" widget="boolean"/>
+                <field name="step_devir_done" string="690 Devir" widget="boolean"/>
+                <field name="move_count" string="Yevmiye Sayısı"/>
+                <field name="all_posted" string="Tümü Onaylı" widget="boolean" optional="show"/>
+                <field name="has_draft" string="Taslak Var" widget="boolean" optional="show"/>
+                <field name="created_uid" string="Oluşturan" optional="show"/>
+                <field name="create_date" string="Tarih" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Form görünümü ──────────────────────────────────────────────── -->
+    <record id="view_mdx_yilsonu_kapanish_run_form" model="ir.ui.view">
+        <field name="name">mdx.yilsonu.kapanish.run.form</field>
+        <field name="model">mdx.yilsonu.kapanish.run</field>
+        <field name="arch" type="xml">
+            <form string="Dönem Sonu Kapanış Kaydı">
+                <header>
+                    <button name="action_post_all_moves"
+                            string="Tümünü Onayla"
+                            type="object"
+                            class="btn-primary"
+                            invisible="not has_draft"
+                            confirm="Tüm taslak kapanış yevmiyeleri onaylanacaktır. Devam etmek istiyor musunuz?"/>
+                    <button name="action_view_moves"
+                            string="Yevmiyeleri Gör"
+                            type="object"
+                            class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-success o_form_no_cog" invisible="not all_posted">
+                        <strong>Tüm kapanış yevmiyeleri onaylı.</strong>
+                    </div>
+                    <div class="alert alert-warning o_form_no_cog" invisible="not has_draft">
+                        <strong>Onay bekleyen yevmiyeler var.</strong>
+                        Tüm yevmiyeleri onaylamak için <em>Tümünü Onayla</em> butonunu kullanın.
+                    </div>
+                    <group>
+                        <group string="Dönem Bilgileri">
+                            <field name="period_label" readonly="1"/>
+                            <field name="date_from" readonly="1"/>
+                            <field name="date_to" readonly="1"/>
+                            <field name="company_id" readonly="1"/>
+                        </group>
+                        <group string="İşlem Bilgileri">
+                            <field name="journal_id" readonly="1"/>
+                            <field name="created_uid" readonly="1"/>
+                            <field name="create_date" readonly="1"/>
+                            <field name="move_count" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Tamamlanan Adımlar">
+                        <field name="step_yansitma_done" readonly="1"/>
+                        <field name="step_kapanish_done" readonly="1"/>
+                        <field name="step_devir_done" readonly="1"/>
+                    </group>
+                    <div class="alert alert-warning o_form_no_cog" invisible="not warnings">
+                        <strong>Uyarılar:</strong>
+                        <field name="warnings" readonly="1" nolabel="1"/>
+                    </div>
+                    <field name="move_ids" readonly="1" string="Oluşturulan Yevmiyeler">
+                        <list>
+                            <field name="name" string="Yevmiye No"/>
+                            <field name="date" string="Tarih"/>
+                            <field name="ref" string="Açıklama"/>
+                            <field name="mdx_closing_step" string="Adım" widget="badge"
+                                   decoration-success="mdx_closing_step == 'yansitma'"
+                                   decoration-info="mdx_closing_step == 'kapanish'"
+                                   decoration-warning="mdx_closing_step == 'devir'"/>
+                            <field name="state" string="Durum" widget="badge"
+                                   decoration-success="state == 'posted'"
+                                   decoration-warning="state == 'draft'"/>
+                            <field name="amount_total" string="Tutar"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Aksiyon ───────────────────────────────────────────────────── -->
+    <record id="action_mdx_yilsonu_kapanish_run" model="ir.actions.act_window">
+        <field name="name">Kapanış Geçmişi</field>
+        <field name="res_model">mdx.yilsonu.kapanish.run</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ── Menü ──────────────────────────────────────────────────────── -->
+    <menuitem id="menu_mdx_yilsonu_kapanish_run"
+              name="Kapanış Geçmişi"
+              parent="account.menu_finance_entries"
+              action="action_mdx_yilsonu_kapanish_run"
+              sequence="92"
+              groups="account.group_account_manager"/>
+</odoo>

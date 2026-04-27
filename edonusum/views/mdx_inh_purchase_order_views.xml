@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_mdx_inh_purchase_order_form" model="ir.ui.view">
+        <field name="name">mdx.inh.purchase.order.form</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <button name="action_create_invoice" position="attributes">
+                <attribute name="invisible">[("gelen_fatura_ids", "!=", [])]</attribute>
+            </button>
+            <field name="partner_id" position="attributes">
+                <attribute name="domain">[('id', 'in', filtered_partner_ids)]</attribute>
+            </field>
+            <xpath expr="//form/sheet/notebook" position="inside">
+                <page string="İşlemler" name="islemler_page">
+                    <field name="invoice_ids" widget="one2many_list"/>
+                    <field name="picking_ids" widget="one2many_list"/>
+                </page>
+            </xpath>
+            <xpath expr="//field[@name='project_id']" position="after">
+                <field name="task_id" context="{'default_project_id': project_id.id}" options="{'no_create': True}"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="after">
+                <field name="work_type_id"/>
+            </xpath>
+        </field>
+    </record>
+    
+    <record id="view_purchase_order_search_inherit" model="ir.ui.view">
+        <field name="name">purchase.report.search.inherit.work_type_project</field>
+        <field name="model">purchase.report</field>
+        <field name="inherit_id" ref="purchase.view_purchase_order_search"/>
+        <field name="arch" type="xml">
+            <!-- expand="1" olan Group By grubunu seçiyoruz -->
+            <xpath expr="//group[@expand='1']" position="inside">
+                <filter string="İş Türü" name="group_work_type_id" context="{'group_by':'work_type_id'}"/>
+                <filter string="Proje" name="group_project_id" context="{'group_by':'project_id'}"/>
+                <filter string="Görev" name="group_task_id" context="{'group_by':'task_id'}"/>
+                <!-- <filter string='Fatura Satırları' name="group_invoice_lines" context="{'group_by':'invoice_lines'}"/>
+                <filter string='Rezervasyonlar' name="group_move_ids" context="{'group_by':'move_ids'}"/> -->
+                <!-- <filter string="Alımlar" name="group_picking_ids" context="{'group_by':'picking_ids'}"/> -->
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

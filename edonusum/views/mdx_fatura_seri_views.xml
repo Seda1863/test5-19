@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_mdx_fatura_seri_list" model="ir.ui.view">
+        <field name="name">mdx.fatura.seri.list</field>
+        <field name="model">mdx.fatura.seri</field>
+        <field name="arch" type="xml">
+            <list string="Fatura Seri">
+                <field name="active"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="ebelge_turu_id"/>
+                <field name="index"/>
+                <field name="last_used_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_mdx_fatura_seri_form" model="ir.ui.view">
+        <field name="name">mdx.fatura.seri.form</field>
+        <field name="model">mdx.fatura.seri</field>
+        <field name="arch" type="xml">
+            <form string="Fatura Seri">
+                <sheet>
+                    <group>
+                        <field name="code"/>
+                        <field name="name"/>
+                        <field name="description"/>
+                    </group>
+                    <group>
+                        <field name="ebelge_turu_id"/>
+                        <field name="index"/>
+                        <field name="last_used_date"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_mdx_fatura_seri" model="ir.actions.act_window">
+        <field name="name">Fatura Seri</field>
+        <field name="res_model">mdx.fatura.seri</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_mdx_fatura_seri" name="Fatura Serileri" action="action_mdx_fatura_seri"/>
+</odoo>

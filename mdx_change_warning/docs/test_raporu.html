@@ -1,0 +1,141 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="utf-8">
+<title>Değişiklik Onay Sistemi — Test Raporu</title>
+<style>
+body { font-family: Calibri, sans-serif; font-size: 11pt; margin: 40px; }
+h1 { color: #333; font-size: 18pt; border-bottom: 2px solid #4a90d9; padding-bottom: 8px; }
+h2 { color: #4a90d9; font-size: 14pt; margin-top: 24px; }
+h3 { color: #666; font-size: 12pt; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0 20px 0; }
+th { background: #4a90d9; color: white; padding: 8px 12px; text-align: left; font-size: 10pt; }
+td { border: 1px solid #ddd; padding: 6px 10px; font-size: 10pt; vertical-align: top; }
+tr:nth-child(even) { background: #f8f9fa; }
+.pass { color: green; font-weight: bold; }
+.fail { color: red; font-weight: bold; }
+.result { width: 80px; text-align: center; }
+.expected { width: 200px; }
+.note { background: #fff3cd; padding: 10px; border-left: 4px solid #ffc107; margin: 10px 0; font-size: 10pt; }
+.danger { background: #f8d7da; padding: 10px; border-left: 4px solid #dc3545; margin: 10px 0; font-size: 10pt; }
+.info { background: #d1ecf1; padding: 10px; border-left: 4px solid #17a2b8; margin: 10px 0; font-size: 10pt; }
+.footer { margin-top: 40px; border-top: 1px solid #ccc; padding-top: 10px; color: #999; font-size: 9pt; }
+</style>
+</head>
+<body>
+
+<h1>🧪 Değişiklik Onay Sistemi — Test Raporu</h1>
+<p><strong>Proje:</strong> MindDX Odoo 18<br>
+<strong>Modül:</strong> mdx_change_warning<br>
+<strong>Tarih:</strong> ___/___/2026<br>
+<strong>Test Eden:</strong> _________________________</p>
+
+<div class="info">
+⚠️ <strong>Test Öncesi:</strong> Her test grubundan önce <strong>Cmd+Shift+R</strong> ile sayfayı hard refresh yapın. Kural değiştirdikten sonra en az 10 saniye bekleyin.
+</div>
+
+<h2>A. DÜZENLEME UYARISI DAVRANIŞI</h2>
+<h3>A1. Değişiklik YAPMADAN test</h3>
+<table>
+<tr><th>#</th><th>Test Adımı</th><th class="expected">Beklenen Sonuç</th><th class="result">✅/❌</th><th>Not</th></tr>
+<tr><td>A1.1</td><td>Kayda gir, HİÇBİR ŞEY DEĞİŞTİRME, <strong>Kaydet</strong>'e bas</td><td>Uyarı GELMEMELİ</td><td class="result"></td><td></td></tr>
+<tr><td>A1.2</td><td>Kayda gir, HİÇBİR ŞEY DEĞİŞTİRME, <strong>&lt; &gt;</strong> ile başka kayda geç</td><td>Uyarı GELMEMELİ</td><td class="result"></td><td></td></tr>
+<tr><td>A1.3</td><td>Kayda gir, HİÇBİR ŞEY DEĞİŞTİRME, <strong>breadcrumb</strong> ile çık</td><td>Uyarı GELMEMELİ</td><td class="result"></td><td></td></tr>
+</table>
+
+<h3>A2. Değişiklik YAPARAK test</h3>
+<table>
+<tr><th>#</th><th>Test Adımı</th><th class="expected">Beklenen Sonuç</th><th class="result">✅/❌</th><th>Not</th></tr>
+<tr><td>A2.1</td><td><strong>Müşteri</strong> alanını değiştir → Kaydet'e bas</td><td>Uyarı GELMELİ + "Müşteri" alan adı görünmeli</td><td class="result"></td><td></td></tr>
+<tr><td>A2.2</td><td><strong>Fatura Tarihi</strong> değiştir → Kaydet'e bas</td><td>Uyarı GELMELİ + alan adı görünmeli</td><td class="result"></td><td></td></tr>
+<tr><td>A2.3</td><td><strong>Ödeme Yöntemi</strong> (selection) değiştir → Kaydet</td><td>Uyarı GELMELİ</td><td class="result"></td><td></td></tr>
+<tr><td>A2.4</td><td><strong>Uyarı Mesajı</strong> (text) yaz → Kaydet</td><td>Uyarı GELMELİ + alan adı görünmeli</td><td class="result"></td><td></td></tr>
+<tr><td>A2.5</td><td>Bir alanı değiştir → <strong>&lt; &gt;</strong> ile başka kayda geç</td><td>Uyarı GELMELİ</td><td class="result"></td><td></td></tr>
+<tr><td>A2.6</td><td>Bir alanı değiştir → <strong>breadcrumb</strong> ile çık</td><td>Uyarı GELMELİ</td><td class="result"></td><td></td></tr>
+</table>
+
+<h3>A3. Uyarı İçeriği</h3>
+<table>
+<tr><th>#</th><th>Kontrol</th><th class="expected">Beklenen</th><th class="result">✅/❌</th><th>Not</th></tr>
+<tr><td>A3.1</td><td>Kural adı dialog'da görünüyor mu?</td><td>📋 Kural: [kural adı]</td><td class="result"></td><td></td></tr>
+<tr><td>A3.2</td><td>Kurala özel mesaj görünüyor mu?</td><td>Kuralda yazılan mesaj</td><td class="result"></td><td></td></tr>
+<tr><td>A3.3</td><td>Değiştirilen alan adları listeleniyor mu?</td><td>📝 Değiştirilen alanlar: • [alan]</td><td class="result"></td><td></td></tr>
+<tr><td>A3.4</td><td>"Evet, Kaydet" → kayıt kaydoluyor mu?</td><td>Kayıt kaydolmalı</td><td class="result"></td><td></td></tr>
+<tr><td>A3.5</td><td>"İptal Et" → değişiklik geri alındı mı?</td><td>Geri alınmalı</td><td class="result"></td><td></td></tr>
+</table>
+
+<h3>A4. Tekrarlı Uyarı</h3>
+<table>
+<tr><th>#</th><th>Test</th><th class="expected">Beklenen</th><th class="result">✅/❌</th><th>Not</th></tr>
+<tr><td>A4.1</td><td>İptal et → farklı alan değiştir → Kaydet</td><td>Yeni uyarı gelmeli</td><td class="result"></td><td></td></tr>
+<tr><td>A4.2</td><td>Onayla → kaydet → yeni değişiklik → Kaydet</td><td>Yeni uyarı gelmeli</td><td class="result"></td><td></td></tr>
+</table>
+
+<h2>B. MODEL / UYGULAMA FİLTRESİ</h2>
+<table>
+<tr><th>#</th><th>Kural Ayarı</th><th>Test</th><th class="expected">Beklenen</th><th class="result">✅/❌</th></tr>
+<tr><td>B1</td><td>Model = account.move</td><td>Faturada değişiklik</td><td>Uyarı GELMELİ</td><td class="result"></td></tr>
+<tr><td>B2</td><td>Model = account.move</td><td>Stokta değişiklik</td><td>Uyarı GELMEMELİ</td><td class="result"></td></tr>
+<tr><td>B3</td><td>Uygulama = Muhasebe, Model = boş</td><td>Faturada değişiklik</td><td>Uyarı GELMELİ</td><td class="result"></td></tr>
+<tr><td>B4</td><td>Uygulama = Muhasebe, Model = boş</td><td>Stokta değişiklik</td><td>Uyarı GELMEMELİ</td><td class="result"></td></tr>
+<tr><td>B5</td><td>Uygulama = boş, Model = boş</td><td>Herhangi yerde değişiklik</td><td>Uyarı GELMELİ</td><td class="result"></td></tr>
+</table>
+
+<h2>C. KULLANICI FİLTRESİ</h2>
+<table>
+<tr><th>#</th><th>Kural Ayarı</th><th>Test</th><th class="expected">Beklenen</th><th class="result">✅/❌</th></tr>
+<tr><td>C1</td><td>Kullanıcı = Uğur</td><td>Uğur ile değişiklik</td><td>Uyarı GELMELİ</td><td class="result"></td></tr>
+<tr><td>C2</td><td>Kullanıcı = Uğur</td><td>Başka kullanıcı ile değişiklik</td><td>Uyarı GELMEMELİ</td><td class="result"></td></tr>
+<tr><td>C3</td><td>Kullanıcı = boş</td><td>Herhangi kullanıcı ile değişiklik</td><td>Uyarı GELMELİ</td><td class="result"></td></tr>
+</table>
+
+<h2>D. UYARI MESAJI</h2>
+<table>
+<tr><th>#</th><th>Test</th><th class="expected">Beklenen</th><th class="result">✅/❌</th><th>Not</th></tr>
+<tr><td>D1</td><td>Kural mesaj = "Muhasebe uyarısı!" → Muhasebede değiştir</td><td>"Muhasebe uyarısı!" mesajı</td><td class="result"></td><td></td></tr>
+<tr><td>D2</td><td>Kural mesaj = "Stok uyarısı!" → Stokta değiştir</td><td>"Stok uyarısı!" mesajı</td><td class="result"></td><td></td></tr>
+<tr><td>D3</td><td>Kural mesaj = boş</td><td>Varsayılan mesaj</td><td class="result"></td><td></td></tr>
+<tr><td>D4</td><td>Mesaj değiştir, 10sn bekle, tekrar test</td><td>Yeni mesaj gelmeli</td><td class="result"></td><td></td></tr>
+</table>
+
+<h2>E. SİLME / ARŞİVLEME</h2>
+<table>
+<tr><th>#</th><th>Kural</th><th>Test</th><th class="expected">Beklenen</th><th class="result">✅/❌</th></tr>
+<tr><td>E1</td><td>Silerken Uyar ✅</td><td>Kaydı sil (çöp kutusu ikonu)</td><td>Silme uyarısı gelmeli</td><td class="result"></td></tr>
+<tr><td>E2</td><td>Silmeyi Engelle ✅</td><td>Kaydı sil</td><td>🚫 Silme ENGELLENMELİ</td><td class="result"></td></tr>
+<tr><td>E3</td><td>Arşivlerken Uyar ✅</td><td>Kaydı arşivle</td><td>Arşivleme uyarısı</td><td class="result"></td></tr>
+</table>
+
+<h2>F. GTIP KODU VALİDASYONU</h2>
+<h3>F1. Format Kontrolü</h3>
+<table>
+<tr><th>#</th><th>GTIP Değeri</th><th class="expected">Beklenen</th><th class="result">✅/❌</th></tr>
+<tr><td>F1.1</td><td>123456789012 (12 hane, rakam)</td><td>✅ Kabul</td><td class="result"></td></tr>
+<tr><td>F1.2</td><td>12345 (5 hane)</td><td>❌ Hata: 12 haneli olmalı</td><td class="result"></td></tr>
+<tr><td>F1.3</td><td>12345abc9012 (harf var)</td><td>❌ Hata: sadece rakam</td><td class="result"></td></tr>
+<tr><td>F1.4</td><td>1234 5678 9012 (boşluklu)</td><td>✅ Temizlenip kabul</td><td class="result"></td></tr>
+</table>
+
+<h3>F2. İstisna Kodu + GTIP Zorunluluğu</h3>
+<table>
+<tr><th>#</th><th>Durum</th><th class="expected">Beklenen</th><th class="result">✅/❌</th></tr>
+<tr><td>F2.1</td><td>İstisna=VAR, GTIP=BOŞ → Taslak kaydet</td><td>✅ Kayıt olmalı (serbest)</td><td class="result"></td></tr>
+<tr><td>F2.2</td><td>İstisna=VAR, GTIP=BOŞ → Faturayı Onayla</td><td>❌ "GTIP zorunlu" hatası</td><td class="result"></td></tr>
+<tr><td>F2.3</td><td>İstisna=VAR, GTIP=123456789012 → Onayla</td><td>✅ Kabul</td><td class="result"></td></tr>
+<tr><td>F2.4</td><td>İstisna=YOK, GTIP=BOŞ → Onayla</td><td>✅ Kabul (GTIP gerekmez)</td><td class="result"></td></tr>
+<tr><td>F2.5</td><td>GTIP gir → sonra sil → Onayla</td><td>❌ "GTIP zorunlu" hatası</td><td class="result"></td></tr>
+</table>
+
+<h2>G. DASHBOARD & LOGLAR</h2>
+<table>
+<tr><th>#</th><th>Test</th><th class="expected">Beklenen</th><th class="result">✅/❌</th></tr>
+<tr><td>G1</td><td>Uyarı → Evet Kaydet</td><td>Tetiklenme +1</td><td class="result"></td></tr>
+<tr><td>G2</td><td>Uyarı → İptal Et</td><td>Log: "İptal Etti"</td><td class="result"></td></tr>
+<tr><td>G3</td><td>Stat button → Loglar</td><td>Log listesi açılmalı</td><td class="result"></td></tr>
+</table>
+
+<div class="footer">
+<p>MindDX Dijital Dönüşüm Teknolojileri — Değişiklik Onay Sistemi Test Dokümanı</p>
+</div>
+
+</body>
+</html>

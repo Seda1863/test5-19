@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- PayTR Ödeme Sağlayıcısı Tanımı -->
+        <record id="payment_provider_paytr" model="payment.provider">
+            <field name="name">PayTR</field>
+            <field name="code">paytr</field>
+            <!--<field name="image_128" type="base64" file="payment_paytr/static/img/paytr_icon.png"/>-->
+            <field name="payment_method_ids" eval="[Command.set([ref('payment.payment_method_card')])]"/>
+            <!-- Inline form gerekirse (iframe konteyneri) -->
+            <field name="inline_form_view_id" ref="payment_paytr.paytr_inline_form"/>
+        </record>
+
+        <!-- Muhasebe yöntemi tanımı -->
+        <record id="account_payment_method_paytr" model="account.payment.method">
+            <field name="name">PayTR</field>
+            <field name="code">paytr</field>
+            <field name="payment_type">inbound</field>
+        </record>
+
+    </data>
+</odoo>

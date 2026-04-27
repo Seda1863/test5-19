@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_mdx_sabit_kod_list" model="ir.ui.view">
+        <field name="name">mdx.sabit.kod.list</field>
+        <field name="model">mdx.sabit.kod</field>
+        <field name="arch" type="xml">
+            <list string="Sabit Kod">
+                <field name="active"/>
+                <field name="code"/>
+                <field name="efinans_kod"/>
+                <!-- <field name="prozon_kod"/> -->
+                <field name="name"/>
+                <field name="description"/>
+                <field name="liste_id"/>
+                <field name="liste_tipi_id"/>
+                <field name="liste_alt_tipi_id"/>
+                <field name="tevkifat_orani"/>
+                <field name="vergi_kisaltma"/>
+                <field name="gelen_giden"/>
+                <field name="ebelge_turu_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_mdx_sabit_kod_form" model="ir.ui.view">
+        <field name="name">mdx.sabit.kod.form</field>
+        <field name="model">mdx.sabit.kod</field>
+        <field name="arch" type="xml">
+            <form string="Sabit Kod">
+                <sheet>
+                    <group>
+                        <field name="code"/>
+                        <field name="efinans_kod"/>
+                        <!-- <field name="prozon_kod"/> -->
+                        <field name="name"/>
+                        <field name="description"/>
+                        <field name="active"/>
+                    </group>
+                    <group>
+                        <field name="liste_id"/>
+                        <field name="liste_tipi_id"/>
+                        <!-- <field name="liste_alt_tipi_id" invisible="not liste_tipi_id.code == 'ISTISNA'"/> -->
+                        <field name="liste_alt_tipi_id" />
+                    </group>
+                    <group>
+                        <field name="tevkifat_orani" invisible="not liste_tipi_id.code == 'TEVKIFAT'"/>
+                        <field name="vergi_kisaltma" invisible="not liste_tipi_id.code == 'VERGI'"/>
+                        <field name="gelen_giden" invisible="not liste_tipi_id.code == 'EBELGESTATU'"/>
+                        <field name="ebelge_turu_id" invisible="not liste_tipi_id.code == 'EBELGESTATU'"/>
+                    </group>
+                    <group>
+                        <field name="tevkifat_orani"/>
+                        <field name="vergi_kisaltma"/>
+                        <field name="gelen_giden"/>
+                        <field name="ebelge_turu_id"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_mdx_sabit_kod" model="ir.actions.act_window">
+        <field name="name">Sabit Kod</field>
+        <field name="res_model">mdx.sabit.kod</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_mdx_sabit_kod" name="Sabit Kodlar" action="action_mdx_sabit_kod"/>
+</odoo>

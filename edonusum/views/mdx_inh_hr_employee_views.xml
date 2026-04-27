@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_mdx_inh_hr_employee_form" model="ir.ui.view">
+        <field name="name">mdx.inh.hr.employee.form</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet/notebook" position="inside">
+                <page string="Prozon HR" name="prozon_hr_page">
+                    <header>
+                        <button name="action_send_to_prozon" type="object" string="Prozon'a Gönder" class="oe_highlight" invisible="sended_to_prozon"/>
+                        <!-- <button name="action_update_on_prozon" type="object" string="Prozon'da Güncelle" class="oe_highlight" invisible="not sended_to_prozon"/>
+                        <button name="action_delete_from_prozon" type="object" string="Prozon'dan Sil" invisible="not sended_to_prozon" confirm="Bu çalışanı Prozon'dan kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."/>
+                        <button name="action_check_prozon_status" type="object" string="Prozon Durumunu Kontrol Et"/> -->
+                        <button name="action_connect_prozon" type="object" string="Prozon'a Bağlan"/>
+                    </header>
+                    <group>
+                        <!-- Prozon Durumu -->
+                        <group string="Prozon Durumu">
+                            <field name="sended_to_prozon"/>
+                            <field name="prozon_id"/>
+                            <field name="prozon_error_message" decoration-danger="prozon_error_message != False"/>
+                        </group>
+                        <!-- Genel Bilgiler -->
+                        <group string="Genel Bilgiler">
+                            <field name="prozon_first_name"/>
+                            <field name="prozon_last_name"/>
+                            <field name="prozon_birth_date"/>
+                            <field name="prozon_identity_number"/>
+                            <field name="prozon_gender"/>
+                            <field name="prozon_employee_type"/>
+                        </group>
+                        <!-- İletişim Bilgileri -->
+                        <group string="İletişim Bilgileri">
+                            <field name="prozon_email"/>
+                            <field name="prozon_phone_number"/>
+                            <field name="prozon_intercom"/>
+                            <field name="prozon_role"/>
+                            <field name="prozon_profession_code"/>
+                        </group>
+                        <!-- İş Yeri Bilgileri -->
+                        <group string="İş Yeri Bilgileri">
+                            <field name="prozon_workplace_code"/>
+                            <field name="prozon_workplace_entry_date"/>
+                            <field name="prozon_workplace_document_type"/>
+                            <field name="prozon_workplace_law_number"/>
+                            <field name="prozon_workplace_contract_type"/>
+                            <field name="prozon_workplace_contract_end_date"/>
+                        </group>
+                        <!-- Maaş Bilgileri -->
+                        <group string="Maaş Bilgileri">
+                            <field name="prozon_salary_wage_type"/>
+                            <field name="prozon_salary_period_type"/>
+                            <field name="prozon_salary_wage"/>
+                            <field name="prozon_salary_foreign_currency"/>
+                            <field name="prozon_salary_salary_type"/>
+                        </group>
+                        <group name="api_response" >
+                            <field name="prozon_response_body" widget="text" readonly="1"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

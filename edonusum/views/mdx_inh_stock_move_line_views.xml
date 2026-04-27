@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_mdx_inh_stock_picking_form" model="ir.ui.view">
+        <field name="name">mdx.inh.stock.picking.form</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <!-- <xpath expr="//form/header" position="inside">
+                <button name="action_send_waybill"
+                        type="object"
+                        class="btn-primary"
+                        string="E-İrsaliye Gönder"
+                        icon="fa-paper-plane"
+                        invisible="efatura_gonderilebilir == False"
+                        />
+            </xpath>
+            <xpath expr="//form/header" position="inside">
+                <button name="view_waybill_pdf_on_newtab"
+                        type="object"
+                        class="btn-primary"
+                        string="E-İrsaliye Görüntüle"
+                        icon="fa-file-pdf-o"
+                        invisible="ekli_belge_id == False"
+                        />
+            </xpath> -->
+            <!-- <xpath expr="//form/header" position="inside">
+                <button name="refresh_api_response"
+                        type="object"
+                        class="btn-primary"
+                        string=""
+                        icon="fa-refresh"
+                        invisible="belge_oid_kod == False"
+                        />
+            </xpath> -->
+            <xpath expr="//form/sheet/notebook" position="inside">
+                <page string="E-Dönüşüm" name="edonusum_page">
+                    <group>
+                        <!-- Genel Bilgiler -->
+                        <group string="Genel Bilgiler">
+                            <field name="picking_type_id" string="TYPE ID"/>
+                            <field name="picking_type_code" string="TYPE CODE"/>
+                            <field name="kayit_aciklamasi" placeholder="Kayıt açıklaması girin"/>
+                            <field name="irsaliye_no" placeholder="İrsaliye numarasını yazın"/>
+                            <field name="uuid" placeholder="Eşsiz bir UUID girin"/>
+                            <field name="belge_oid_kod" placeholder="Belge OID kodunu yazın"/>
+                            <field name="irsaliye_aciklama" placeholder="İrsaliye ile ilgili açıklama yazın"/>
+                            <!-- <field name="hide_post_button"/> -->
+                            <!-- <field name="expense_sheet_id" placeholder="Masrafı seçin"/> -->
+                        </group>
+
+                        <!-- E-İrsaliye Bilgileri -->
+                        <group string="E-İrsaliye Bilgileri">
+                            <field name="ebelge_turu_id" placeholder="E-İrsaliye türünü seçin"/>
+                            <field name="eirsaliye_senaryo_id" placeholder="E-İrsaliye senaryosunu seçin"/>
+                            <field name="irsaliye_tipi_id" placeholder="E-İrsaliye tipini seçin"/>
+                            <!-- <field name="fatura_alt_tipi_id" placeholder="İrsaliye alt tipini seçin"/> -->
+                            <field name="irsaliye_statu_id" placeholder="İrsaliye statüsünü seçin"/>
+                            <field name="irsaliye_seri_id" placeholder="İrsaliye serisini girin"/>
+                        </group>
+
+                        <!-- E-Fatura Teknik -->
+                        <group string="E-İrsaliye Teknik">
+                            <field name="eirsaliye_gonderilebilir"/>                           
+                            <field name="irsaliye_gonderim_hata_kodu"/>
+                            <field name="irsaliye_durum_detay"/>        
+                        </group>
+
+                        <!-- Gönderim ve Ekli Belgeler -->
+                        <group string="Gönderim ve Belgeler">
+                            <field name="ekli_belge_id" placeholder="Ekli belgeyi seçin"/>
+                            <!-- <field name="belge_gonderim_sekli" placeholder="Belge gönderim şeklini seçin"/> -->
+                            <!-- <field name="fatura_xml" placeholder="Fatura XML dosyasını ekleyin"/>
+                            <field name="xml_ekli_belge_id" placeholder="XML ekli belgeyi seçin"/> -->
+                        </group>
+
+                        <!-- Nakliye Bilgileri -->
+                        <group string="Nakliye Bilgileri">
+                            <field name="nakliye_sirketi_id" placeholder="Nakliye şirketini seçin"/>
+                            <field name="sofor_adi" placeholder="Şoför adını yazın"/>
+                            <field name="sofor_soyadi" placeholder="Şoför soyadını yazın"/>
+                            <field name="sofor_tc_no" placeholder="Şoför TC numarasını yazın"/>
+                            <field name="arac_plaka_no" placeholder="Araç plaka numarasını yazın"/>
+                            <field name="dorse_plaka_no_1" placeholder="Dorse Plaka No 1"/>
+                            <field name="dorse_plaka_no_2" placeholder="Dorse Plaka No 2"/>
+                        </group>
+
+                        <group>
+                            <field name="state" string="STATE"/>
+                            <!-- <field name="reversed_entry_id" string="Reversed Entry" optional="show"/> -->
+                            <!-- <field name="is_storno" string="is_storno"/> -->
+                            <field  name="logging_field1" string="LOG1"/>
+                            <field  name="logging_field2" string="LOG2"/>
+                            <field  name="logging_field3" string="LOG3"/>
+                            <field  name="logging_field4" string="LOG4"/>
+                            <field  name="logging_field5" string="LOG5"/>
+                            <field  name="logging_field6" string="LOG6"/>
+                            <!-- <field  name="logging_field7" string="LOG7"/>
+                            <field  name="logging_field8" string="LOG8"/> -->
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+            <!-- <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='invoice_tab']/field[@name='invoice_line_ids']/list[1]/field[@name='price_subtotal']" position="after"> -->
+            <!-- <xpath expr="//form/sheet/notebook/page[@name='invoice_tab']/field[@name='invoice_line_ids']/list" position="inside" invisible="move_type == 'entry'">
+                <field name="tax_base_amount" string="tax_base_amount" optional="show"/>
+                <field name="gtip_kodu" string="GTIP Kodu" optional="show" placeholder="GTIP kodunu girin"/>
+                <field name="istisna_kodu" string="İstisna Kodu" optional="show" placeholder="İstisna kodunu seçin"/>
+                <field name="tevkifat_kodu" string="Tevkifat Kodu" optional="show" placeholder="Tevkifat kodunu seçin"/>
+                <field name="ihrac_kayit_kodu" string="İhrac Kayıt Kodu" optional="show" placeholder="İhraç kayıt kodunu girin"/>
+                <field name="vergi_kodu" string="Vergi Kodu" optional="show" placeholder="Vergi kodunu seçin"/>
+            </xpath> -->
+        </field>
+    </record>
+</odoo>

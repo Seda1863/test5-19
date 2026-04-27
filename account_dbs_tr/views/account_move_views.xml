@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_out_invoice_tree_dbs_inherit" model="ir.ui.view">
+        <field name="name">account.move.list.dbs.inherit</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_out_invoice_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="inside">
+                <field name="dbs_eligible_label" optional="show"
+                    decoration-success="dbs_eligible_label == 'eligible'"
+                    decoration-warning="dbs_eligible_label in ('no_contract', 'contract_mismatch')"
+                    decoration-danger="dbs_eligible_label == 'partner_inactive'"
+                    decoration-muted="dbs_eligible_label == 'not_applicable'"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_move_form_dbs_inherit" model="ir.ui.view">
+        <field name="name">account.move.form.dbs.inherit</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_send_to_dbs"
+                    string="DBS'ye Gönder"
+                        type="object"
+                        class="btn-secondary"
+                        invisible="not dbs_button_visible"/>
+
+                <button name="action_view_dbs_lines"
+                    string="DBS'ye Gönderildi"
+                        type="object"
+                        class="btn-secondary"
+                        invisible="dbs_line_count == 0"/>
+            </xpath>
+
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button class="oe_stat_button"
+                        name="action_view_dbs_lines"
+                        type="object"
+                        icon="fa-exchange"
+                        invisible="dbs_line_count == 0">
+                    <field string="DBS Geçmişi" name="dbs_line_count" widget="statinfo"/>
+                </button>
+                <button class="oe_stat_button"
+                        name="action_open_dbs_batch"
+                        type="object"
+                        icon="fa-folder-open"
+                        invisible="dbs_batch_count == 0">
+                    <field string="DBS Toplu İşlem" name="dbs_batch_count" widget="statinfo"/>
+                </button>
+                <button class="oe_stat_button"
+                        name="action_open_dbs_contract"
+                        type="object"
+                        icon="fa-link"
+                        invisible="not dbs_contract_id">
+                    <field string="DBS Sözleşmesi" name="dbs_contract_id" widget="many2one" readonly="1"/>
+                </button>
+            </xpath>
+
+            <xpath expr="//sheet/group" position="inside">
+                <group string="DBS" invisible="move_type != 'out_invoice'">
+                    <field name="dbs_invoice_partner_id" invisible="1"/>
+                    <field name="dbs_send_contract_id" readonly="dbs_line_count &gt; 0" domain="[('active', '=', True), ('company_id', '=', company_id), ('contact_id', '=', dbs_invoice_partner_id)]"/>
+                    <field name="dbs_state" readonly="1"/>
+                    <field name="dbs_line_ref" readonly="1"/>
+                    <field name="dbs_history" readonly="1" widget="text"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <!-- Line Tree View -->
+    <record id="view_mdx_gelen_irsaliye_line_list" model="ir.ui.view">
+    <field name="name">mdx.gelen.irsaliye.line.list</field>
+    <field name="model">mdx.gelen.irsaliye.line</field>
+    <field name="arch" type="xml">
+        <list editable="bottom">
+            <field name="match_record" string="Eşleştir"/>
+            <field name="cancel_supplierinfo_creation" string="Tedarikçi Bilgisi Oluşturma" />
+            <field name="create_supplierinfo" string="Tedarikçi Bilgisi Oluştur" />
+            <button name="action_create_product"
+                    string="Ürün Oluştur"
+                    type="object"
+                    icon="fa-magic"
+                    invisible="create_product == False" />
+            <!-- <button name="action_open_service_creation_wizard"
+                    string="Hizmet Oluştur"
+                    type="object"
+                    icon="fa-magic"
+                    invisible="create_service_card == False" /> -->
+            <field name="line_id" string="Satır No"/>
+            <field name="supplier_product_code" string="Tedarikçi Kodu" readonly="1"/>
+            <field name="supplier_product_name" string="Ürün Adı" readonly="1"/>
+            <!-- <field name="tax_name" string="Vergi" />
+            <field name="tax_rate" string="Vergi Oranı" /> -->
+            <!-- <field name="tax_id" string="Vergi" /> -->
+            <!-- <field name="service_card" string="Hizmet" /> -->
+            <field name="product_id" string="Ürün" />
+            <field name="account_id" string="Hesap" />
+            <field name="quantity" />
+            <field name="received_qty" />
+            <field name="rejected_qty" />
+            <field name="short_qty" />
+            <field name="oversupply_qty" />
+            <field name="reject_reason" />
+            <!-- <field name="eslestirme_id" string="Servis Bilgisi" /> -->
+            <!-- <field name="create_service_card" string="Hizmet Oluştur" /> -->
+            <button string="" icon="fa-long-arrow-right" name="action_view_mdx_gelen_irsaliye_line_form" type="object"/>
+        </list>
+    </field>
+</record>
+
+
+    <!-- Line Form View -->
+    <record id="view_mdx_gelen_irsaliye_line_form" model="ir.ui.view">
+        <field name="name">mdx.gelen.irsaliye.line.form</field>
+        <field name="model">mdx.gelen.irsaliye.line</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                <!-- ["|", ("waybill_id", "=", False), ("irsaliye_onay_statu", "!=", "1")] -->
+                    <group>
+                        <field name="line_id" readonly="1"/>
+                        <field name="supplier_product_code" readonly="1"/>
+                        <field name="supplier_product_name" readonly="1"/>
+                        <!-- <field name="service_card" /> -->
+                        <field name="product_id" />
+                        <field name="account_id" />
+                        <field name="create_product" string="Ürün Oluştur" readonly="1"/>
+                        <field name="create_supplierinfo" string="Tedarikçi Bilgisi Oluştur" readonly="1"/>
+                        <field name="supplierinfo_id" string="Tedarikçi Bilgisi" readonly="1"/>
+                        <!-- <field name="istisna_kodu" readonly="1"/>
+                        <field name="tevkifat_kodu" readonly="1"/>
+                        <field name="ihrac_kayit_kodu" readonly="1"/>
+                        <field name="gtip_kodu" readonly="1"/>
+                        <field name="ozel_matrah_kodu" readonly="1"/> -->
+                        <field name="waybill_line_id" readonly="1"/>
+                        <field name="ref_po_line_id" readonly="1"/>
+                        <field name="gelen_irsaliye_id" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_mdx_gelen_irsaliye_form" model="ir.ui.view">
+        <field name="name">mdx.gelen.irsaliye.form</field>
+        <field name="model">mdx.gelen.irsaliye</field>
+        <field name="arch" type="xml">
+            <form string="Gelen İrsaliye">
+                <header>
+                <!-- Tedarikçi irsaliyesı oluşturma butonu -->
+                    <button name="action_create_waybill"
+                            string="Alım İrsaliyesi Oluştur"
+                            type="object"
+                            class="oe_highlight"
+                            invisible="waybill_will_be_created == False"/>
+                    <button name="refresh_gelen_irsaliye_api_response"
+                        type="object"
+                        class="btn-info"
+                        string=""
+                        icon="fa-refresh"
+                        />
+                    <button name="send_gelen_irsaliye_response"
+                        type="object"
+                        class="btn-success"
+                        string=""
+                        icon="fa-paper-plane"
+                        invisible="irsaliye_onay_statu != '0'"
+                        />
+                </header>
+                <sheet>
+                    <notebook>
+                        <!-- İlk Sekme: Temel Bilgiler -->
+                        <page string="Genel Bilgiler">
+                            <group string="Temel Bilgiler" col="2">
+                                <field name="name" string="İrsaliye No"/>
+                                <field name="ettn" string="ETTN"/>
+                                <field name="belge_tarihi" string="Belge Tarihi"/>
+                                <field name="irsaliye_gelis_tarihi" string="İrsaliye Geliş Tarihi"/>
+                                <!-- <field name="son_odeme_tarihi" string="Son Ödeme Tarihi"/> -->
+                                <field name="belge_turu" string="Belge Türü"/>
+                                <field name="irsaliye_senaryo" string="Senaryo"/>
+                                <field name="irsaliye_onay_statu" string="İrsaliye Statüsü"/>
+                                <field name="irsaliye_durum_detay" string="İrsaliye Durum Detayı"/>
+                                <field name="yanit_belge_oid" string="Yanıt Belge OID"/>
+                            </group>
+
+                            <group string="Taraf Bilgileri" col="2">
+                                <field name="satici_unvan" string="Satıcı Ünvan" colspan="2"/>
+                                <field name="gonderen_vkn_tckn" string="Gönderen VKN/TCKN"/>
+                                <field name="gonderen_etiket" string="Gönderen Etiket"/>
+                                
+                                <field name="alici_unvan" string="Alıcı Ünvan" colspan="2"/>
+                                <field name="alan_etiket" string="Alıcı Etiket"/>
+                                <field name="company_id" />
+                            </group>
+
+                            <!-- <group string="Ödeme Bilgileri" col="2">
+                                <field name="odenecek_tutar" string="Tutar"/>
+                                <field name="odenecek_tutar_doviz_cinsi" string="Döviz Cinsi"/>
+                            </group> -->
+                        </page>
+
+                        <!-- İkinci Sekme: Belgeler -->
+                        <page string="Belgeler" icon="fa-files-o">
+                            <group string="Ekler">
+                                <field name="irsaliye_html" string="HTML İrsaliye" readonly="1"/>
+                                <field name="irsaliye_pdf" string="PDF İrsaliye" readonly="1"/>
+                                <field name="irsaliye_xml" string="XML İrsaliye" readonly="1"/>
+                                <field name="attachment_error_details" readonly="1"/>
+                            </group>
+                        </page>
+
+                        <!-- Üçüncü Sekme: İşlemler -->
+                        <page string="İşlemler" icon="fa-gears">
+                            <group string="Sipariş İlişkilendirme" col="2">
+                                <field name="so_number_from_xml" />
+                                <field name="ref_po_id" string="İlişkili Sipariş"/>
+                            </group>
+
+                            <!-- <group string="irsaliye İlişkilendirme" col="2">
+                                <field name="invoice_number_from_xml" />
+                                <field name="ref_invoice_id" string="İlişkili irsaliye"/>
+                            </group> -->
+
+                            <group string="İrsaliye Oluşturma" col="2">
+                                <field name="waybill_will_be_created" string="Oluşturulacak mı?" readonly="manually_matched == True"/>
+                                <field name="waybill_created" string="Oluşturuldu mu?"/>
+                                <field name="waybill_creation_date_time" string="Oluşturma Tarihi"/>
+                                <!-- <field name="waybill_id" string="Oluşan İrsaliye" options='{"no_open": true}'/> -->
+                                <field name="manually_matched" readonly="waybill_id != False"/>
+                                <field name="waybill_id" string="Oluşan İrsaliye" readonly="manually_matched == False"/>
+                                <field name="waybill_creation_error_details" string="Hata Detayları" colspan="2"/>
+                            </group>
+
+                            <group string="Kontrol" col="2">
+                                <field name="controlled" string="Kontrol Edildi"/>
+                                <field name="controlled_date_time" string="Kontrol Tarihi"/>
+                                <field name="controlled_by" string="Kontrol Eden"/>
+                            </group>
+                        </page>
+
+                        <!-- Dördüncü Sekme: Detaylar -->
+                        <page string="Detaylar" icon="fa-info-circle">
+                            <group string="Teknik Bilgiler" col="2">
+                                <field name="belge_sira_no" string="Belge Sıra No"/>
+                                <field name="belge_hash" string="Belge Hash"/>
+                                <!-- <field name="tax_exemption_reason_code_id" string="Vergi İstisna Nedeni"/> -->
+                                <group string="Tedarikçi" col="2">
+                                    <field name="supplier_id" string="Tedarikçi"/>
+                                    <!-- <button name="action_create_new_supplier" string="Tedarikçi Oluştur" type="object" class="oe_highlight" readonly="[('create_supplier', '=', False)]"/> -->
+                                    <button name="action_create_new_supplier"
+                                            string="Tedarikçi Oluştur"
+                                            type="object"
+                                            icon="fa-magic"
+                                            invisible="supplier_id != False"
+                                            class="oe_highlight"/>
+                                </group>
+                                <!-- <field name="create_supplier" string="Tedarikçi Oluştur"/> -->
+                            </group>
+
+                            <group string="İrsaliye Satırları">
+                                <field name="waybill_line_ids"
+                                    widget="one2many" 
+                                    mode="list,form"
+                                    context="{'form_view_ref': 'mdx_gelen_irsaliye_line.view_mdx_gelen_irsaliye_line_form',
+                                                'list_view_ref': 'mdx_gelen_irsaliye_line.view_mdx_gelen_irsaliye_line_list'}"
+                                    options="{'editable': 'bottom'}"/>
+                            </group>
+                        </page>
+
+                        <!-- Beşinci Sekme: Loglar -->
+                        <page string="Loglar" icon="fa-history">
+                            <group string="Sistem Logları" col="2">
+                                <field name="logging_field1" string="Log 1"/>
+                                <field name="logging_field2" string="Log 2"/>
+                                <field name="logging_field3" string="Log 3"/>
+                                <field name="logging_field4" string="Log 4"/>
+                                <field name="logging_field5" string="Log 5"/>
+                                <field name="logging_field6" string="Log 6"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <!-- Header Butonları -->
+                <!-- <header>
+                    <field name="invoice_will_be_created"/>
+                </header> -->
+            </form>
+        </field>
+    </record>
+
+    <record id="view_mdx_gelen_irsaliye_search" model="ir.ui.view">
+        <field name="name">mdx.gelen.irsaliye.search</field>
+        <field name="model">mdx.gelen.irsaliye</field>
+        <field name="arch" type="xml">
+            <search>
+                <separator/>
+                <filter name="active" string="Available" domain="[('waybill_id', '=', False), ('irsaliye_onay_statu', '!=', '1')]"/>
+                <separator/>
+            </search>
+        </field>
+    </record>
+
+     <!-- List View for Gelen İrsaliye -->
+    <record id="view_mdx_gelen_irsaliye_list" model="ir.ui.view">
+        <field name="name">mdx.gelen.irsaliye.list</field>
+        <field name="model">mdx.gelen.irsaliye</field>
+        <field name="arch" type="xml">
+            <list string="Gelen İrsaliyeler" decoration-warning="irsaliye_onay_statu == '0'" decoration-success="irsaliye_onay_statu == '1'">
+                <header>
+                    <button string="E-İrsaliye Sorgula" name="action_search_incoming_waybill" type="object" class="oe_highlight" display="always"/>
+                    <button name="process_pending_attachments_gelen_irsaliye" type="object" string="Belgeleri Ekle" icon="fa-paperclip" class="oe_highlight" display="always"/>
+                    <!-- <button name="process_create_out_waybills_gelen_irsaliye" type="object" string="İrsaliye Oluştur" class="oe_highlight" /> -->
+                </header>
+                <!-- <button name="action_view_pdf_on_newtab" type="object" string="" class="oe_highlight" /> -->
+                <button name="action_view_pdf_attachment" icon="fa-eye" type="object"/>
+                <button name="send_gelen_irsaliye_response"
+                        type="object"
+                        class="text-success"
+                        string=""
+                        icon="fa-paper-plane"
+                        invisible="irsaliye_onay_statu != '0'"
+                        />
+                <field name="company_id" column_invisible="True"/>
+                <field name="company_id" groups="base.group_multi_company" readonly="1" optional="hide"/>
+                <field name="waybill_will_be_created"/>
+                <field name="name"/>
+                <field name="belge_sira_no"/>
+                <field name="belge_tarihi"/>
+                <field name="irsaliye_gelis_tarihi"/>
+                <field name="belge_turu"/>
+                <field name="irsaliye_senaryo"/>
+                <field name="ettn"/>
+                <!-- <field name="alici_unvan"/>
+                <field name="satici_unvan"/>
+                <field name="gonderen_etiket"/> -->
+                <field name="gonderen_vkn_tckn"/>
+                <field name="alan_etiket"/>
+                <!-- <field name="odenecek_tutar"/>
+                <field name="odenecek_tutar_doviz_cinsi"/> -->
+            </list>
+        </field>
+    </record>
+
+    <record id="action_mdx_gelen_irsaliye" model="ir.actions.act_window">
+        <field name="name">Gelen İrsaliye</field>
+        <field name="res_model">mdx.gelen.irsaliye</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Henüz bir irsaliye kaydı bulunmamaktadır.
+            </p>
+        </field>
+    </record>
+</odoo>

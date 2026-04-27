@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="iyzico_inline_form" name="Iyzico Inline Form">
+        <div id="iyzico-container" class="o_payment_form" data-provider="iyzico">
+            <p>Iyzico ödeme işlemi başlatılıyor...</p>
+        </div>
+    </template>
+</odoo>

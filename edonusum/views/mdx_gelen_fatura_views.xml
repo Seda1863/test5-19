@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <!-- Line Tree View -->
+    <record id="view_mdx_gelen_fatura_line_list" model="ir.ui.view">
+    <field name="name">mdx.gelen.fatura.line.list</field>
+    <field name="model">mdx.gelen.fatura.line</field>
+    <field name="arch" type="xml">
+        <list editable="bottom">
+            <field name="match_record" string="Eşleştir"/>
+            <field name="cancel_supplierinfo_creation" string="Tedarikçi Bilgisi Oluşturma" />
+            <field name="create_supplierinfo" string="Tedarikçi Bilgisi Oluştur" />
+            <button name="action_create_product"
+                    string="Ürün Oluştur"
+                    type="object"
+                    icon="fa-magic"
+                    invisible="create_product == False" />
+            <!-- <button name="action_open_service_creation_wizard"
+                    string="Hizmet Oluştur"
+                    type="object"
+                    icon="fa-magic"
+                    invisible="create_service_card == False" /> -->
+            <field name="line_id" string="Satır No"/>
+            <field name="supplier_product_code" string="Tedarikçi Kodu" readonly="1"/>
+            <field name="supplier_product_name" string="Ürün Adı" readonly="1"/>
+            <field name="product_id" string="Ürün" />
+            <field name="account_id" string="Hesap" />
+            <field name="tax_id" string="Vergi" />
+            <field name="quantity" string="Miktar" />
+            <field name="price_unit" string="Birim Fiyat" />
+            <button string="" icon="fa-long-arrow-right" name="action_view_mdx_gelen_fatura_line_form" type="object"/>
+        </list>
+    </field>
+</record>
+
+
+    <!-- Line Form View -->
+    <record id="view_mdx_gelen_fatura_line_form" model="ir.ui.view">
+        <field name="name">mdx.gelen.fatura.line.form</field>
+        <field name="model">mdx.gelen.fatura.line</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                    <group>
+                        <field name="line_id" readonly="1"/>
+                        <field name="supplier_product_code" readonly="1"/>
+                        <field name="supplier_product_name" readonly="1"/>
+                        <!-- <field name="service_card" /> -->
+                        <field name="product_id" />
+                        <field name="account_id" />
+                        <field name="create_product" string="Ürün Oluştur" />
+                        <field name="create_supplierinfo" string="Tedarikçi Bilgisi Oluştur" />
+                        <field name="supplierinfo_id" string="Tedarikçi Bilgisi" />
+                        <field name="istisna_kodu"  readonly="1"/>
+                        <field name="tevkifat_kodu"  readonly="1"/>
+                        <field name="ihrac_kayit_kodu"  readonly="1"/>
+                        <field name="gtip_kodu"  readonly="1"/>
+                        <field name="ozel_matrah_kodu"  readonly="1"/>
+                        <field name="invoice_line_id" />
+                        <field name="ref_po_line_id" />
+                        <field name="gelen_fatura_id"  readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_mdx_gelen_fatura_form" model="ir.ui.view">
+        <field name="name">mdx.gelen.fatura.form</field>
+        <field name="model">mdx.gelen.fatura</field>
+        <field name="arch" type="xml">
+            <form string="Gelen Fatura">
+                <header>
+                <!-- Sorumlu Belirle butonu -->
+                    <button name="action_assign_to_me"
+                            string="Sorumlu Belirle"
+                            type="object"
+                            class="oe_highlight"
+                            invisible="responsible_user_id != False"
+                            icon="fa-user"/>
+                <!-- Tedarikçi faturası oluşturma butonu -->
+                    <button name="action_create_supplier_invoice"
+                            string="Tedarikçi Faturası Oluştur"
+                            type="object"
+                            class="oe_highlight"
+                            invisible="invoice_will_be_created == False"/>
+                    <button name="refresh_gelen_fatura_api_response"
+                        type="object"
+                        class="btn-info"
+                        string=""
+                        icon="fa-refresh"
+                        />
+                    <button name="accept_gelen_fatura"
+                        type="object"
+                        class="btn-success"
+                        string=""
+                        icon="fa-check"
+                        invisible="fatura_onay_statu != '0' or fatura_senaryo.code != 'TICARIFATURA'"
+                        />
+                    <button name="reject_gelen_fatura"
+                        type="object"
+                        class="btn-danger"
+                        string=""
+                        icon="fa-times"
+                        invisible="fatura_onay_statu != '0' or fatura_senaryo.code != 'TICARIFATURA'"
+                        />
+                </header>
+                <sheet>
+                    <notebook>
+                        <!-- İlk Sekme: Temel Bilgiler -->
+                        <page string="Genel Bilgiler">
+                            <group string="Temel Bilgiler" col="2">
+                                <field name="name" string="Fatura No"/>
+                                <field name="ettn" string="ETTN"/>
+                                <field name="belge_tarihi" string="Belge Tarihi"/>
+                                <field name="fatura_gelis_tarihi" string="Fatura Geliş Tarihi"/>
+                                <field name="son_odeme_tarihi" string="Son Ödeme Tarihi"/>
+                                <field name="belge_turu" string="Belge Türü"/>
+                                <field name="fatura_senaryo" string="Senaryo"/>
+                                <field name="fatura_onay_statu" string="Ticari Fatura Statüsü"/>
+                                <field name="fatura_durum_detay" string="Fatura Durum Detayı"/>
+                            </group>
+
+                            <group string="Taraf Bilgileri" col="2">
+                                <field name="satici_unvan" string="Satıcı Ünvan" colspan="2"/>
+                                <field name="gonderen_vkn_tckn" string="Gönderen VKN/TCKN"/>
+                                <field name="gonderen_etiket" string="Gönderen Etiket"/>
+                                
+                                <field name="alici_unvan" string="Alıcı Ünvan" colspan="2"/>
+                                <field name="alan_etiket" string="Alıcı Etiket"/>
+                                <field name="company_id" />
+                            </group>
+
+                            <group string="Ödeme Bilgileri" col="2">
+                                <field name="odenecek_tutar" string="Tutar"/>
+                                <field name="odenecek_tutar_doviz_cinsi" string="Döviz Cinsi"/>
+                            </group>
+                        </page>
+
+                        <!-- İkinci Sekme: Belgeler -->
+                        <page string="Belgeler" icon="fa-files-o">
+                            <group string="Ekler">
+                                <field name="fatura_html" string="HTML Fatura" readonly="1"/>
+                                <field name="fatura_pdf" string="PDF Fatura" readonly="1"/>
+                                <field name="fatura_xml" string="XML Fatura" readonly="1"/>
+                                <field name="attachment_error_details" readonly="1"/>
+                            </group>
+                            <group string="Fatura Önizleme" invisible="not fatura_pdf">
+                                <field name="fatura_pdf_preview" nolabel="1" readonly="1"/>
+                            </group>
+                        </page>
+
+                        <!-- Üçüncü Sekme: İşlemler -->
+                        <page string="İşlemler" icon="fa-gears">
+                            <group string="Kabul/Red İşlemleri" col="2">
+                                <field name="kabul_red_aciklama" readonly="fatura_onay_statu != '0' or fatura_senaryo.code != 'TICARIFATURA'"/>
+                            </group>
+
+                            <group string="Sipariş İlişkilendirme" col="2">
+                                <field name="so_number_from_xml" readonly="1"/>
+                                <field name="ref_po_id" string="İlişkili Sipariş"/>
+                            </group>
+
+                            <group string="İrsaliye İlişkilendirme" col="2">
+                                <field name="waybill_number_from_xml" readonly="1"/>
+                                <field name="ref_in_receipt_id" string="İlişkili İrsaliye"/>
+                            </group>
+
+                            <group string="Fatura Oluşturma" col="2">
+                                <field name="invoice_will_be_created" string="Oluşturulacak mı?" readonly="manually_matched == True"/> 
+                                <field name="invoice_created" string="Oluşturuldu mu?"/>
+                                <field name="invoice_creation_date_time" string="Oluşturma Tarihi"/>
+                                <!-- <field name="invoice_id" string="Oluşan Fatura" options='{"no_open": true}'/> -->
+                                <field name="manually_matched" readonly="invoice_id != False"/>
+                                <field name="invoice_id" string="Oluşan Fatura" readonly="manually_matched == False"/>
+                                <field name="invoice_creation_error_details" string="Hata Detayları" colspan="2"/>
+                            </group>
+
+                            <group string="Kontrol" col="2">
+                                <field name="controlled" string="Kontrol Edildi"/>
+                                <field name="controlled_date_time" string="Kontrol Tarihi"/>
+                                <field name="controlled_by" string="Kontrol Eden"/>
+                            </group>
+                        </page>
+
+                        <!-- Dördüncü Sekme: Detaylar -->
+                        <page string="Detaylar" icon="fa-info-circle">
+                            <group string="Teknik Bilgiler" col="2">
+                                <field name="belge_sira_no" string="Belge Sıra No"/>
+                                <field name="belge_hash" string="Belge Hash"/>
+                                <field name="tax_exemption_reason_code_id" string="Vergi İstisna Nedeni"/>
+                                <field name="responsible_user_id" string="Sorumlu Kullanıcı"/>
+                                <group string="Tedarikçi" col="2">
+                                    <field name="supplier_id" string="Tedarikçi"/>
+                                    <!-- <button name="action_create_new_supplier" string="Tedarikçi Oluştur" type="object" class="oe_highlight" readonly="[('create_supplier', '=', False)]"/> -->
+                                    <button name="action_create_new_supplier"
+                                            string="Tedarikçi Oluştur"
+                                            type="object"
+                                            icon="fa-magic"
+                                            invisible="supplier_id != False"
+                                            class="oe_highlight"/>
+                                </group>
+                                <!-- <field name="create_supplier" string="Tedarikçi Oluştur"/> -->
+                            </group>
+
+                            <group string="Fatura Satırları">
+                                <field name="invoice_line_ids"
+                                    widget="one2many" 
+                                    mode="list,form"
+                                    context="{'form_view_ref': 'mdx_gelen_fatura_line.view_mdx_gelen_fatura_line_form',
+                                                'list_view_ref': 'mdx_gelen_fatura_line.view_mdx_gelen_fatura_line_list'}"
+                                    options="{'editable': 'bottom'}"/>
+                            </group>
+                        </page>
+
+                        <!-- Beşinci Sekme: Loglar -->
+                        <page string="Loglar" icon="fa-history">
+                            <group string="Sistem Logları" col="2">
+                                <field name="logging_field1" string="Log 1"/>
+                                <field name="logging_field2" string="Log 2"/>
+                                <field name="logging_field3" string="Log 3"/>
+                                <field name="logging_field4" string="Log 4"/>
+                                <field name="logging_field5" string="Log 5"/>
+                                <field name="logging_field6" string="Log 6"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <!-- Header Butonları -->
+                <!-- <header>
+                    <field name="invoice_will_be_created"/>
+                </header> -->
+            </form>
+        </field>
+    </record>
+
+    <record id="view_mdx_gelen_fatura_search" model="ir.ui.view">
+        <field name="name">mdx.gelen.fatura.search</field>
+        <field name="model">mdx.gelen.fatura</field>
+        <field name="arch" type="xml">
+            <search>
+                <separator/>
+                    <filter name="active" string="Available" domain="[&quot;&amp;&quot;, (&quot;invoice_id&quot;, &quot;=&quot;, False), (&quot;fatura_onay_statu&quot;, &quot;!=&quot;, &quot;1&quot;), (&quot;manually_matched&quot;, &quot;=&quot;, False)]"/>
+                    <filter name="my_incoming_invoices" string="Bana Ait" domain="[('responsible_user_id', '=', uid)]"/>
+                    <field name="responsible_user_id"/>
+                <separator/>
+            </search>
+        </field>
+    </record>
+
+     <!-- List View for Gelen Fatura -->
+    <record id="view_mdx_gelen_fatura_list" model="ir.ui.view">
+        <field name="name">mdx.gelen.fatura.list</field>
+        <field name="model">mdx.gelen.fatura</field>
+        <field name="arch" type="xml">
+            <list string="Gelen Faturalar"
+                  decoration-success="supplier_id != False and fatura_onay_statu in ('2', '-1')"
+                  decoration-info="fatura_onay_statu == '0'"
+                  decoration-danger="supplier_id == False">
+                <!-- Correctly placed header with button -->
+                <header>
+                    <button string="E-Fatura Sorgula" name="action_search_incoming_invoice" type="object" class="oe_highlight" display="always"/>
+                    <button name="process_pending_attachments_gelen_fatura" type="object" string="Belgeleri Ekle" icon="fa-paperclip" class="oe_highlight" display="always"/>
+                    <!-- <button name="process_create_out_invoices_gelen_fatura" type="object" string="Fatura Oluştur" class="oe_highlight" /> -->
+                </header>
+                <!-- <button name="action_view_pdf_on_newtab" type="object" string="" class="oe_highlight" /> -->
+                <button name="action_view_pdf_attachment" icon="fa-eye" type="object"/>
+                <button name="accept_gelen_fatura"
+                        type="object"
+                        string="Kabul"
+                        class="text-success"
+                        icon="fa-check"
+                        readonly="fatura_onay_statu != '0' or fatura_senaryo.code != 'TICARIFATURA'"
+                        />
+                    <button name="reject_gelen_fatura"
+                        type="object"
+                        string="Red"
+                        class="text-danger"
+                        icon="fa-times"
+                        readonly="fatura_onay_statu != '0' or fatura_senaryo.code != 'TICARIFATURA'"
+                        />
+                <!-- Renklendirme icin gerekli gizli alanlar -->
+                <field name="supplier_id" column_invisible="True"/>
+                <field name="fatura_onay_statu" column_invisible="True"/>
+                <field name="company_id" column_invisible="True"/>
+                <field name="company_id" groups="base.group_multi_company" readonly="1" optional="hide"/>
+                <field name="responsible_user_id" optional="hide"/>
+                <field name="fatura_durum_text" string="Durum"/>
+                <field name="invoice_will_be_created"/>
+                <field name="name"/>
+                <field name="belge_sira_no"/>
+                <field name="belge_tarihi"/>
+                <field name="fatura_gelis_tarihi"/>
+                <field name="belge_turu"/>
+                <field name="fatura_senaryo"/>
+                <field name="satici_unvan"/>
+                <!-- <field name="ettn"/>
+                <field name="satici_unvan"/>
+                <field name="gonderen_etiket"/> -->
+                <field name="gonderen_vkn_tckn"/>
+                <field name="alan_etiket"/>
+                <field name="odenecek_tutar"/>
+                <field name="odenecek_tutar_doviz_cinsi"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_mdx_gelen_fatura" model="ir.actions.act_window">
+        <field name="name">Gelen Fatura</field>
+        <field name="res_model">mdx.gelen.fatura</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Henüz bir fatura kaydı bulunmamaktadır.
+            </p>
+        </field>
+    </record>
+</odoo>

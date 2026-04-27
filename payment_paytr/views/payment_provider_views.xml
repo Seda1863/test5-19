@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="payment_provider_form_inherit_paytr" model="ir.ui.view">
+        <field name="name">payment.provider.form.inherit.paytr</field>
+        <field name="model">payment.provider</field>
+        <field name="inherit_id" ref="payment.payment_provider_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='provider_credentials']" position="after">
+                <group name="paytr_credentials" invisible="code != 'paytr'">
+                    <field name="paytr_merchant_key" password="True"/>
+                    <field name="paytr_merchant_id"/>
+                    <field name="paytr_merchant_salt" password="True"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

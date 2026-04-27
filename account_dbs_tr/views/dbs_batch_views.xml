@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_dbs_batch_tree" model="ir.ui.view">
+        <field name="name">dbs.batch.tree</field>
+        <field name="model">dbs.batch</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name" string="Toplu Islem No"/>
+                <field name="date" string="Tarih"/>
+                <field name="contract_id" string="DBS Sozlesmesi"/>
+                <field name="bank_reference" string="Banka Referansi"/>
+                <field name="line_count" string="Satir Sayisi"/>
+                <field name="total_amount" string="Toplam Tutar"/>
+                <field name="state" string="Durum" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_dbs_batch_line_tree" model="ir.ui.view">
+        <field name="name">dbs.batch.line.tree</field>
+        <field name="model">dbs.batch.line</field>
+        <field name="arch" type="xml">
+            <list>
+                <header>
+                    <button name="action_retry_rejected" type="object" string="Yeniden Gonder" class="btn-primary"/>
+                    <button name="action_warn_customer" type="object" string="Musteriyi Uyar" class="btn-secondary"/>
+                    <button name="action_suspend_customer_profile" type="object" string="DBS Profilini Askiya Al" class="btn-secondary"/>
+                </header>
+                <field name="batch_id" string="DBS Toplu Islem" optional="show"/>
+                <field name="contract_id" string="DBS Sozlesmesi" optional="show"/>
+                <field name="contract_company_id" string="Sozlesme Sirketi" optional="show"/>
+                <field name="dbs_line_ref" string="DBS Satir Ref"/>
+                <field name="partner_id" string="Musteri"/>
+                <field name="invoice_name" string="Fatura"/>
+                <field name="due_date" string="Vade"/>
+                <field name="amount" string="Tutar"/>
+                <field name="state" string="Durum" widget="badge"/>
+                <field name="batch_state" string="Toplu Islem Durumu" widget="badge" optional="show"/>
+                <field name="reject_code" string="Ret Kodu"/>
+                <field name="last_message" string="Mesaj"/>
+                <field name="retry_count"/>
+                <field name="last_retry_at"/>
+                <field name="warned_at"/>
+                <button name="action_open_invoice" type="object" string="Fatura Ac" class="btn-link"/>
+                <button name="action_open_contract" type="object" string="Sozlesme Ac" class="btn-link"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_dbs_batch_line_search" model="ir.ui.view">
+        <field name="name">dbs.batch.line.search</field>
+        <field name="model">dbs.batch.line</field>
+        <field name="arch" type="xml">
+            <search string="DBS Faturalari">
+                <field name="dbs_line_ref"/>
+                <field name="partner_id"/>
+                <field name="invoice_name"/>
+                <field name="contract_id"/>
+                <filter name="filter_to_send" string="Gonderime Hazir" domain="[('state', '=', 'to_send')]"/>
+                <filter name="filter_rejected" string="Reddedilen" domain="[('state', '=', 'rejected')]"/>
+                <filter name="filter_settled" string="Kapatilan" domain="[('state', '=', 'settled')]"/>
+                <group expand="0" string="Grupla">
+                    <filter name="group_partner" string="Musteri" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_contract" string="DBS Sozlesmesi" context="{'group_by': 'contract_id'}"/>
+                    <filter name="group_company" string="Sozlesme Sirketi" context="{'group_by': 'contract_company_id'}"/>
+                    <filter name="group_state" string="Durum" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_dbs_batch_line_form" model="ir.ui.view">
+        <field name="name">dbs.batch.line.form</field>
+        <field name="model">dbs.batch.line</field>
+        <field name="arch" type="xml">
+            <form string="DBS Ret Detayi">
+                <header>
+                    <button name="action_retry_rejected" type="object" string="Yeniden Dene" class="btn-primary" invisible="state != 'rejected'"/>
+                    <button name="action_warn_customer" type="object" string="Musteriyi Uyar" class="btn-secondary"/>
+                    <button name="action_suspend_customer_profile" type="object" string="DBS Profilini Askiya Al" class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" name="action_open_batch" type="object" icon="fa-folder-open">
+                            <field name="batch_id" string="DBS Toplu İşlem" widget="many2one" readonly="1"/>
+                        </button>
+                        <button class="oe_stat_button" name="action_open_invoice" type="object" icon="fa-file-text-o">
+                            <field name="move_id" string="Fatura" widget="many2one" readonly="1"/>
+                        </button>
+                        <button class="oe_stat_button" name="action_open_contract" type="object" icon="fa-link">
+                            <field name="contract_id" string="DBS Sözleşmesi" widget="many2one" readonly="1"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="batch_id" readonly="1"/>
+                            <field name="dbs_line_ref" readonly="1"/>
+                            <field name="partner_id" readonly="1"/>
+                            <field name="move_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="state" readonly="1"/>
+                            <field name="amount" readonly="1"/>
+                            <field name="reject_code" readonly="1"/>
+                            <field name="last_message" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Operasyon">
+                        <field name="retry_count" readonly="1"/>
+                        <field name="last_retry_at" readonly="1"/>
+                        <field name="warned_at" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dbs_batch_form" model="ir.ui.view">
+        <field name="name">dbs.batch.form</field>
+        <field name="model">dbs.batch</field>
+        <field name="arch" type="xml">
+            <form string="DBS Toplu Islem">
+                <header>
+                    <button name="action_send" type="object" string="Gönder" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_import_ack" type="object" string="ACK İçeri Al" class="btn-secondary" invisible="state not in ('sent', 'ack')"/>
+                    <button name="action_close" type="object" string="Kapat" invisible="state in ('closed', 'cancel')"/>
+                    <button name="action_cancel" type="object" string="İptal" invisible="state in ('closed', 'cancel')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,sent,ack,settled,closed" options="{'clickable': 1}"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" name="action_open_contract" type="object" icon="fa-link">
+                            <field name="contract_id" string="DBS Sözleşmesi" widget="many2one" readonly="1"/>
+                        </button>
+                        <button class="oe_stat_button" name="action_open_lines" type="object" icon="fa-list" invisible="line_count == 0">
+                            <field name="line_count" string="DBS Faturaları" widget="statinfo"/>
+                        </button>
+                        <button class="oe_stat_button" name="action_open_invoices" type="object" icon="fa-files-o" invisible="invoice_count == 0">
+                            <field name="invoice_count" string="Kaynak Faturalar" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="date"/>
+                            <field name="contract_id"/>
+                            <field name="bank_reference" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="line_count" readonly="1"/>
+                            <field name="total_amount" readonly="1"/>
+                            <field name="export_filename" readonly="1"/>
+                            <field name="export_file" filename="export_filename" readonly="1"/>
+                            <field name="ack_filename"/>
+                            <field name="ack_file" filename="ack_filename"/>
+                        </group>
+                    </group>
+
+                    <field name="line_ids" context="{'default_currency_id': currency_id}">
+                        <list editable="bottom">
+                            <field name="dbs_line_ref" string="DBS Satir Ref" readonly="1"/>
+                            <field name="partner_id" string="Musteri"/>
+                            <field name="invoice_name" string="Fatura"/>
+                            <field name="due_date" string="Vade"/>
+                            <field name="amount" string="Tutar"/>
+                            <field name="state" string="Durum"/>
+                            <field name="reject_code" string="Ret Kodu"/>
+                            <field name="last_message" string="Mesaj"/>
+                        </list>
+                    </field>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_dbs_batch" model="ir.actions.act_window">
+        <field name="name">DBS Toplu Islemler</field>
+        <field name="res_model">dbs.batch</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_dbs_invoices" model="ir.actions.act_window">
+        <field name="name">DBS Faturalari</field>
+        <field name="res_model">dbs.batch.line</field>
+        <field name="view_mode">list,form,pivot</field>
+        <field name="search_view_id" ref="view_dbs_batch_line_search"/>
+    </record>
+</odoo>

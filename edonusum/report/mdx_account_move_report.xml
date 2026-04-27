@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Rapor Aksiyonu - Aksiyonlar menüsünde görünecek -->
+    <record id="action_report_account_move" model="ir.actions.report">
+        <field name="name">Yevmiye Kaydı Çıktısı</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">edonusum.report_account_move_document</field>
+        <field name="report_file">edonusum.report_account_move_document</field>
+        <field name="print_report_name">'Yevmiye_Kaydi_%s' % (object.name or 'Taslak').replace('/', '_')</field>
+        <field name="binding_model_id" ref="account.model_account_move"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Ana Rapor Şablonu -->
+    <template id="report_account_move_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="edonusum.report_account_move_content"/>
+            </t>
+        </t>
+    </template>
+
+    <!-- Rapor İçerik Şablonu -->
+    <template id="report_account_move_content">
+        <t t-call="web.external_layout">
+            <div class="page">
+                <!-- Başlık -->
+                <div class="row mb-4">
+                    <div class="col-12 text-center">
+                        <h2>
+                            <t t-if="o.move_type == 'entry'">YEVMİYE KAYDI</t>
+                            <t t-elif="o.move_type == 'out_invoice'">SATIŞ FATURASI</t>
+                            <t t-elif="o.move_type == 'in_invoice'">ALIŞ FATURASI</t>
+                            <t t-elif="o.move_type == 'out_refund'">SATIŞ İADE FATURASI</t>
+                            <t t-elif="o.move_type == 'in_refund'">ALIŞ İADE FATURASI</t>
+                            <t t-elif="o.move_type == 'out_receipt'">SATIŞ MAKBUZU</t>
+                            <t t-elif="o.move_type == 'in_receipt'">ALIŞ MAKBUZU</t>
+                            <t t-else="">YEVMİYE KAYDI</t>
+                        </h2>
+                    </div>
+                </div>
+
+                <!-- Genel Bilgiler -->
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <table class="table table-sm table-borderless">
+                            <tr>
+                                <td class="text-muted" style="width: 40%;">Belge No:</td>
+                                <td><strong t-field="o.name"/></td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Tarih:</td>
+                                <td><span t-field="o.date"/></td>
+                            </tr>
+                            <tr t-if="o.ref">
+                                <td class="text-muted">Referans:</td>
+                                <td><span t-field="o.ref"/></td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Yevmiye Defteri:</td>
+                                <td><span t-field="o.journal_id.name"/></td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Durum:</td>
+                                <td>
+                                    <t t-if="o.state == 'draft'">Taslak</t>
+                                    <t t-elif="o.state == 'posted'">Onaylanmış</t>
+                                    <t t-elif="o.state == 'cancel'">İptal</t>
+                                    <t t-else=""><span t-field="o.state"/></t>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-6">
+                        <table class="table table-sm table-borderless">
+                            <tr t-if="o.partner_id">
+                                <td class="text-muted" style="width: 40%;">Cari:</td>
+                                <td><span t-field="o.partner_id.name"/></td>
+                            </tr>
+                            <tr t-if="o.partner_id.vat">
+                                <td class="text-muted">VKN/TCKN:</td>
+                                <td><span t-field="o.partner_id.vat"/></td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Para Birimi:</td>
+                                <td><span t-field="o.currency_id.name"/></td>
+                            </tr>
+                            <tr t-if="o.currency_id != o.company_currency_id">
+                                <td class="text-muted">Kur:</td>
+                                <td>
+                                    1 <span t-field="o.currency_id.name"/> = 
+                                    <span t-field="o.invoice_currency_inverse_rate" t-options='{"precision": 6}'/> 
+                                    <span t-field="o.company_currency_id.name"/>
+                                </td>
+                            </tr>
+                            <tr t-if="o.currency_id != o.company_currency_id and o.currency_rate_type">
+                                <td class="text-muted">Kur Tipi:</td>
+                                <td>
+                                    <t t-if="o.currency_rate_type == 'forexbuying'">Döviz Alış</t>
+                                    <t t-elif="o.currency_rate_type == 'forexselling'">Döviz Satış</t>
+                                    <t t-elif="o.currency_rate_type == 'banknotebuying'">Efektif Alış</t>
+                                    <t t-elif="o.currency_rate_type == 'banknoteselling'">Efektif Satış</t>
+                                    <t t-elif="o.currency_rate_type == 'manualexchange'">Manuel Kur</t>
+                                </td>
+                            </tr>
+                            <tr t-if="o.invoice_origin">
+                                <td class="text-muted">Kaynak Belge:</td>
+                                <td><span t-field="o.invoice_origin"/></td>
+                            </tr>
+                            <tr t-if="o.fatura_no">
+                                <td class="text-muted">Fatura No:</td>
+                                <td><span t-field="o.fatura_no"/></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Yevmiye Kalemleri Tablosu -->
+                <div class="row">
+                    <div class="col-12">
+                        <h5 class="mb-3">Yevmiye Kalemleri</h5>
+                        <table class="table table-sm table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 5%;" class="text-center">#</th>
+                                    <th style="width: 12%;">Hesap Kodu</th>
+                                    <th style="width: 20%;">Hesap Adı</th>
+                                    <th style="width: 18%;">Cari</th>
+                                    <th style="width: 20%;">Açıklama</th>
+                                    <th style="width: 12%;" class="text-end">Borç</th>
+                                    <th style="width: 12%;" class="text-end">Alacak</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="line_no" t-value="0"/>
+                                <t t-set="total_debit" t-value="0"/>
+                                <t t-set="total_credit" t-value="0"/>
+                                <t t-foreach="o.line_ids.sorted(key=lambda l: (l.account_id.code, l.id))" t-as="line">
+                                    <t t-set="line_no" t-value="line_no + 1"/>
+                                    <t t-set="total_debit" t-value="total_debit + line.debit"/>
+                                    <t t-set="total_credit" t-value="total_credit + line.credit"/>
+                                    <tr>
+                                        <td class="text-center"><t t-esc="line_no"/></td>
+                                        <td><span t-field="line.account_id.code"/></td>
+                                        <td><span t-field="line.account_id.name"/></td>
+                                        <td>
+                                            <t t-if="line.partner_id">
+                                                <span t-field="line.partner_id.name"/>
+                                            </t>
+                                        </td>
+                                        <td><span t-field="line.name"/></td>
+                                        <td class="text-end">
+                                            <t t-if="line.debit">
+                                                <span t-field="line.debit" t-options='{"widget": "monetary", "display_currency": o.company_currency_id}'/>
+                                            </t>
+                                        </td>
+                                        <td class="text-end">
+                                            <t t-if="line.credit">
+                                                <span t-field="line.credit" t-options='{"widget": "monetary", "display_currency": o.company_currency_id}'/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <td colspan="5" class="text-end"><strong>TOPLAM</strong></td>
+                                    <td class="text-end">
+                                        <strong t-esc="total_debit" t-options='{"widget": "monetary", "display_currency": o.company_currency_id}'/>
+                                    </td>
+                                    <td class="text-end">
+                                        <strong t-esc="total_credit" t-options='{"widget": "monetary", "display_currency": o.company_currency_id}'/>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Dövizli İşlemler (Para birimi şirket para biriminden farklıysa) -->
+                <t t-if="o.currency_id != o.company_currency_id">
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5 class="mb-3">Döviz Detayları</h5>
+                            <table class="table table-sm table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 5%;" class="text-center">#</th>
+                                        <th style="width: 12%;">Hesap Kodu</th>
+                                        <th style="width: 25%;">Hesap Adı</th>
+                                        <th style="width: 18%;">Açıklama</th>
+                                        <th style="width: 15%;" class="text-end">Döviz Tutarı</th>
+                                        <th style="width: 10%;" class="text-center">Para Birimi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-set="line_no" t-value="0"/>
+                                    <t t-foreach="o.line_ids.filtered(lambda l: l.amount_currency != 0).sorted(key=lambda l: (l.account_id.code, l.id))" t-as="line">
+                                        <t t-set="line_no" t-value="line_no + 1"/>
+                                        <tr>
+                                            <td class="text-center"><t t-esc="line_no"/></td>
+                                            <td><span t-field="line.account_id.code"/></td>
+                                            <td><span t-field="line.account_id.name"/></td>
+                                            <td><span t-field="line.name"/></td>
+                                            <td class="text-end">
+                                                <span t-field="line.amount_currency" t-options='{"widget": "monetary", "display_currency": line.currency_id}'/>
+                                            </td>
+                                            <td class="text-center"><span t-field="line.currency_id.name"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </t>
+
+                <!-- Fatura Bilgileri (Fatura tipli kayıtlar için) -->
+                <t t-if="o.move_type in ('out_invoice', 'in_invoice', 'out_refund', 'in_refund')">
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5 class="mb-3">Fatura Özeti</h5>
+                            <table class="table table-sm table-bordered">
+                                <tr>
+                                    <td class="text-muted" style="width: 25%;">Ara Toplam:</td>
+                                    <td class="text-end" style="width: 25%;">
+                                        <span t-field="o.amount_untaxed" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                    <td class="text-muted" style="width: 25%;">KDV Toplam:</td>
+                                    <td class="text-end" style="width: 25%;">
+                                        <span t-field="o.amount_tax" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted"><strong>Genel Toplam:</strong></td>
+                                    <td class="text-end" colspan="3">
+                                        <strong t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </t>
+
+                <!-- Açıklama / Notlar -->
+                <t t-if="o.narration or o.kayit_aciklamasi or o.fatura_aciklama">
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5 class="mb-3">Açıklamalar</h5>
+                            <div class="border p-2" style="background-color: #f8f9fa;">
+                                <t t-if="o.kayit_aciklamasi">
+                                    <p><strong>Kayıt Açıklaması:</strong> <span t-field="o.kayit_aciklamasi"/></p>
+                                </t>
+                                <t t-if="o.fatura_aciklama">
+                                    <p><strong>Fatura Açıklaması:</strong></p>
+                                    <p t-field="o.fatura_aciklama" style="white-space: pre-wrap;"/>
+                                </t>
+                                <t t-if="o.narration">
+                                    <p><strong>Notlar:</strong></p>
+                                    <div t-field="o.narration"/>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+
+                <!-- Alt Bilgi -->
+                <div class="row mt-5">
+                    <div class="col-6">
+                        <p class="text-muted small">
+                            <strong>Oluşturma Tarihi:</strong> <span t-field="o.create_date" t-options='{"widget": "datetime"}'/><br/>
+                            <t t-if="o.create_uid">
+                                <strong>Oluşturan:</strong> <span t-field="o.create_uid.name"/>
+                            </t>
+                        </p>
+                    </div>
+                    <div class="col-6 text-end">
+                        <p class="text-muted small">
+                            <strong>Şirket:</strong> <span t-field="o.company_id.name"/>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

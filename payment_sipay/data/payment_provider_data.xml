@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="payment_provider_sipay" model="payment.provider">
+            <field name="name">Sipay</field>
+            <field name="code">sipay</field>
+            <field name="inline_form_view_id" ref="payment_sipay.sipay_inline_form"/>
+            <field name="image_128" type="base64" file="payment_sipay/static/img/sipay_icon.png"/>
+            <field name="payment_method_ids" eval="[Command.set([ref('payment.payment_method_card')])]"/>
+        </record>
+        
+        <record id="account_payment_method_sipay" model="account.payment.method">
+            <field name="name">Sipay</field>
+            <field name="code">sipay</field>
+            <field name="payment_type">inbound</field>
+        </record>
+        
+        <!-- <record id="payment_method_sipay" model="payment.method">
+            <field name="name">Sipay</field>
+            <field name="code">sipay</field>
+            <field name="primary_payment_method_id" eval="ref('payment.payment_method_card')"/>
+            <field name="sequence">1000</field>
+            <field name="active">False</field>
+            <field name="image" type="base64" file="payment_sipay/static/img/sipay_icon.png"/>
+        </record> -->     
+    </data>
+</odoo>

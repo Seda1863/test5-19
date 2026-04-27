@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- E-Dönüşüm Ana Grup -->
+    <record id="spreadsheet_dashboard_group_edonusum" model="spreadsheet.dashboard.group">
+        <field name="name">E-Dönüşüm Muhasebe</field>
+        <field name="sequence">50</field>
+    </record>
+
+</odoo>

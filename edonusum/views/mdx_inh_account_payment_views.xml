@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_mdx_inh_account_payment_form" model="ir.ui.view">
+        <field name="name">mdx.inh.account.payment.form</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
+        <field name="arch" type="xml">
+            <!-- <field name="partner_id" position="attributes">
+                <attribute name="domain">[('id', 'in', filtered_partner_ids)]</attribute>
+            </field> -->
+            <xpath expr="//button[@name='button_open_journal_entry']" position="before">
+                <button name="button_open_check_leaf" type="object" class="oe_stat_button" icon="fa-ticket" invisible="not cheque_leaf_id" groups="account.group_account_user,account.group_account_readonly">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Çek Yaprağı</span>
+                    </div>
+                </button>
+            </xpath>
+
+            <xpath expr="//div[@name='amount_div']" position="after">
+                <div name="parent_currency_conversion_div" style="width: 100%; display: flex; flex-direction: column; gap: 2px;">
+                    <!-- 1. Satır: 1 EUR = 0,024255 TRY -->
+                    <div name="currency_conversion_div" style="width: 100%;">
+                        <div style="display: flex; align-items: center;">
+                            <span>1&#160;</span>
+                            <field name="company_currency_id" readonly="True" options="{'no_open': True}" nolabel="1" style="margin: 0 2px;"/>
+                            <span>=</span>
+                            <field name="payment_currency_rate" digits="[12,6]" readonly="currency_rate_type != 'manualexchange'" nolabel="1" style="margin: 0 2px;"/>
+                            <field name="currency_id" readonly="True" options="{'no_open': True}" nolabel="1" style="margin: 0 2px;"/>
+                        </div>
+                    </div>
+
+                    <!-- 2. Satır: 1 EUR = 41,228600 TRY -->
+                    <div name="currency_conversion_div_2" style="width: 100%;">
+                        <div style="display: flex; align-items: center;">
+                            <span>1&#160;</span>
+                            <field name="currency_id" readonly="True" options="{'no_open': True}" nolabel="1" style="margin: 0 2px;"/>
+                            <span>=</span>
+                            <field name="payment_currency_inverse_rate" digits="[12,6]" readonly="currency_rate_type != 'manualexchange'" nolabel="1" style="margin: 0 2px;"/>
+                            <field name="company_currency_id" readonly="True" options="{'no_open': True}" nolabel="1" style="margin: 0 2px;"/>
+                        </div>
+                    </div>
+
+                    <!-- 3. Satır: Kur Seçimi -->
+                    <div name="currency_conversion_div_3" style="width: 100%;">
+                        <field name="currency_rate_type" string="Kur Seçimi"/>
+                    </div>
+                </div>
+            </xpath>
+
+            <xpath expr="//field[@name='journal_id']" position="after">
+                <field name="warning_message" style="color: red; font-weight: bold;" string="" />
+            </xpath>
+
+            <xpath expr="//form/sheet/group[@name='main_group']" position="inside" style="width: 100%;">
+                <!-- <notebook> -->
+                <group string="E-Defter" name="edefter_group" style="width: 100%;">
+                    <group style="width: 50%;">
+                        <!-- <field name="entry_sequence_no" string="Yevmiye No" readonly="1"/> -->
+                        <field name="payment_method" />
+                        <field name="document_type"/>
+                        <field name="document_type_description_id" readonly="document_type != 'other'"/>
+                        <field name="document_number" />
+                        <field name="document_date" />
+                    </group>
+                    <group invisible="payment_method != 'check'" style="width: 50%;">
+                        <!-- payment_type 'outbound' ise no_create True -->
+                        <!-- <field name="cheque_leaf_id" options="{'no_create': payment_type == 'outbound',
+                                                                    'no_create_edit': payment_type == 'outbound',
+                                                                    'no_quick_create': payment_type == 'outbound'}" context="{
+                                                                    'default_payment_type': payment_type,
+                                                                    'default_issuer_id': (payment_type == 'inbound') and partner_id or False,
+                                                                    'default_first_owner_id': (payment_type == 'inbound') and partner_id or False,
+                                                                    'default_currency_id': currency_id,
+                                                                    'default_amount': amount
+                                                                  }"/> -->
+                        <field name="cheque_leaf_id"/>
+                        <field name="cheque_leaf_bank" readonly="1" invisible="not cheque_leaf_id"/>
+                        <field name="cheque_leaf_number" readonly="1" invisible="not cheque_leaf_id"/>
+                        <field name="cheque_amount" />
+                        <field name="bring_cheque_amount"/>
+                        <field name="expiry_date" />
+                        <field name="difference" />
+                    </group>
+                </group>
+                <!-- </notebook> -->
+            </xpath>
+        </field>
+    </record>
+
+    <!-- <record id="view_mdx_inh_account_payment_register_form" model="ir.ui.view">
+        <field name="name">mdx.inh.account.payment.register.form</field>
+        <field name="model">account.payment.register</field>
+        <field name="inherit_id" ref="account.view_account_payment_register_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/group" position="inside">
+                    <group name="group3" invisible="edefter_musterisi == False"> 
+                    <field name="payment_method"/>
+                    <field name="document_type"/>
+                    <field name="document_type_description_id" readonly="document_type != 'other'"/>
+                    <field name="document_number" />
+                    <field name="document_date" />
+                </group>
+            </xpath>
+        </field>
+    </record> -->
+
+    <!-- <record id="view_mdx_account_move_form_inherit" model="ir.ui.view">
+        <field name="name">mdx.account.move.form</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_line_ids']/list/field[@name='account_id']" position="before">
+                <field name="line_sequence_no"/>
+            </xpath>
+        </field>
+    </record> -->
+</odoo>

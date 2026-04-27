@@ -1,0 +1,13 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_dbs_contract_user,dbs.contract.user,model_dbs_contract,account_dbs_tr.group_dbs_user,1,0,0,0
+access_dbs_contract_manager,dbs.contract.manager,model_dbs_contract,account_dbs_tr.group_dbs_manager,1,1,1,1
+access_dbs_batch_user,dbs.batch.user,model_dbs_batch,account_dbs_tr.group_dbs_user,1,0,0,0
+access_dbs_batch_manager,dbs.batch.manager,model_dbs_batch,account_dbs_tr.group_dbs_manager,1,1,1,1
+access_dbs_batch_line_user,dbs.batch.line.user,model_dbs_batch_line,account_dbs_tr.group_dbs_user,1,0,0,0
+access_dbs_batch_line_manager,dbs.batch.line.manager,model_dbs_batch_line,account_dbs_tr.group_dbs_manager,1,1,1,1
+access_dbs_message_log_user,dbs.message.log.user,model_dbs_message_log,account_dbs_tr.group_dbs_user,1,0,0,0
+access_dbs_message_log_manager,dbs.message.log.manager,model_dbs_message_log,account_dbs_tr.group_dbs_manager,1,1,1,1
+access_dbs_risk_confirm_wizard_user,dbs.risk.confirm.wizard.user,model_dbs_risk_confirm_wizard,account_dbs_tr.group_dbs_user,1,1,1,1
+access_dbs_risk_confirm_wizard_manager,dbs.risk.confirm.wizard.manager,model_dbs_risk_confirm_wizard,account_dbs_tr.group_dbs_manager,1,1,1,1
+access_dbs_profile_confirm_wizard_user,dbs.profile.confirm.wizard.user,model_dbs_profile_confirm_wizard,account_dbs_tr.group_dbs_user,1,1,1,1
+access_dbs_profile_confirm_wizard_manager,dbs.profile.confirm.wizard.manager,model_dbs_profile_confirm_wizard,account_dbs_tr.group_dbs_manager,1,1,1,1

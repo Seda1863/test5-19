@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="mdx_lokalizasyon_menu_root" name="TR-Lokalizasyon" web_icon="edonusum,static/description/icon.png" />
+    
+    <menuitem id="action_mdx_lokalizasyon_ayarlar" parent="mdx_lokalizasyon_menu_root" name="Ayarlar"/>
+    <menuitem id="menu_mdx_belge_cinsi" parent="action_mdx_lokalizasyon_ayarlar" action="action_mdx_belge_cinsi"/>
+    <menuitem id="menu_mdx_ebelge_turu" parent="action_mdx_lokalizasyon_ayarlar" action="action_mdx_ebelge_turu"/>
+    <menuitem id="menu_mdx_ebelge_tipi" parent="action_mdx_lokalizasyon_ayarlar" action="action_mdx_ebelge_tipi"/>
+    <menuitem id="menu_mdx_ebelge_senaryo" parent="action_mdx_lokalizasyon_ayarlar" action="action_mdx_ebelge_senaryo"/>
+    <menuitem id="menu_mdx_fatura_alt_tipi" parent="action_mdx_lokalizasyon_ayarlar" action="action_mdx_fatura_alt_tipi"/>
+    <menuitem id="menu_mdx_edefter_doctype_desc" parent="action_mdx_lokalizasyon_ayarlar" action="action_mdx_edefter_doctype_desc"/>
+    <menuitem id="menu_mdx_fatura_seri" parent="action_mdx_lokalizasyon_ayarlar" action="action_mdx_fatura_seri"/>
+    <menuitem id="menu_mdx_web_service" parent="action_mdx_lokalizasyon_ayarlar" action="action_mdx_web_service"/>
+    <menuitem id="menu_mdx_dokuman_sayac" parent="action_mdx_lokalizasyon_ayarlar" action="action_mdx_dokuman_sayac"/>
+    <!-- <menuitem id="menu_mdx_prozon_api_test" parent="action_mdx_lokalizasyon_ayarlar" action="action_mdx_prozon_api_test"/> -->
+
+    <menuitem id="mdx_lokalizasyon_listeler" parent="mdx_lokalizasyon_menu_root" name="Listeler"/>
+    <menuitem id="menu_mdx_kod_listesi" parent="mdx_lokalizasyon_listeler" action="action_mdx_kod_listesi"/>
+    <menuitem id="menu_mdx_kod_liste_tipi" parent="mdx_lokalizasyon_listeler" action="action_mdx_kod_liste_tipi"/>
+    <menuitem id="menu_mdx_kod_liste_alt_tipi" parent="mdx_lokalizasyon_listeler" action="action_mdx_kod_liste_alt_tipi"/>
+    <menuitem id="menu_mdx_sabit_kod" parent="mdx_lokalizasyon_listeler" action="action_mdx_sabit_kod"/>
+</odoo>

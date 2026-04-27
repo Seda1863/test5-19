@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ════════════════════════════════ -->
+    <!-- GUARANTEE LETTER - FORM VIEW -->
+    <!-- ════════════════════════════════ -->
+    <record id="guarantee_letter_form_view" model="ir.ui.view">
+        <field name="name">guarantee.letter.form</field>
+        <field name="model">guarantee.letter</field>
+        <field name="arch" type="xml">
+            <form string="Teminat Mektubu">
+                <header>
+                    <button name="action_submit_approval" string="Onaya Gönder"
+                            type="object" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_approve" string="Onayla"
+                            type="object" class="btn-primary"
+                            invisible="state != 'waiting_approval'"
+                            groups="mdx_guarantee_letter.group_guarantee_manager"/>
+                    <button name="action_request_return" string="İade Talep Et"
+                            type="object"
+                            invisible="state != 'active'"/>
+                    <button name="action_return" string="İade Edildi"
+                            type="object" class="btn-primary"
+                            invisible="state not in ('active', 'return_requested')"
+                            groups="mdx_guarantee_letter.group_guarantee_manager"/>
+                    <button name="action_encash" string="Nakde Çevrildi"
+                            type="object" class="btn-danger"
+                            invisible="state != 'active'"
+                            groups="mdx_guarantee_letter.group_finance_manager"/>
+                    <button name="action_cancel" string="İptal"
+                            type="object"
+                            invisible="state in ('returned', 'encashed')"
+                            groups="mdx_guarantee_letter.group_guarantee_manager"/>
+                    <button name="action_reset_draft" string="Taslağa Al"
+                            type="object"
+                            invisible="state not in ('cancelled', 'waiting_approval')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,waiting_approval,active,returned,encashed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Genel Bilgiler">
+                            <field name="letter_no"/>
+                            <field name="letter_party_type"/>
+                            <field name="letter_type_id"/>
+                            <field name="bank_partner_id"/>
+                            <field name="lehdar_partner_id" required="1"/>
+                            <field name="beneficiary_partner_id"/>
+                            <field name="responsible_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Mali Bilgiler">
+                            <field name="amount"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                            <field name="currency_rate_type" string="Kur Secimi" invisible="currency_id == company_currency_id"/>
+                            <field name="letter_currency_rate" string="1 Sirket PB = Islem PB" digits="[12,6]" readonly="currency_rate_type != 'manualexchange'" invisible="currency_id == company_currency_id"/>
+                            <field name="letter_currency_inverse_rate" string="1 Islem PB = Sirket PB" digits="[12,6]" readonly="currency_rate_type != 'manualexchange'" invisible="currency_id == company_currency_id"/>
+                            <field name="issue_date"/>
+                            <field name="expiry_date"/>
+                            <field name="commission_rate"/>
+                            <field name="commission_amount"/>
+                            <field name="has_blockage"/>
+                            <field name="blockage_amount" invisible="not has_blockage"/>
+                            <field name="remaining_days"
+                                   decoration-danger="remaining_days &lt; 8"
+                                   decoration-warning="remaining_days &lt; 31"
+                                   decoration-success="remaining_days &gt;= 31"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Proje &amp; Detaylar" name="details">
+                            <group>
+                                <group>
+                                    <field name="project_id"/>
+                                </group>
+                                <group>
+                                    <field name="bank_limit_id" readonly="1"/>
+                                </group>
+                            </group>
+                            <field name="description" placeholder="Teminat mektubu açıklaması..."/>
+                        </page>
+                        <page string="Notlar" name="notes">
+                            <field name="notes" placeholder="Ek notlar..."/>
+                        </page>
+                        <page string="Bilgilendirme" name="notifications">
+                            <group string="Hatırlatma Ayarları">
+                                <group>
+                                    <field name="reminder_user_id"/>
+                                    <field name="reminder_email_to" required="1" placeholder="ornek1@firma.com, ornek2@firma.com"/>
+                                </group>
+                                <group string="Hatırlatma Aralıkları">
+                                    <field name="reminder_day_7"/>
+                                    <field name="reminder_day_15"/>
+                                    <field name="reminder_day_30"/>
+                                    <field name="intro_notification_sent" readonly="1"/>
+                                    <button name="action_send_notification_setup_email"
+                                            string="Bilgilendirme Atama Maili Gönder"
+                                            type="object"
+                                            class="btn-primary"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Yevmiye Kaydı" name="journal_entry">
+                            <group string="Muhasebe Bilgileri">
+                                <group>
+                                    <field name="journal_entry_id" readonly="1"/>
+                                    <field name="return_journal_entry_id" readonly="1"/>
+                                    <field name="commission_journal_entry_id" readonly="1"/>
+                                    <field name="blockage_journal_entry_id" readonly="1"/>
+                                    <field name="encash_journal_entry_id" readonly="1"/>
+                                    <field name="accounting_state" readonly="1" widget="badge"
+                                           decoration-success="accounting_state == 'created'"
+                                           decoration-warning="accounting_state == 'draft'"
+                                           decoration-danger="accounting_state == 'cancelled'"/>
+                                    <field name="journal_entry_create_date" readonly="1"/>
+                                </group>
+                                <group>
+                                    <button name="action_open_journal_entry"
+                                            string="Yevmiye Kaydını Aç"
+                                            type="object"
+                                            class="btn-primary"
+                                            invisible="not journal_entry_id"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════ -->
+    <!-- GUARANTEE LETTER - LIST VIEW -->
+    <!-- ════════════════════════════════ -->
+    <record id="guarantee_letter_list_view" model="ir.ui.view">
+        <field name="name">guarantee.letter.list</field>
+        <field name="model">guarantee.letter</field>
+        <field name="arch" type="xml">
+            <list string="Teminat Mektupları"
+                  decoration-danger="remaining_days &lt; 8 and state == 'active'"
+                  decoration-warning="remaining_days &lt; 31 and remaining_days &gt;= 8 and state == 'active'"
+                  decoration-muted="state in ('returned', 'cancelled')">
+                <field name="name"/>
+                <field name="letter_no"/>
+                <field name="letter_party_type"/>
+                <field name="letter_type_id"/>
+                <field name="bank_partner_id"/>
+                <field name="lehdar_partner_id"/>
+                <field name="beneficiary_partner_id"/>
+                <field name="amount" sum="Toplam"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="issue_date"/>
+                <field name="expiry_date"/>
+                <field name="remaining_days"/>
+                <field name="responsible_id"/>
+                <field name="state" widget="badge"
+                       decoration-success="state in ('active', 'returned')"
+                       decoration-warning="state in ('draft', 'waiting_approval', 'return_requested')"
+                       decoration-danger="state in ('cancelled', 'encashed')"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════ -->
+    <!-- GUARANTEE LETTER - SEARCH VIEW -->
+    <!-- ════════════════════════════════ -->
+    <record id="guarantee_letter_search_view" model="ir.ui.view">
+        <field name="name">guarantee.letter.search</field>
+        <field name="model">guarantee.letter</field>
+        <field name="arch" type="xml">
+            <search string="Teminat Mektupları">
+                <field name="name"/>
+                <field name="letter_no"/>
+                <field name="letter_party_type"/>
+                <field name="bank_partner_id"/>
+                <field name="lehdar_partner_id"/>
+                <field name="beneficiary_partner_id"/>
+                <field name="project_id"/>
+                <field name="responsible_id"/>
+                <separator/>
+                <filter name="filter_active" string="Aktif" domain="[('state', '=', 'active')]"/>
+                <filter name="filter_draft" string="Taslak" domain="[('state', '=', 'draft')]"/>
+                <filter name="filter_waiting" string="Onay Bekliyor" domain="[('state', '=', 'waiting_approval')]"/>
+                <filter name="filter_returned" string="İade Edildi" domain="[('state', '=', 'returned')]"/>
+                <separator/>
+                <filter name="filter_expiring_30" string="30 Gün İçinde Vadesi Dolan"
+                        domain="[('remaining_days', '&lt;=', 30), ('remaining_days', '&gt;', 0), ('state', '=', 'active')]"/>
+                <filter name="filter_expired" string="Vadesi Geçen"
+                        domain="[('remaining_days', '&lt;', 0), ('state', '=', 'active')]"/>
+                <separator/>
+                <group expand="0" string="Grupla">
+                    <filter name="group_bank" string="Banka" context="{'group_by': 'bank_partner_id'}"/>
+                    <filter name="group_lehdar" string="Lehdar" context="{'group_by': 'lehdar_partner_id'}"/>
+                    <filter name="group_beneficiary" string="Muhatap" context="{'group_by': 'beneficiary_partner_id'}"/>
+                    <filter name="group_type" string="Tür" context="{'group_by': 'letter_type_id'}"/>
+                    <filter name="group_state" string="Durum" context="{'group_by': 'state'}"/>
+                    <filter name="group_project" string="Proje" context="{'group_by': 'project_id'}"/>
+                    <filter name="group_responsible" string="Sorumlu" context="{'group_by': 'responsible_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════ -->
+    <!-- GUARANTEE LETTER - PIVOT VIEW -->
+    <!-- ════════════════════════════════ -->
+    <record id="guarantee_letter_pivot_view" model="ir.ui.view">
+        <field name="name">guarantee.letter.pivot</field>
+        <field name="model">guarantee.letter</field>
+        <field name="arch" type="xml">
+            <pivot string="Teminat Mektupları Raporu">
+                <field name="bank_partner_id" type="row"/>
+                <field name="state" type="col"/>
+                <field name="amount" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════ -->
+    <!-- GUARANTEE LETTER - ACTION -->
+    <!-- ════════════════════════════════ -->
+    <record id="guarantee_letter_action" model="ir.actions.act_window">
+        <field name="name">Teminat Mektupları</field>
+        <field name="res_model">guarantee.letter</field>
+        <field name="view_mode">list,form,pivot</field>
+        <field name="search_view_id" ref="guarantee_letter_search_view"/>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                İlk teminat mektubunuzu oluşturun
+            </p>
+            <p>
+                Banka teminat mektuplarınızı buradan takip edebilirsiniz.
+            </p>
+        </field>
+    </record>
+
+</odoo>

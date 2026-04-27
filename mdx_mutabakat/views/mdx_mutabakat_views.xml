@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ════════════════════════════════ -->
+    <!-- MUTABAKAT FORM VIEW -->
+    <!-- ════════════════════════════════ -->
+    <record id="mdx_mutabakat_form_view" model="ir.ui.view">
+        <field name="name">mdx.mutabakat.form</field>
+        <field name="model">mdx.mutabakat</field>
+        <field name="arch" type="xml">
+            <form string="Mutabakat">
+                <header>
+                    <button name="action_compute_lines" type="object"
+                            string="Faturaları Hesapla" icon="fa-calculator"
+                            invisible="state != 'draft'" class="oe_highlight"/>
+                    <button name="action_send_email" type="object"
+                            string="📧 Mutabakat Gönder" class="oe_highlight"
+                            invisible="state != 'draft'"
+                            confirm="Mutabakat mektubunu göndermek istediğinize emin misiniz?"/>
+                    <button name="action_preview_pdf" type="object"
+                            string="📄 PDF Önizleme" class="btn-secondary"/>
+                    <button name="action_mark_agreed" type="object"
+                            string="✅ Mutabık İşaretle" class="btn-success"
+                            invisible="state not in ('sent', 'opened')"/>
+                    <button name="action_mark_disagreed" type="object"
+                            string="❌ Mutabık Değil" class="btn-danger"
+                            invisible="state not in ('sent', 'opened')"/>
+                    <button name="action_cancel" type="object"
+                            string="İptal" invisible="state in ('cancelled', 'agreed', 'disagreed', 'expired')"/>
+                    <button name="action_reset_draft" type="object"
+                            string="Taslağa Dön" invisible="state not in ('cancelled', 'expired')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,sent,opened,agreed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Tedarikçi Bilgileri">
+                            <field name="partner_id"/>
+                            <field name="partner_email"/>
+                            <field name="partner_vat"/>
+                            <field name="partner_phone"/>
+                        </group>
+                        <group string="Gönderim Bilgileri">
+                            <field name="date"/>
+                            <field name="sender_id"/>
+                            <field name="sender_email"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Dönem">
+                            <field name="period_start"/>
+                            <field name="period_end"/>
+                            <field name="response_due_date"/>
+                        </group>
+                        <group string="İzleme Bilgileri">
+                            <field name="sent_date" readonly="1" invisible="not sent_date"/>
+                            <field name="opened_date" readonly="1" invisible="not opened_date"/>
+                            <field name="response_date" invisible="state == 'draft'"/>
+                            <field name="response_note" invisible="state == 'draft'"/>
+                            <field name="is_opened" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Mutabakat Detayları" name="lines">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="mutabakat_type"/>
+                                    <field name="period"/>
+                                    <field name="invoice_count"/>
+                                    <field name="amount"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer">
+                                <field name="total_invoice_count" string="Toplam Belge"/>
+                                <field name="total_amount" string="Toplam Tutar"/>
+                                <field name="partner_balance" class="oe_subtotal_footer_separator" string="Bakiye (Borç - Alacak)"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                        </page>
+                        <page string="E-Posta Mesajı" name="email_message">
+                            <div class="text-muted mb-2">
+                                Varsayılan mesaj aşağıdadır. İsterseniz değiştirebilirsiniz.
+                            </div>
+                            <field name="email_message" placeholder="E-postada gönderilecek mesaj..."/>
+                        </page>
+                        <page string="Notlar" name="notes">
+                            <field name="notes" placeholder="Mutabakat mektubunda görünecek notlar..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════ -->
+    <!-- MUTABAKAT LIST VIEW -->
+    <!-- ════════════════════════════════ -->
+    <record id="mdx_mutabakat_list_view" model="ir.ui.view">
+        <field name="name">mdx.mutabakat.list</field>
+        <field name="model">mdx.mutabakat</field>
+        <field name="arch" type="xml">
+            <list string="Mutabakatlar" decoration-success="state == 'agreed'"
+                  decoration-danger="state == 'disagreed'"
+                  decoration-warning="state == 'expired'"
+                  decoration-muted="state == 'cancelled'"
+                  decoration-info="state in ('sent', 'opened')">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="date"/>
+                <field name="period_start"/>
+                <field name="period_end"/>
+                <field name="total_invoice_count" string="Belge"/>
+                <field name="partner_balance" string="Bakiye"/>
+                <field name="partner_email" string="Mail Adresi"/>
+                <field name="sender_id"/>
+                <field name="sent_date"/>
+                <field name="opened_date" optional="hide"/>
+                <field name="response_date" optional="hide"/>
+                <field name="is_opened" string="Okundu"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'agreed'"
+                       decoration-danger="state == 'disagreed'"
+                       decoration-info="state in ('sent', 'opened')"
+                       decoration-warning="state in ('draft', 'expired')"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════ -->
+    <!-- MUTABAKAT SONUÇ RAPORU LIST VIEW -->
+    <!-- ════════════════════════════════ -->
+    <record id="mdx_mutabakat_result_report_list_view" model="ir.ui.view">
+        <field name="name">mdx.mutabakat.result.report.list</field>
+        <field name="model">mdx.mutabakat</field>
+        <field name="arch" type="xml">
+            <list string="Mutabakat Sonuç Raporu"
+                  decoration-success="state == 'agreed'"
+                  decoration-danger="state == 'disagreed'"
+                  decoration-warning="state == 'expired'">
+                <field name="partner_id" string="Cari"/>
+                <field name="partner_balance" string="Bakiye"/>
+                <field name="state" string="Durum" widget="badge"
+                       decoration-success="state == 'agreed'"
+                       decoration-danger="state == 'disagreed'"
+                       decoration-info="state in ('sent', 'opened')"
+                       decoration-warning="state == 'expired'"/>
+                <field name="date" string="Tarih"/>
+                <field name="is_agreed" string="Mutabık"/>
+                <field name="is_disagreed" string="Mutabık Değil"/>
+                <field name="is_pending" string="Bekleyen"/>
+                <field name="sent_date" string="Gönderim Tarihi"/>
+                <field name="partner_email" string="Mail Adresi"/>
+                <field name="is_opened" string="Okundu"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════ -->
+    <!-- MUTABAKAT SONUÇ RAPORU PIVOT VIEW -->
+    <!-- ════════════════════════════════ -->
+    <record id="mdx_mutabakat_result_report_pivot_view" model="ir.ui.view">
+        <field name="name">mdx.mutabakat.result.report.pivot</field>
+        <field name="model">mdx.mutabakat</field>
+        <field name="arch" type="xml">
+            <pivot string="Mutabakat Sonuç Raporu">
+                <field name="partner_id" type="row"/>
+                <field name="state" type="col"/>
+                <field name="partner_balance" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════ -->
+    <!-- MUTABAKAT SEARCH VIEW -->
+    <!-- ════════════════════════════════ -->
+    <record id="mdx_mutabakat_search_view" model="ir.ui.view">
+        <field name="name">mdx.mutabakat.search</field>
+        <field name="model">mdx.mutabakat</field>
+        <field name="arch" type="xml">
+            <search string="Mutabakat Ara">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="sender_id"/>
+                <filter name="draft" string="Taslak" domain="[('state', '=', 'draft')]"/>
+                <filter name="sent" string="Gönderildi" domain="[('state', '=', 'sent')]"/>
+                <filter name="opened" string="Açıldı" domain="[('state', '=', 'opened')]"/>
+                <filter name="agreed" string="Mutabık" domain="[('state', '=', 'agreed')]"/>
+                <filter name="disagreed" string="Mutabık Değil" domain="[('state', '=', 'disagreed')]"/>
+                <filter name="expired" string="Süresi Geçti" domain="[('state', '=', 'expired')]"/>
+                <filter name="pending" string="Bekleyen" domain="[('state', 'in', ('sent', 'opened'))]"/>
+                <filter name="opened_yes" string="Okundu" domain="[('is_opened', '=', True)]"/>
+                <separator/>
+                <filter name="my" string="Benim Gönderdiklerim" domain="[('sender_id', '=', uid)]"/>
+                <group expand="0" string="Grupla">
+                    <filter name="group_partner" string="Tedarikçi" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_state" string="Durum" context="{'group_by': 'state'}"/>
+                    <filter name="group_date" string="Tarih" context="{'group_by': 'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════ -->
+    <!-- AKSİYON ve MENÜ -->
+    <!-- ════════════════════════════════ -->
+    <record id="action_mdx_mutabakat" model="ir.actions.act_window">
+        <field name="name">Mutabakatlar</field>
+        <field name="res_model">mdx.mutabakat</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="mdx_mutabakat_search_view"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Henüz mutabakat kaydı yok
+            </p>
+            <p>
+                Tedarikçiler listesinden "Mutabakat Gönder" aksiyonunu kullanarak
+                mutabakat mektubu gönderebilirsiniz.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_mdx_mutabakat_result_report" model="ir.actions.act_window">
+        <field name="name">Mutabakat Sonuç Raporu</field>
+        <field name="res_model">mdx.mutabakat</field>
+        <field name="view_mode">list,pivot,form</field>
+        <field name="view_id" ref="mdx_mutabakat_result_report_list_view"/>
+        <field name="search_view_id" ref="mdx_mutabakat_search_view"/>
+        <field name="domain">[('state', '!=', 'draft')]</field>
+    </record>
+
+    <menuitem id="menu_mdx_mutabakat_root"
+              name="Mutabakat"
+              parent="account.menu_finance_reports"
+              sequence="90"/>
+
+    <menuitem id="menu_mdx_mutabakat_list"
+              name="Mutabakatlar"
+              parent="menu_mdx_mutabakat_root"
+              action="action_mdx_mutabakat"
+              sequence="10"/>
+
+    <menuitem id="menu_mdx_mutabakat_result_report"
+              name="Mutabakat Sonuç Raporu"
+              parent="menu_mdx_mutabakat_root"
+              action="action_mdx_mutabakat_result_report"
+              sequence="20"/>
+
+</odoo>

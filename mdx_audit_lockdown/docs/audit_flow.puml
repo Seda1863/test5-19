@@ -1,0 +1,111 @@
+@startuml audit_flow_readable
+title MDX Audit Lockdown - Audit Flow (Readable)
+
+' Daha iyi layout engine
+!pragma teoz true
+
+' Render kalitesi
+skinparam dpi 180
+skinparam defaultFontName Arial
+skinparam defaultFontSize 18
+skinparam titleFontSize 22
+
+' Kontrast (beyaz arkaplan)
+skinparam backgroundColor white
+skinparam shadowing false
+
+' Sequence ayarlari
+skinparam SequenceParticipantPadding 25
+skinparam SequenceBoxPadding 15
+skinparam SequenceLifeLineBorderColor #444444
+skinparam SequenceLifeLineBackgroundColor #ffffff
+skinparam ParticipantBorderColor #333333
+skinparam ParticipantBackgroundColor #f3f3f3
+skinparam ParticipantFontColor #111111
+skinparam ArrowColor #111111
+skinparam NoteBackgroundColor #fff8dc
+skinparam NoteBorderColor #444444
+skinparam NoteFontColor #111111
+
+' Mesajlari sar / kisalt
+skinparam maxMessageSize 70
+
+hide footbox
+autonumber
+
+actor User
+actor Admin
+
+participant "Odoo UI" as UI
+participant "Odoo ORM" as ORM
+participant "BaseAuditPatch\n(models/patch.py)" as Patch
+participant "mdx.audit.rule" as Rule
+database   "mdx.audit.log" as Log
+participant "Security\n(groups/access/rules)" as Sec
+
+== 0) Permission (Checkbox -> group) ==
+Admin -> UI : open Users form
+UI -> ORM : write(can_view_audit_logs=True)
+ORM -> Sec : check res.users write
+Sec --> ORM : OK
+note right of UI
+Checkbox hedefi:
+- group_audit_viewer
+- inverse ile groups_id'ye ekleme/cikarma
+end note
+
+== 1) CREATE ==
+User -> ORM : create(vals)
+ORM -> Patch : create(vals)
+Patch -> Rule : get rules(model)
+Rule --> Patch : rules
+
+alt track_create enabled
+  Patch -> Log : create log(op=create)
+else disabled / no rule
+  Patch -> ORM : super().create
+end
+Patch --> ORM : records
+
+== 2) WRITE ==
+User -> ORM : write(vals)
+ORM -> Patch : write(vals)
+Patch -> Rule : get rules(model)
+Rule --> Patch : rules
+
+alt track_write enabled
+  Patch -> Patch : snapshot old(tracked fields)
+  Patch -> ORM : super().write(vals)
+  Patch -> Patch : diff(old,new)\nskip old==new
+  Patch -> Log : create log(op=write, diff)
+else disabled / no rule
+  Patch -> ORM : super().write(vals)
+end
+Patch --> ORM : True
+
+== 3) UNLINK ==
+User -> ORM : unlink()
+ORM -> Patch : unlink()
+Patch -> Rule : get rules(model)
+Rule --> Patch : rules
+
+alt track_unlink enabled
+  Patch -> Log : create log(op=unlink)
+end
+Patch -> ORM : super().unlink()
+Patch --> ORM : True
+
+== 4) View Logs ==
+Admin -> UI : open Audit Rule
+UI -> ORM : action_open_logs(rule_id)
+ORM -> Sec : check mdx.audit.log read
+Sec --> ORM : OK (viewer/admin)
+
+alt rule-scoped logs implemented
+  ORM -> Log : search([('rule_id','=',rule_id)])
+else current (global)
+  ORM -> Log : search([])
+end
+ORM --> UI : list view
+
+@enduml

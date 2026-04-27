@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_guarantee_letter_document">
+        <t t-call="web.external_layout">
+        <div class="page" style="font-family: Arial, sans-serif; font-size: 12px;">
+
+            <!-- Tarih -->
+            <div style="text-align: right; margin-bottom: 30px;">
+                <strong>Tarih: </strong>
+                <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d.%m.%Y')"/>
+            </div>
+
+            <!-- Başlık -->
+            <h2 style="text-align: center; font-weight: bold; margin-bottom: 30px;">
+                Teminat Mektubu Özet Bilgisi
+            </h2>
+
+            <!-- Referans -->
+            <p><strong>Referans No: </strong><span t-field="doc.name"/></p>
+
+            <!-- Bilgi Tablosu -->
+            <table style="width: 100%; border-collapse: collapse; margin: 20px 0;" border="1">
+                <tbody>
+                    <tr style="background: #f0f0f0;">
+                        <td style="padding: 8px; width: 30%; font-weight: bold;">Mektup No</td>
+                        <td style="padding: 8px;"><span t-field="doc.letter_no"/></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">Teminat Türü</td>
+                        <td style="padding: 8px;">
+                            <span t-field="doc.letter_type_id"/>
+                        </td>
+                    </tr>
+                    <tr style="background: #f0f0f0;">
+                        <td style="padding: 8px; font-weight: bold;">Banka</td>
+                        <td style="padding: 8px;"><span t-field="doc.bank_partner_id.name"/></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">Lehtar (Muhatap)</td>
+                        <td style="padding: 8px;"><span t-field="doc.beneficiary_partner_id.name"/></td>
+                    </tr>
+                    <tr style="background: #f0f0f0;">
+                        <td style="padding: 8px; font-weight: bold;">Proje</td>
+                        <td style="padding: 8px;">
+                            <span t-if="doc.project_id" t-field="doc.project_id.name"/>
+                            <span t-else="">-</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">Tutar</td>
+                        <td style="padding: 8px; font-weight: bold; font-size: 14px;">
+                            <span t-field="doc.amount" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                        </td>
+                    </tr>
+                    <tr style="background: #f0f0f0;">
+                        <td style="padding: 8px; font-weight: bold;">Düzenleme Tarihi</td>
+                        <td style="padding: 8px;"><span t-field="doc.issue_date" t-options='{"format": "dd.MM.yyyy"}'/></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">Vade Tarihi</td>
+                        <td style="padding: 8px;"><span t-field="doc.expiry_date" t-options='{"format": "dd.MM.yyyy"}'/></td>
+                    </tr>
+                    <tr style="background: #f0f0f0;">
+                        <td style="padding: 8px; font-weight: bold;">Kalan Gün</td>
+                        <td style="padding: 8px;"><span t-field="doc.remaining_days"/></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">Durum</td>
+                        <td style="padding: 8px;">
+                            <t t-if="doc.state == 'draft'">Taslak</t>
+                            <t t-if="doc.state == 'waiting_approval'">Onay Bekliyor</t>
+                            <t t-if="doc.state == 'active'">Aktif</t>
+                            <t t-if="doc.state == 'return_requested'">İade Talep Edildi</t>
+                            <t t-if="doc.state == 'returned'">İade Edildi</t>
+                            <t t-if="doc.state == 'cancelled'">İptal</t>
+                            <t t-if="doc.state == 'encashed'">Nakde Çevrildi</t>
+                        </td>
+                    </tr>
+                    <tr style="background: #f0f0f0;">
+                        <td style="padding: 8px; font-weight: bold;">Sorumlu</td>
+                        <td style="padding: 8px;"><span t-field="doc.responsible_id.name"/></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Açıklama -->
+            <t t-if="doc.description">
+                <h4 style="margin-top: 20px;">Açıklama</h4>
+                <p><span t-field="doc.description"/></p>
+            </t>
+
+            <!-- Notlar -->
+            <t t-if="doc.notes">
+                <h4 style="margin-top: 20px;">Notlar</h4>
+                <p><span t-field="doc.notes"/></p>
+            </t>
+
+        </div>
+        </t>
+    </template>
+
+    <template id="report_guarantee_letter">
+        <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="doc">
+            <t t-call="mdx_guarantee_letter.report_guarantee_letter_document"/>
+        </t>
+        </t>
+    </template>
+</odoo>

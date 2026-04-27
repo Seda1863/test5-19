@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- İşlem Kaydı Tree View -->
+        <record id="mdx_efatura_islem_view_tree" model="ir.ui.view">
+            <field name="name">mdx.efatura.islem.tree</field>
+            <field name="model">mdx.efatura.islem</field>
+            <field name="arch" type="xml">
+                <list string="E-Fatura İşlemleri" decoration-danger="state == 'error'" decoration-success="state == 'sent'" decoration-warning="state == 'retry_scheduled'">
+                    <field name="name"/>
+                    <field name="document_ref"/>
+                    <field name="document_type"/>
+                    <field name="state" widget="badge" decoration-danger="state == 'error'" decoration-success="state == 'sent'" decoration-warning="state in ('retry_scheduled', 'validating')" decoration-info="state in ('draft', 'sending')"/>
+                    <field name="error_code_id"/>
+                    <field name="retry_count"/>
+                    <field name="last_attempt_date"/>
+                    <field name="next_retry_date"/>
+                    <field name="can_retry"/>
+                    <field name="series_id"/>
+                    <field name="series_confirmed"/>
+                    <field name="create_date"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- İşlem Kaydı Form View -->
+        <record id="mdx_efatura_islem_view_form" model="ir.ui.view">
+            <field name="name">mdx.efatura.islem.form</field>
+            <field name="model">mdx.efatura.islem</field>
+            <field name="arch" type="xml">
+                <form string="E-Fatura İşlem Kaydı">
+                    <header>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,sending,sent,error"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group string="Belge Bilgileri">
+                                <field name="document_ref"/>
+                                <field name="document_type"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>
+                            <group string="Hata Bilgileri">
+                                <field name="error_code_id"/>
+                                <field name="error_message"/>
+                                <field name="can_retry"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Tekrar Deneme">
+                                <field name="retry_count"/>
+                                <field name="max_retry"/>
+                                <field name="last_attempt_date"/>
+                                <field name="next_retry_date"/>
+                            </group>
+                            <group string="Seri Bilgileri">
+                                <field name="series_id"/>
+                                <field name="series_number"/>
+                                <field name="series_confirmed"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Hata Detayı">
+                                <field name="error_display" widget="html"/>
+                            </page>
+                            <page string="XML İçeriği">
+                                <field name="xml_content"/>
+                            </page>
+                            <page string="Yanıt İçeriği">
+                                <field name="response_content"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- İşlem Kaydı Search View -->
+        <record id="mdx_efatura_islem_view_search" model="ir.ui.view">
+            <field name="name">mdx.efatura.islem.search</field>
+            <field name="model">mdx.efatura.islem</field>
+            <field name="arch" type="xml">
+                <search string="E-Fatura İşlemleri">
+                    <field name="name"/>
+                    <field name="document_ref"/>
+                    <field name="error_code_id"/>
+                    <filter string="Hatalı" name="filter_error" domain="[('state', '=', 'error')]"/>
+                    <filter string="Gönderildi" name="filter_sent" domain="[('state', '=', 'sent')]"/>
+                    <filter string="Tekrar Planlandı" name="filter_retry" domain="[('state', '=', 'retry_scheduled')]"/>
+                    <separator/>
+                    <filter string="Yeniden Denenebilir" name="filter_can_retry" domain="[('can_retry', '=', True)]"/>
+                    <group expand="0" string="Grupla">
+                        <filter string="Durum" name="group_state" context="{'group_by': 'state'}"/>
+                        <filter string="Belge Türü" name="group_doc_type" context="{'group_by': 'document_type'}"/>
+                        <filter string="Hata Kodu" name="group_error" context="{'group_by': 'error_code_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- İşlem Kaydı Action -->
+        <record id="action_mdx_efatura_islem" model="ir.actions.act_window">
+            <field name="name">E-Fatura İşlemleri</field>
+            <field name="res_model">mdx.efatura.islem</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="mdx_efatura_islem_view_search"/>
+        </record>
+
+        <!-- Sequence -->
+        <record id="seq_mdx_efatura_islem" model="ir.sequence">
+            <field name="name">E-Fatura İşlem Sırası</field>
+            <field name="code">mdx.efatura.islem</field>
+            <field name="prefix">EFI-</field>
+            <field name="padding">6</field>
+        </record>
+    </data>
+</odoo>

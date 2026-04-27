@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <!-- LIST -->
+    <record id="view_mdx_audit_log_tree" model="ir.ui.view">
+      <field name="name">mdx.audit.log.list</field>
+      <field name="model">mdx.audit.log</field>
+      <field name="arch" type="xml">
+        <list string="Audit Logs" create="0" edit="0" delete="0">
+          <button name="action_open_target" type="object"
+                  string="Open" icon="fa-external-link"/>
+          <field name="event_datetime"/>
+          <field name="user_id"/>
+          <field name="model"/>
+          <field name="res_id"/>
+          <field name="operation"/>
+          <field name="field_name"/>
+          <field name="old_value"/>
+          <field name="new_value"/>
+          <field name="rule_id"/>
+          <field name="ip_address"/>
+        </list>
+      </field>
+    </record>
+
+    <!-- FORM -->
+    <record id="view_mdx_audit_log_form" model="ir.ui.view">
+      <field name="name">mdx.audit.log.form</field>
+      <field name="model">mdx.audit.log</field>
+      <field name="arch" type="xml">
+        <form string="Audit Log" create="0" edit="0" delete="0">
+          <header>
+            <button name="action_open_target" type="object"
+                    string="Open Target" class="oe_highlight"
+                    icon="fa-external-link"/>
+          </header>
+          <sheet>
+            <group>
+              <field name="event_datetime" readonly="1"/>
+              <field name="user_id" readonly="1"/>
+              <field name="operation" readonly="1"/>
+            </group>
+
+            <group string="Target Record">
+              <field name="model" readonly="1"/>
+              <field name="res_id" readonly="1"/>
+            </group>
+
+            <group string="Field Change">
+              <field name="field_name" readonly="1"/>
+              <field name="old_value" readonly="1"/>
+              <field name="new_value" readonly="1"/>
+            </group>
+
+            <group string="Audit Rule &amp; Network">
+              <field name="rule_id" readonly="1"/>
+              <field name="ip_address" readonly="1"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- SEARCH -->
+    <record id="view_mdx_audit_log_search" model="ir.ui.view">
+      <field name="name">mdx.audit.log.search</field>
+      <field name="model">mdx.audit.log</field>
+      <field name="arch" type="xml">
+        <search string="Audit Logs">
+
+          <field name="user_id"/>
+          <field name="operation"/>
+          <field name="model" optional="show"/>
+          <field name="res_id" optional="show"/>
+          <field name="field_name" optional="show"/>
+          <field name="rule_id" optional="show"/>
+          <field name="ip_address" optional="show"/>
+
+          <separator/>
+
+          <filter string="My Changes" name="my_changes" domain="[('user_id','=',uid)]"/>
+          <filter string="Only Writes" name="only_write" domain="[('operation','=','write')]"/>
+          <filter string="Only Creates" name="only_create" domain="[('operation','=','create')]"/>
+          <filter string="Only Deletes" name="only_unlink" domain="[('operation','=','unlink')]"/>
+
+          <separator/>
+
+          <filter string="Today" name="today"
+                  domain="[('event_datetime','&gt;=', context.get('mdx_today_start')),
+                          ('event_datetime','&lt;=', context.get('mdx_today_end'))]"/>
+
+          <filter string="Last 7 Days" name="last_7_days"
+                  domain="[('event_datetime','&gt;=', context.get('mdx_last7_start'))]"/>
+
+          <separator/>
+
+          <group expand="0" string="Group By">
+            <filter string="User" name="group_user" context="{'group_by':'user_id'}"/>
+            <filter string="Operation" name="group_op" context="{'group_by':'operation'}"/>
+            <filter string="Model" name="group_model" context="{'group_by':'model'}"/>
+            <filter string="Day" name="group_day" context="{'group_by':'event_datetime:day'}"/>
+            <filter string="Month" name="group_month" context="{'group_by':'event_datetime:month'}"/>
+          </group>
+
+        </search>
+      </field>
+    </record>
+
+    <!-- WINDOW ACTION (liste/form) -->
+    <record id="action_mdx_audit_log" model="ir.actions.act_window">
+      <field name="name">Audit Logs</field>
+      <field name="res_model">mdx.audit.log</field>
+      <field name="view_mode">list,form</field>
+      <field name="search_view_id" ref="view_mdx_audit_log_search"/>
+      <field name="context">{}</field>
+      <field name="groups_id" eval="[(6, 0, [ref('mdx_audit_lockdown.group_audit_admin'), ref('mdx_audit_lockdown.group_audit_viewer')])]"/>
+    </record>
+
+    <!-- SERVER ACTION (computed context ile open) -->
+    <record id="action_mdx_audit_log_open" model="ir.actions.server">
+      <field name="name">Audit Logs</field>
+      <field name="model_id" ref="model_mdx_audit_log"/>
+      <field name="state">code</field>
+      <field name="code">action = env['mdx.audit.log'].sudo().action_view_audit_logs()</field>
+    </record>
+
+  </data>
+</odoo>

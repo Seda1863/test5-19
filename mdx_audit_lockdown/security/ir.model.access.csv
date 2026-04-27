@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mail_tracking_value_audit_admin,mail.tracking.value audit admin,mail.model_mail_tracking_value,mdx_audit_lockdown.group_audit_admin,1,1,1,1
+access_mdx_audit_log_audit_admin,mdx.audit.log audit admin,mdx_audit_lockdown.model_mdx_audit_log,mdx_audit_lockdown.group_audit_admin,1,1,1,1
+access_mdx_audit_rule_audit_admin,mdx.audit.rule audit admin,mdx_audit_lockdown.model_mdx_audit_rule,mdx_audit_lockdown.group_audit_admin,1,1,1,1
+access_mdx_audit_rule_viewer,mdx.audit.rule viewer,mdx_audit_lockdown.model_mdx_audit_rule,mdx_audit_lockdown.group_audit_viewer,1,0,0,0
+access_mdx_audit_log_viewer,mdx.audit.log viewer,mdx_audit_lockdown.model_mdx_audit_log,mdx_audit_lockdown.group_audit_viewer,1,0,0,0
+access_mdx_audit_log_system,mdx.audit.log system,mdx_audit_lockdown.model_mdx_audit_log,base.group_system,1,0,0,0
+access_mdx_audit_rule_system,mdx.audit.rule system,mdx_audit_lockdown.model_mdx_audit_rule,base.group_system,1,0,0,0

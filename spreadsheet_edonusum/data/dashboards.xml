@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- 1. ÇEK TAKİP PANELİ -->
+    <record id="dashboard_cek_takip" model="spreadsheet.dashboard">
+        <field name="name">Çek Takip Paneli</field>
+        <field name="spreadsheet_binary_data" type="base64" file="spreadsheet_edonusum/data/files/cek_takip_dashboard.json"/>
+        <field name="dashboard_group_id" ref="spreadsheet_edonusum.spreadsheet_dashboard_group_edonusum"/>
+        <field name="group_ids" eval="[Command.link(ref('account.group_account_readonly')), Command.link(ref('account.group_account_invoice'))]"/>
+        <field name="sequence">10</field>
+        <field name="is_published">True</field>
+    </record>
+
+    <!-- 2. E-FATURA ANALİZ PANELİ -->
+    <record id="dashboard_efatura_analiz" model="spreadsheet.dashboard">
+        <field name="name">E-Fatura Analiz Paneli</field>
+        <field name="spreadsheet_binary_data" type="base64" file="spreadsheet_edonusum/data/files/efatura_analiz_dashboard.json"/>
+        <field name="dashboard_group_id" ref="spreadsheet_edonusum.spreadsheet_dashboard_group_edonusum"/>
+        <field name="group_ids" eval="[Command.link(ref('account.group_account_readonly')), Command.link(ref('account.group_account_invoice'))]"/>
+        <field name="sequence">20</field>
+        <field name="is_published">True</field>
+    </record>
+
+    <!-- 3. E-İRSALİYE TAKİP PANELİ -->
+    <record id="dashboard_eirsaliye_takip" model="spreadsheet.dashboard">
+        <field name="name">E-İrsaliye Takip Paneli</field>
+        <field name="spreadsheet_binary_data" type="base64" file="spreadsheet_edonusum/data/files/eirsaliye_takip_dashboard.json"/>
+        <field name="dashboard_group_id" ref="spreadsheet_edonusum.spreadsheet_dashboard_group_edonusum"/>
+        <field name="group_ids" eval="[Command.link(ref('account.group_account_readonly')), Command.link(ref('stock.group_stock_user'))]"/>
+        <field name="sequence">30</field>
+        <field name="is_published">True</field>
+    </record>
+
+    <!-- 4. TEVKİFAT VE VERGİ ANALİZİ -->
+    <record id="dashboard_tevkifat_vergi" model="spreadsheet.dashboard">
+        <field name="name">Tevkifat ve Vergi Analizi</field>
+        <field name="spreadsheet_binary_data" type="base64" file="spreadsheet_edonusum/data/files/tevkifat_vergi_dashboard.json"/>
+        <field name="dashboard_group_id" ref="spreadsheet_edonusum.spreadsheet_dashboard_group_edonusum"/>
+        <field name="group_ids" eval="[Command.link(ref('account.group_account_readonly')), Command.link(ref('account.group_account_invoice'))]"/>
+        <field name="sequence">40</field>
+        <field name="is_published">True</field>
+    </record>
+
+    <!-- 5. CARİ HESAP ANALİZİ -->
+    <record id="dashboard_cari_hesap" model="spreadsheet.dashboard">
+        <field name="name">E-Dönüşüm Cari Hesap Analizi</field>
+        <field name="spreadsheet_binary_data" type="base64" file="spreadsheet_edonusum/data/files/cari_hesap_dashboard.json"/>
+        <field name="dashboard_group_id" ref="spreadsheet_edonusum.spreadsheet_dashboard_group_edonusum"/>
+        <field name="group_ids" eval="[Command.link(ref('account.group_account_readonly')), Command.link(ref('account.group_account_invoice'))]"/>
+        <field name="sequence">50</field>
+        <field name="is_published">True</field>
+    </record>
+
+    <!-- 6. GELEN FATURA TAKİP PANELİ -->
+    <record id="dashboard_gelen_fatura" model="spreadsheet.dashboard">
+        <field name="name">Gelen Fatura Takip Paneli</field>
+        <field name="spreadsheet_binary_data" type="base64" file="spreadsheet_edonusum/data/files/gelen_fatura_dashboard.json"/>
+        <field name="dashboard_group_id" ref="spreadsheet_edonusum.spreadsheet_dashboard_group_edonusum"/>
+        <field name="group_ids" eval="[Command.link(ref('account.group_account_readonly')), Command.link(ref('account.group_account_invoice'))]"/>
+        <field name="sequence">60</field>
+        <field name="is_published">True</field>
+    </record>
+
+</odoo>

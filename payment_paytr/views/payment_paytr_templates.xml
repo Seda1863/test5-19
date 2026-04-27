@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="paytr_inline_form" name="PayTR Inline Form">
+        <div t-attf-id="paytr-container-#{payment_option_id}" data-paytr-container="true" class="o_paytr_form">
+            <t t-if="provider_code == 'paytr'">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Kart Üzerindeki İsim</label>
+                            <input type="text"
+                                   t-attf-id="o_paytr_cc_owner_#{payment_option_id}"
+                                   class="form-control o_paytr_cc_owner"
+                                   placeholder="Ad Soyad"
+                                   autocomplete="cc-name"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Kart Numarası</label>
+                            <input type="text"
+                                   t-attf-id="o_paytr_card_number_#{payment_option_id}"
+                                   class="form-control o_paytr_card_number"
+                                   placeholder="1234 5678 9012 3456"
+                                   maxlength="19"
+                                   autocomplete="cc-number"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>Ay</label>
+                            <select t-attf-id="o_paytr_expiry_month_#{payment_option_id}"
+                                    class="form-control o_paytr_expiry_month"
+                                    autocomplete="cc-exp-month">
+                                <option value="">Ay</option>
+                                <option value="01">01</option>
+                                <option value="02">02</option>
+                                <option value="03">03</option>
+                                <option value="04">04</option>
+                                <option value="05">05</option>
+                                <option value="06">06</option>
+                                <option value="07">07</option>
+                                <option value="08">08</option>
+                                <option value="09">09</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>Yıl</label>
+                            <select t-attf-id="o_paytr_expiry_year_#{payment_option_id}"
+                                    class="form-control o_paytr_expiry_year"
+                                    autocomplete="cc-exp-year">
+                                <option value="">Yıl</option>
+                                <t t-foreach="range(datetime.datetime.now().year, datetime.datetime.now().year + 20)" t-as="year">
+                                    <option t-att-value="str(year)" t-esc="year"/>
+                                </t>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>CVV</label>
+                            <input type="text"
+                                   t-attf-id="o_paytr_cvv_#{payment_option_id}"
+                                   class="form-control o_paytr_cvv"
+                                   placeholder="123"
+                                   maxlength="4"
+                                   autocomplete="cc-csc"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Taksit</label>
+                            <select t-attf-id="o_paytr_installments_#{payment_option_id}"
+                                    class="form-control o_paytr_installments">
+                                <option value="1">Tek Çekim</option>
+                                <option value="2">2 Taksit</option>
+                                <option value="3">3 Taksit</option>
+                                <option value="6">6 Taksit</option>
+                                <option value="9">9 Taksit</option>
+                                <option value="12">12 Taksit</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </template>
+</odoo>

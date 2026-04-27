@@ -1,0 +1,1111 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"
+    xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+    <meta charset="utf-8">
+    <title>MDX Değişiklik Onay Sistemi — Kullanım Kılavuzu</title>
+    <style>
+        body {
+            font-family: Calibri, sans-serif;
+            font-size: 11pt;
+            margin: 50px 60px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        h1 {
+            font-size: 22pt;
+            color: #1a1a2e;
+            border-bottom: 3px solid #4a90d9;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+
+        h2 {
+            font-size: 16pt;
+            color: #16213e;
+            margin-top: 30px;
+            border-left: 4px solid #4a90d9;
+            padding-left: 12px;
+        }
+
+        h3 {
+            font-size: 13pt;
+            color: #4a90d9;
+            margin-top: 20px;
+        }
+
+        h4 {
+            font-size: 11pt;
+            color: #666;
+            margin-top: 15px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 12px 0 20px 0;
+        }
+
+        th {
+            background: #1a1a2e;
+            color: white;
+            padding: 10px 14px;
+            text-align: left;
+            font-size: 10pt;
+        }
+
+        td {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            font-size: 10pt;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .cover {
+            text-align: center;
+            padding: 80px 0 60px 0;
+            border-bottom: 3px double #1a1a2e;
+            margin-bottom: 40px;
+        }
+
+        .cover h1 {
+            border: none;
+            font-size: 28pt;
+            color: #1a1a2e;
+            margin-bottom: 5px;
+        }
+
+        .cover .subtitle {
+            font-size: 14pt;
+            color: #4a90d9;
+            margin-bottom: 30px;
+        }
+
+        .cover .company {
+            font-size: 12pt;
+            color: #666;
+            margin-top: 40px;
+        }
+
+        .cover .version {
+            font-size: 11pt;
+            color: #999;
+        }
+
+        .info-box {
+            background: #e8f4fd;
+            border-left: 4px solid #4a90d9;
+            padding: 12px 16px;
+            margin: 12px 0;
+        }
+
+        .warn-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px 16px;
+            margin: 12px 0;
+        }
+
+        .danger-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 12px 16px;
+            margin: 12px 0;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 12px 16px;
+            margin: 12px 0;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: Consolas, monospace;
+            font-size: 10pt;
+        }
+
+        .toc {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            border: 1px solid #ddd;
+            margin: 20px 0;
+        }
+
+        .toc a {
+            text-decoration: none;
+            color: #4a90d9;
+        }
+
+        .toc li {
+            margin: 4px 0;
+        }
+
+        .footer {
+            margin-top: 50px;
+            border-top: 2px solid #1a1a2e;
+            padding-top: 15px;
+            text-align: center;
+            color: #999;
+            font-size: 9pt;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #4a90d9;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 9pt;
+            margin-right: 4px;
+        }
+
+        .tag-green {
+            background: #28a745;
+        }
+
+        .tag-orange {
+            background: #fd7e14;
+        }
+
+        .tag-red {
+            background: #dc3545;
+        }
+
+        .screenshot-placeholder {
+            border: 2px dashed #ccc;
+            padding: 40px;
+            text-align: center;
+            color: #999;
+            margin: 10px 0;
+            background: #fafafa;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- KAPAK SAYFASI -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="cover">
+        <h1 style="border:none;">MDX Değişiklik Onay Sistemi</h1>
+        <div class="subtitle">Kullanım Kılavuzu ve Teknik Dokümantasyon</div>
+        <p style="font-size: 12pt; color: #666;">mdx_change_warning &amp; edonusum Modülleri</p>
+        <br><br>
+        <div class="company">
+            <strong>MindDX Dijital Dönüşüm Teknolojileri</strong><br>
+            Odoo 18 Enterprise
+        </div>
+        <br>
+        <div class="version">
+            <strong>Versiyon:</strong> 1.0<br>
+            <strong>Tarih:</strong> 05 Mart 2026<br>
+            <strong>Hazırlayan:</strong> Yazılım Geliştirme Ekibi<br>
+            <strong>Durum:</strong> <span class="tag tag-green">Aktif</span>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- DOKÜMAN BİLGİLERİ -->
+    <!-- ═══════════════════════════════════════════ -->
+    <h2>Doküman Bilgileri</h2>
+    <table>
+        <tr>
+            <th style="width:200px;">Alan</th>
+            <th>Değer</th>
+        </tr>
+        <tr>
+            <td><strong>Doküman Adı</strong></td>
+            <td>MDX Değişiklik Onay Sistemi — Kullanım Kılavuzu</td>
+        </tr>
+        <tr>
+            <td><strong>Doküman No</strong></td>
+            <td>MDX-CW-001</td>
+        </tr>
+        <tr>
+            <td><strong>Versiyon</strong></td>
+            <td>1.0</td>
+        </tr>
+        <tr>
+            <td><strong>Platform</strong></td>
+            <td>Odoo 18 Enterprise</td>
+        </tr>
+        <tr>
+            <td><strong>Modüller</strong></td>
+            <td><code>mdx_change_warning</code>, <code>edonusum</code></td>
+        </tr>
+        <tr>
+            <td><strong>Son Güncelleme</strong></td>
+            <td>05.03.2026</td>
+        </tr>
+        <tr>
+            <td><strong>Gizlilik</strong></td>
+            <td>Şirket İçi</td>
+        </tr>
+    </table>
+
+    <h3>Revizyon Geçmişi</h3>
+    <table>
+        <tr>
+            <th>Versiyon</th>
+            <th>Tarih</th>
+            <th>Değişiklik</th>
+            <th>Hazırlayan</th>
+        </tr>
+        <tr>
+            <td>0.1</td>
+            <td>27.02.2026</td>
+            <td>İlk tasarım — temel kural yapısı ve uyarı mekanizması</td>
+            <td>Yazılım Ekibi</td>
+        </tr>
+        <tr>
+            <td>0.2</td>
+            <td>02.03.2026</td>
+            <td>Kural tipi, uygulama filtresi, kullanıcı filtresi eklendi</td>
+            <td>Yazılım Ekibi</td>
+        </tr>
+        <tr>
+            <td>0.3</td>
+            <td>04.03.2026</td>
+            <td>Pager navigasyon, dashboard, GTIP validasyonu eklendi</td>
+            <td>Yazılım Ekibi</td>
+        </tr>
+        <tr>
+            <td>0.4</td>
+            <td>04.03.2026</td>
+            <td>Kural adı dialog'da gösterildi, log sistemi eklendi</td>
+            <td>Yazılım Ekibi</td>
+        </tr>
+        <tr>
+            <td>0.5</td>
+            <td>05.03.2026</td>
+            <td>record.update() tracking, eski→yeni değer gösterimi</td>
+            <td>Yazılım Ekibi</td>
+        </tr>
+        <tr>
+            <td>1.0</td>
+            <td>05.03.2026</td>
+            <td>Silme engeli (deleteRecord), GTIP constrains, final optimizasyon</td>
+            <td>Yazılım Ekibi</td>
+        </tr>
+        <tr>
+            <td>1.1</td>
+            <td>06.03.2026</td>
+            <td>Tedarikçi Mutabakat Sistemi (mdx_mutabakat) eklendi</td>
+            <td>Yazılım Ekibi</td>
+        </tr>
+    </table>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- İÇİNDEKİLER -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="toc">
+        <h3 style="margin-top:0;">İçindekiler</h3>
+        <ol>
+            <li><a href="#bolum1">İhtiyaç Analizi ve Proje Amacı</a></li>
+            <li><a href="#bolum2">Sistem Mimarisi</a></li>
+            <li><a href="#bolum3">Kullanıcı Kılavuzu</a>
+                <ol type="a">
+                    <li>Kural Oluşturma</li>
+                    <li>Kural Tipleri</li>
+                    <li>Kapsam Ayarları</li>
+                    <li>Kullanıcı Filtresi</li>
+                </ol>
+            </li>
+            <li><a href="#bolum4">Uyarı Davranışları</a></li>
+            <li><a href="#bolum5">GTIP Kodu Validasyonu</a></li>
+            <li><a href="#bolum6">Dashboard ve Loglar</a></li>
+            <li><a href="#bolum_mutabakat">Tedarikçi Mutabakat Sistemi</a></li>
+            <li><a href="#bolum7">Teknik Detaylar</a></li>
+            <li><a href="#bolum8">Değişen Dosyalar</a></li>
+            <li><a href="#bolum9">Bilinen Kısıtlamalar</a></li>
+            <li><a href="#bolum10">SSS (Sık Sorulan Sorular)</a></li>
+        </ol>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- BÖLÜM 1: İHTİYAÇ ANALİZİ -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="page-break"></div>
+    <h2 id="bolum1">1. İhtiyaç Analizi ve Proje Amacı</h2>
+
+    <h3>1.1 Sorun Tanımı</h3>
+    <p>Odoo 18 ERP sisteminde kullanıcılar, kritik kayıtlar üzerinde farkında olmadan değişiklik yapabilmekte ve bu
+        değişiklikler geri alınamaz sonuçlara yol açabilmektedir. Özellikle:</p>
+    <ul>
+        <li><strong>Muhasebe kayıtları:</strong> Fatura tutarları, müşteri bilgileri, ödeme koşulları gibi mali
+            bütünlüğü etkileyen alanların yanlışlıkla değiştirilmesi</li>
+        <li><strong>Stok kayıtları:</strong> Ürün miktarları, depo transferleri gibi envanter doğruluğunu etkileyen
+            değişiklikler</li>
+        <li><strong>Veri kaybı:</strong> Kayıtların yanlışlıkla silinmesi veya arşivlenmesi</li>
+        <li><strong>GTIP uyumsuzlukları:</strong> E-fatura süreçlerinde gerekli olan GTIP kodlarının hatalı girilmesi
+            veya silinmesi</li>
+        <li><strong>Otomatik kaydetme:</strong> Odoo 18'de form içi navigasyon (<> okları) sırasında değişikliklerin
+                otomatik kaydedilmesi</li>
+    </ul>
+
+    <h3>1.2 Çözüm Yaklaşımı</h3>
+    <p>Kural tabanlı, yapılandırılabilir bir uyarı sistemi geliştirilmiştir. Bu sistem:</p>
+    <ul>
+        <li>Kullanıcılara değişiklik yapmadan önce onay sorar</li>
+        <li>Hangi alanın değiştiğini eski ve yeni değerleriyle gösterir</li>
+        <li>Belirli modeller, uygulamalar veya kullanıcılar için özelleştirilebilir</li>
+        <li>Silme ve arşivleme işlemlerini engelleyebilir veya uyarı verebilir</li>
+        <li>Tüm tetiklenmeleri loglar ve istatistik sunar</li>
+    </ul>
+
+    <h3>1.3 Hedef Kullanıcılar</h3>
+    <table>
+        <tr>
+            <th>Rol</th>
+            <th>Kullanım</th>
+        </tr>
+        <tr>
+            <td>Sistem Yöneticisi</td>
+            <td>Kural oluşturma, yapılandırma, log analizi</td>
+        </tr>
+        <tr>
+            <td>Muhasebe Personeli</td>
+            <td>Fatura/kayıt düzenlerken uyarı alma</td>
+        </tr>
+        <tr>
+            <td>Stok Personeli</td>
+            <td>Stok kayıtları düzenlerken uyarı alma</td>
+        </tr>
+        <tr>
+            <td>Satış/Satınalma</td>
+            <td>Sipariş kayıtları düzenlerken uyarı alma</td>
+        </tr>
+    </table>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- BÖLÜM 2: MİMARİ -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="page-break"></div>
+    <h2 id="bolum2">2. Sistem Mimarisi</h2>
+
+    <h3>2.1 Bileşenler</h3>
+    <table>
+        <tr>
+            <th>Bileşen</th>
+            <th>Katman</th>
+            <th>Teknoloji</th>
+            <th>Görev</th>
+        </tr>
+        <tr>
+            <td><code>change_warning_interceptor.js</code></td>
+            <td>Frontend (Client)</td>
+            <td>JavaScript / OWL</td>
+            <td>Kullanıcı etkileşimlerini yakalar, uyarı dialog'u gösterir</td>
+        </tr>
+        <tr>
+            <td><code>mdx_change_warning_rule.py</code></td>
+            <td>Backend (Server)</td>
+            <td>Python / Odoo ORM</td>
+            <td>Kural tanımları, filtreleme, log yönetimi</td>
+        </tr>
+        <tr>
+            <td><code>mdx_change_warning_rule_views.xml</code></td>
+            <td>Arayüz (View)</td>
+            <td>XML</td>
+            <td>Kural formu, liste, dashboard görünümleri</td>
+        </tr>
+        <tr>
+            <td><code>mdx_inh_account_move.py</code></td>
+            <td>Backend</td>
+            <td>Python</td>
+            <td>Fatura onayında GTIP validasyonu</td>
+        </tr>
+        <tr>
+            <td><code>mdx_inh_account_move_line.py</code></td>
+            <td>Backend</td>
+            <td>Python</td>
+            <td>Satır bazında GTIP format ve zorunluluk kontrolü</td>
+        </tr>
+    </table>
+
+    <h3>2.2 Veri Akışı</h3>
+    <div class="info-box">
+        <strong>Kullanıcı bir alan değiştirdiğinde:</strong><br>
+        1. <code>record.update()</code> tetiklenir → alan adı ve eski değer kaydedilir<br>
+        2. Kullanıcı Kaydet / &lt; &gt; / Breadcrumb tıklar<br>
+        3. Frontend, backend'den ilgili kuralları çeker (<code>get_rules_for_model</code>)<br>
+        4. Kurallar eşleşirse → uyarı dialog'u gösterilir (eski ➡️ yeni değer ile)<br>
+        5. Onaylarsa → kayıt kaydedilir + log oluşturulur<br>
+        6. İptal ederse → <code>discard()</code> ile form eski haline döner
+    </div>
+
+    <h3>2.3 Değişiklik Tespit Mekanizması</h3>
+    <p>Sistem, Odoo 18'in OWL framework'ündeki <code>record.update()</code> metodunu patch'leyerek çalışır. Bu sayede
+        tüm widget tipleri yakalanır:</p>
+    <table>
+        <tr>
+            <th>Widget Tipi</th>
+            <th>Örnek Alanlar</th>
+            <th>Tespit</th>
+        </tr>
+        <tr>
+            <td>Many2one</td>
+            <td>Müşteri, Ödeme Koşulları, Ürün</td>
+            <td>✅ Yakalanır</td>
+        </tr>
+        <tr>
+            <td>Date / Datetime</td>
+            <td>Fatura Tarihi, Vade Tarihi</td>
+            <td>✅ Yakalanır</td>
+        </tr>
+        <tr>
+            <td>Selection</td>
+            <td>Ödeme Yöntemi, Belge Tipi</td>
+            <td>✅ Yakalanır</td>
+        </tr>
+        <tr>
+            <td>Char / Text</td>
+            <td>Referans, Açıklama</td>
+            <td>✅ Yakalanır</td>
+        </tr>
+        <tr>
+            <td>Many2many Tags</td>
+            <td>Etiketler, Modeller</td>
+            <td>✅ Yakalanır</td>
+        </tr>
+        <tr>
+            <td>Boolean / Checkbox</td>
+            <td>Aktif, Onay kutuları</td>
+            <td>✅ Yakalanır</td>
+        </tr>
+        <tr>
+            <td>Float / Integer</td>
+            <td>Tutar, Miktar, Fiyat</td>
+            <td>✅ Yakalanır</td>
+        </tr>
+    </table>
+
+    <div class="warn-box">
+        <strong>⚠️ Not:</strong> Form ilk açıldığında Odoo'nun computed alanları otomatik hesaplanır. Bu alanların
+        değişiklik olarak algılanmaması için sistem, form yüklendikten sonra 1.5 saniye bekler. Bu süre zarfında yapılan
+        otomatik değişiklikler kullanıcı değişikliği olarak sayılmaz.
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- BÖLÜM 3: KULLANICI KILAVUZU -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="page-break"></div>
+    <h2 id="bolum3">3. Kullanıcı Kılavuzu</h2>
+
+    <h3>3.1 Kural Oluşturma</h3>
+    <p><strong>Menü:</strong> Ayarlar → Teknik → Değişiklik Uyarıları</p>
+    <ol>
+        <li>"Yeni" butonuna tıklayın</li>
+        <li><strong>Kural Adı:</strong> Açıklayıcı bir ad girin (örn: "Muhasebe Kayıt Değişikliği")</li>
+        <li><strong>Uyarı Mesajı:</strong> Kullanıcıya gösterilecek mesajı yazın</li>
+        <li>Kapsam ve kural tiplerini belirleyin (aşağıda detaylı)</li>
+        <li>Kaydedin</li>
+    </ol>
+
+    <h3>3.2 Kural Tipleri</h3>
+    <table>
+        <tr>
+            <th>Tip</th>
+            <th>Açıklama</th>
+            <th>Davranış</th>
+        </tr>
+        <tr>
+            <td><span class="tag">Düzenlerken Uyar</span></td>
+            <td>Kayıt düzenlenip kaydedilmeye çalışıldığında</td>
+            <td>Onay dialog'u gösterir. Kullanıcı değişiklikleri onaylayabilir veya iptal edebilir.</td>
+        </tr>
+        <tr>
+            <td><span class="tag tag-orange">Silerken Uyar</span></td>
+            <td>Kayıt silinmeye çalışıldığında</td>
+            <td>Onay dialog'u gösterir. Kullanıcı silme işlemini onaylayabilir veya iptal edebilir.</td>
+        </tr>
+        <tr>
+            <td><span class="tag tag-red">Silmeyi Engelle</span></td>
+            <td>Kayıt silinmeye çalışıldığında</td>
+            <td><strong>Silme tamamen engellenir.</strong> Kullanıcı sadece "Tamam" butonuna basabilir.</td>
+        </tr>
+        <tr>
+            <td><span class="tag tag-orange">Arşivlerken Uyar</span></td>
+            <td>Kayıt arşivlenmeye çalışıldığında</td>
+            <td>Onay dialog'u gösterir.</td>
+        </tr>
+    </table>
+
+    <div class="info-box">
+        <strong>💡 İpucu:</strong> Birden fazla kural tipi aynı anda seçilebilir. Örneğin hem "Düzenlerken Uyar" hem
+        "Silmeyi Engelle" seçilirse, düzenlemelerde uyarı verilir ve silme tamamen engellenir.
+    </div>
+
+    <h3>3.3 Kapsam Ayarları</h3>
+    <h4>Uygulama Filtresi</h4>
+    <table>
+        <tr>
+            <th>Ayar</th>
+            <th>Etki</th>
+        </tr>
+        <tr>
+            <td><strong>Boş (seçim yok)</strong></td>
+            <td>Tüm uygulamalara uygulanır</td>
+        </tr>
+        <tr>
+            <td><strong>Muhasebe seçili</strong></td>
+            <td>Sadece muhasebe modülündeki kayıtlara uygulanır (account.move, account.move.line vb.)</td>
+        </tr>
+        <tr>
+            <td><strong>Birden fazla seçili</strong></td>
+            <td>Seçilen tüm uygulamalardaki kayıtlara uygulanır</td>
+        </tr>
+    </table>
+
+    <h4>Model Filtresi</h4>
+    <table>
+        <tr>
+            <th>Ayar</th>
+            <th>Etki</th>
+        </tr>
+        <tr>
+            <td><strong>Boş (seçim yok)</strong></td>
+            <td>Seçilen uygulamadaki tüm modellere uygulanır. Uygulama da boşsa tüm modellere.</td>
+        </tr>
+        <tr>
+            <td><strong>account.move seçili</strong></td>
+            <td>Sadece fatura/yevmiye kayıtlarına uygulanır</td>
+        </tr>
+        <tr>
+            <td><strong>Birden fazla seçili</strong></td>
+            <td>Seçilen modellerdeki kayıtlara uygulanır</td>
+        </tr>
+    </table>
+
+    <div class="warn-box">
+        <strong>⚠️ Öncelik:</strong> Model filtresi, Uygulama filtresinden önceliklidir. Model seçiliyse uygulama
+        filtresi yok sayılır.
+    </div>
+
+    <h3>3.4 Kullanıcı Filtresi</h3>
+    <table>
+        <tr>
+            <th>Ayar</th>
+            <th>Etki</th>
+        </tr>
+        <tr>
+            <td><strong>Boş (seçim yok)</strong></td>
+            <td>Tüm kullanıcılara uygulanır</td>
+        </tr>
+        <tr>
+            <td><strong>Belirli kullanıcılar seçili</strong></td>
+            <td>Sadece seçilen kullanıcılar uyarı alır, diğerleri almaz</td>
+        </tr>
+    </table>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- BÖLÜM 4: UYARI DAVRANIŞLARI -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="page-break"></div>
+    <h2 id="bolum4">4. Uyarı Davranışları</h2>
+
+    <h3>4.1 Düzenleme Uyarısı</h3>
+    <p>Kullanıcı bir kayıt üzerinde değişiklik yaptığında aşağıdaki durumlarda uyarı dialog'u gösterilir:</p>
+    <table>
+        <tr>
+            <th>Tetikleyici</th>
+            <th>Davranış</th>
+        </tr>
+        <tr>
+            <td>💾 <strong>Kaydet butonu</strong></td>
+            <td>Uyarı gösterilir. Onaylarsa kaydedilir, iptal ederse form eski haline döner.</td>
+        </tr>
+        <tr>
+            <td>◀️ ▶️ <strong>Pager okları (&lt; &gt;)</strong></td>
+            <td>Uyarı gösterilir. Onaylarsa kaydedip geçer, iptal ederse değişiklikler geri alınır.</td>
+        </tr>
+        <tr>
+            <td>🧭 <strong>Breadcrumb / Menü</strong></td>
+            <td>Uyarı gösterilir. İptal ederse değişiklikler geri alınır ve navigasyon devam eder.</td>
+        </tr>
+    </table>
+
+    <h3>4.2 Dialog İçeriği</h3>
+    <p>Uyarı dialog'u aşağıdaki bilgileri içerir:</p>
+    <div style="border: 2px solid #4a90d9; padding: 15px; border-radius: 8px; background: #f8f9fa; margin: 10px 0;">
+        <p style="font-weight: bold; font-size: 12pt;">⚠️ Düzenleme Onayı</p>
+        <p>📋 <strong>Kural:</strong> Muhasebe Kayıt Değişikliği</p>
+        <p>Muhasebe kaydı değiştiriyorsunuz, dikkatli olun!</p>
+        <br>
+        <p>📝 <strong>Değiştirilen alanlar:</strong></p>
+        <ul>
+            <li>Müşteri: ABC Ltd ➡️ XYZ Corp</li>
+            <li>Fatura Tarihi: 01-03-2026 ➡️ 15-03-2026</li>
+            <li>Ödeme Yöntemi: Kredi Kartı ➡️ Senet</li>
+        </ul>
+        <p>
+            <span style="background: #dc3545; color: white; padding: 6px 16px; border-radius: 4px;">Evet, Kaydet</span>
+            &nbsp;
+            <span
+                style="background: #f8f9fa; border: 1px solid #ccc; padding: 6px 16px; border-radius: 4px;">Değişiklikleri
+                İptal Et</span>
+        </p>
+    </div>
+
+    <h3>4.3 Değişiklik Yapılmadığında</h3>
+    <div class="success-box">
+        <strong>✅ Önemli:</strong> Kullanıcı kayda girip hiçbir değişiklik yapmadan navigasyon yaparsa uyarı
+        <strong>gösterilmez</strong>. Sistem sadece gerçek kullanıcı etkileşimlerini algılar.
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- BÖLÜM 5: GTIP -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="page-break"></div>
+    <h2 id="bolum5">5. GTIP Kodu Validasyonu</h2>
+
+    <h3>5.1 Kurallar</h3>
+    <table>
+        <tr>
+            <th>Kural</th>
+            <th>Açıklama</th>
+        </tr>
+        <tr>
+            <td><strong>12 Haneli</strong></td>
+            <td>GTIP kodu tam olarak 12 rakamdan oluşmalıdır</td>
+        </tr>
+        <tr>
+            <td><strong>Sadece Rakam</strong></td>
+            <td>Harf, özel karakter veya boşluk kabul edilmez (boşluklar otomatik temizlenir)</td>
+        </tr>
+        <tr>
+            <td><strong>İstisna Kodu Bağımlılığı</strong></td>
+            <td>İstisna kodu seçili satırlarda GTIP kodu zorunludur</td>
+        </tr>
+    </table>
+
+    <h3>5.2 Kontrol Noktaları</h3>
+    <table>
+        <tr>
+            <th>Katman</th>
+            <th>Ne Zaman</th>
+            <th>Davranış</th>
+        </tr>
+        <tr>
+            <td><span class="tag">@api.onchange</span></td>
+            <td>Alan değiştiğinde (anlık)</td>
+            <td>Uyarı popup'ı gösterir, kaydetmeyi engellemez</td>
+        </tr>
+        <tr>
+            <td><span class="tag tag-orange">@api.constrains</span></td>
+            <td>Her kayıt sırasında (create/write)</td>
+            <td><strong>Kaydetmeyi engeller</strong> — istisna varken GTIP silemezsiniz</td>
+        </tr>
+        <tr>
+            <td><span class="tag tag-red">action_post</span></td>
+            <td>Fatura onaylarken</td>
+            <td><strong>Onaylamayı engeller</strong> — son kontrol noktası</td>
+        </tr>
+    </table>
+
+    <h3>5.3 Senaryolar</h3>
+    <table>
+        <tr>
+            <th>Durum</th>
+            <th>Sonuç</th>
+        </tr>
+        <tr>
+            <td>İstisna kodu VAR, GTIP = <code>123456789012</code></td>
+            <td>✅ Kabul edilir</td>
+        </tr>
+        <tr>
+            <td>İstisna kodu VAR, GTIP = boş</td>
+            <td>❌ <strong>Kaydetme engellenir</strong></td>
+        </tr>
+        <tr>
+            <td>İstisna kodu VAR, GTIP = <code>12345</code> (5 hane)</td>
+            <td>❌ "12 haneli olmalıdır" hatası</td>
+        </tr>
+        <tr>
+            <td>İstisna kodu VAR, GTIP girildi → sonra silindi</td>
+            <td>❌ <strong>Kaydetme engellenir</strong></td>
+        </tr>
+        <tr>
+            <td>İstisna kodu YOK, GTIP = boş</td>
+            <td>✅ GTIP gerekmez</td>
+        </tr>
+        <tr>
+            <td>İstisna kodu YOK, GTIP = <code>abc123</code></td>
+            <td>❌ "Sadece rakam" hatası</td>
+        </tr>
+    </table>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- BÖLÜM 6: DASHBOARD -->
+    <!-- ═══════════════════════════════════════════ -->
+    <h2 id="bolum6">6. Dashboard ve Loglar</h2>
+
+    <h3>6.1 Kural İstatistikleri</h3>
+    <p>Her kuralın form görünümünde bir <strong>stat button</strong> bulunur:</p>
+    <ul>
+        <li><strong>Tetiklenme Sayısı:</strong> Kuralın toplam kaç kez tetiklendiği</li>
+        <li><strong>Son Tetiklenme:</strong> En son ne zaman tetiklendiği</li>
+        <li><strong>Son Tetikleyen:</strong> En son hangi kullanıcı tetiklediği</li>
+    </ul>
+
+    <h3>6.2 Log Kayıtları</h3>
+    <p><strong>Menü:</strong> Ayarlar → Teknik → Değişiklik Uyarıları → Loglar</p>
+    <p>Her tetiklenme bir log kaydı oluşturur:</p>
+    <table>
+        <tr>
+            <th>Alan</th>
+            <th>Açıklama</th>
+        </tr>
+        <tr>
+            <td>Kural</td>
+            <td>Hangi kural tetiklendi</td>
+        </tr>
+        <tr>
+            <td>Kullanıcı</td>
+            <td>Kim tetikledi</td>
+        </tr>
+        <tr>
+            <td>Model</td>
+            <td>Hangi modelde tetiklendi (account.move vb.)</td>
+        </tr>
+        <tr>
+            <td>Kayıt ID</td>
+            <td>Hangi kayıt üzerinde</td>
+        </tr>
+        <tr>
+            <td>İşlem Tipi</td>
+            <td>Düzenleme / Silme / Arşivleme</td>
+        </tr>
+        <tr>
+            <td>Kullanıcı Yanıtı</td>
+            <td>Onayladı / İptal Etti / Engellendi</td>
+        </tr>
+    </table>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- BÖLÜM: MUTABAKAT SİSTEMİ -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="page-break"></div>
+    <h2 id="bolum_mutabakat">Tedarikçi Mutabakat Sistemi</h2>
+
+    <h3>7.1 Genel Bakış</h3>
+    <p>Tedarikçi Mutabakat Sistemi (<code>mdx_mutabakat</code>), tedarikçilerle olan borç/alacak bakiyelerinin dijital
+        ortamda onaylanmasını sağlar. Sistem, manuel mektup hazırlama ve e-posta takibi süreçlerini otomatize eder.</p>
+
+    <h3>7.2 Mutabakat Gönderme</h3>
+    <p><strong>Aksiyon:</strong> Muhasebe → Satınalma → Tedarikçiler listesi</p>
+    <ol>
+        <li>Tedarikçi listesinden istediğiniz firmaları seçin.</li>
+        <li><strong>Aksiyonlar</strong> menüsünden <strong>Mutabakat Gönder</strong> seçeneğine tıklayın.</li>
+        <li>Açılan sihirbazda:
+            <ul>
+                <li><strong>Dönem Aralığı:</strong> Mutabakat yapılacak tarih aralığını seçin.</li>
+                <li><strong>Yanıt Adresi:</strong> Tedarikçinin yanıtının düşeceği e-posta adresi (varsayılan:
+                    <code>aysenur@minddx.ai</code>).</li>
+                <li><strong>Hemen Gönder:</strong> İşaretlenirse mutabakatlar taslak olarak kalmaz, hemen e-postalanır.
+                </li>
+            </ul>
+        </li>
+        <li>"Mutabakat Oluştur" butonuna basın.</li>
+    </ol>
+
+    <h3>7.3 Mutabakat Süreci</h3>
+    <div class="info-box">
+        <strong>İş Akışı:</strong><br>
+        1. <strong>Taslak:</strong> Kayıt oluşturulur, faturalar otomatik hesaplanır (KDV Hariç).<br>
+        2. <strong>Gönderildi:</strong> Tedarikçiye özel bir link içeren şık bir e-posta gönderilir.<br>
+        3. <strong>Yanıt Bekleniyor:</strong> Tedarikçi e-postadaki "Mutabıkız" veya "Mutabık Değiliz" butonlarından
+        birine tıklar.<br>
+        4. <strong>Sonuç:</strong> Yanıt Odoo'ya anlık düşer, durum güncellenir ve gönderene bildirim gider.
+    </div>
+
+    <h3>7.4 Tedarikçi Deneyimi</h3>
+    <p>Tedarikçi e-postada aşağıdaki butonları görür:</p>
+    <ul>
+        <li><span style="color:#28a745; font-weight:bold;">✅ Mutabıkız:</span> Tıklandığında sistem durumu "Mutabık"
+            yapar.</li>
+        <li><span style="color:#dc3545; font-weight:bold;">❌ Mutabık Değiliz:</span> Tıklandığında sistem durumu
+            "Mutabık Değil" yapar ve gönderene acil bildirim atar.</li>
+    </ul>
+
+    <h3>7.5 Hesaplama Detayları</h3>
+    <table>
+        <tr>
+            <th>Kalem</th>
+            <th>Hesaplama Mantığı</th>
+        </tr>
+        <tr>
+            <td><strong>Alacak (Gelen)</strong></td>
+            <td>Gelen Faturalar - Tedarikçi İade Faturaları (KDV Hariç)</td>
+        </tr>
+        <tr>
+            <td><strong>Borç (Giden)</strong></td>
+            <td>Müşteri Faturaları - Müşteri İade Faturaları (KDV Hariç)</td>
+        </tr>
+        <tr>
+            <td><strong>Dönem</strong></td>
+            <td>Seçilen tarih aralığındaki onaylanmış (Posted) hareketler</td>
+        </tr>
+    </table>
+
+    <div class="success-box">
+        <strong>ℹ️ Yanıt Takibi:</strong> Tedarikçi yanıt verdiğinde, mutabakat kaydının "Chatter" bölümünde detaylı bir
+        log oluşur ve ilgili kullanıcıya Odoo üzerinden aktivite atanır.
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- BÖLÜM 7: TEKNİK DETAYLAR -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="page-break"></div>
+    <h2 id="bolum7">7. Teknik Detaylar</h2>
+
+    <h3>7.1 Modeller</h3>
+    <table>
+        <tr>
+            <th>Model</th>
+            <th>Tablo</th>
+            <th>Açıklama</th>
+        </tr>
+        <tr>
+            <td><code>mdx.change.warning.rule</code></td>
+            <td>mdx_change_warning_rule</td>
+            <td>Uyarı kurallarını saklar</td>
+        </tr>
+        <tr>
+            <td><code>mdx.change.warning.log</code></td>
+            <td>mdx_change_warning_log</td>
+            <td>Tetiklenme loglarını saklar</td>
+        </tr>
+    </table>
+
+    <h3>7.2 API Metotları</h3>
+    <table>
+        <tr>
+            <th>Metot</th>
+            <th>Tip</th>
+            <th>Açıklama</th>
+        </tr>
+        <tr>
+            <td><code>get_rules_for_model(model_name)</code></td>
+            <td>@api.model</td>
+            <td>Frontend'den çağrılır. Model adına göre geçerli kuralları döner. Kullanıcı ve kapsam filtresi uygular.
+            </td>
+        </tr>
+        <tr>
+            <td><code>log_trigger(rule_id)</code></td>
+            <td>@api.model</td>
+            <td>Tetiklenme istatistiklerini günceller</td>
+        </tr>
+        <tr>
+            <td><code>action_view_logs()</code></td>
+            <td>instance</td>
+            <td>Stat button'dan log listesini açar</td>
+        </tr>
+    </table>
+
+    <h3>7.3 Frontend Hook'ları</h3>
+    <table>
+        <tr>
+            <th>Hook</th>
+            <th>Yakalanan Olay</th>
+        </tr>
+        <tr>
+            <td><code>saveButtonClicked</code></td>
+            <td>💾 Kaydet butonu</td>
+        </tr>
+        <tr>
+            <td><code>onPagerUpdate</code></td>
+            <td>◀️ ▶️ Pager okları</td>
+        </tr>
+        <tr>
+            <td><code>canBeDiscarded</code></td>
+            <td>🧭 Breadcrumb / Menü navigasyonu</td>
+        </tr>
+        <tr>
+            <td><code>deleteRecord</code></td>
+            <td>🗑️ Silme butonu</td>
+        </tr>
+        <tr>
+            <td><code>beforeExecuteActionButton</code></td>
+            <td>📦 Arşivleme ve diğer aksiyonlar</td>
+        </tr>
+    </table>
+
+    <h3>7.4 Cache Mekanizması</h3>
+    <p>Frontend, her model için kuralları <strong>10 saniye</strong> cache'ler. Bu süre zarfında aynı model için tekrar
+        sunucuya istek gönderilmez. Kural değişikliklerinin yansıması için en fazla 10 saniye beklenmesi veya sayfanın
+        yenilenmesi gerekir.</p>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- BÖLÜM 8: DEĞİŞEN DOSYALAR -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="page-break"></div>
+    <h2 id="bolum8">8. Değişen Dosyalar</h2>
+
+    <h3>8.1 mdx_change_warning Modülü (Yeni)</h3>
+    <table>
+        <tr>
+            <th>Dosya</th>
+            <th>Tip</th>
+            <th>Açıklama</th>
+        </tr>
+        <tr>
+            <td><code>__manifest__.py</code></td>
+            <td>Yapılandırma</td>
+            <td>Modül tanımı, bağımlılıklar</td>
+        </tr>
+        <tr>
+            <td><code>__init__.py</code></td>
+            <td>Python</td>
+            <td>Modül import'ları</td>
+        </tr>
+        <tr>
+            <td><code>models/__init__.py</code></td>
+            <td>Python</td>
+            <td>Model import'ları</td>
+        </tr>
+        <tr>
+            <td><code>models/mdx_change_warning_rule.py</code></td>
+            <td>Python</td>
+            <td>Kural ve log modelleri, filtreleme mantığı</td>
+        </tr>
+        <tr>
+            <td><code>views/mdx_change_warning_rule_views.xml</code></td>
+            <td>XML</td>
+            <td>Form, liste, pivot, grafik görünümleri, menü tanımları</td>
+        </tr>
+        <tr>
+            <td><code>security/ir.model.access.csv</code></td>
+            <td>CSV</td>
+            <td>Erişim hakları (user ve admin)</td>
+        </tr>
+        <tr>
+            <td><code>static/src/js/change_warning_interceptor.js</code></td>
+            <td>JavaScript</td>
+            <td>Frontend değişiklik takibi ve uyarı dialog'u</td>
+        </tr>
+        <tr>
+            <td><code>docs/test_raporu.html</code></td>
+            <td>HTML</td>
+            <td>Test dokümanı</td>
+        </tr>
+        <tr>
+            <td><code>docs/kullanim_kilavuzu.html</code></td>
+            <td>HTML</td>
+            <td>Bu doküman</td>
+        </tr>
+    </table>
+
+    <h3>8.2 edonusum Modülü (Güncelleme)</h3>
+    <table>
+        <tr>
+            <th>Dosya</th>
+            <th>Değişiklik</th>
+        </tr>
+        <tr>
+            <td><code>models/mdx_inh_account_move.py</code></td>
+            <td>
+                <ul>
+                    <li><code>action_post()</code>: GTIP format kontrolü + 12 hane + istisna zorunluluğu eklendi</li>
+                    <li><code>create()</code>: GTIP validasyonu kaldırıldı (taslakta serbest)</li>
+                    <li><code>write()</code>: GTIP validasyonu kaldırıldı (taslakta serbest)</li>
+                    <li><code>_validate_product_hs_code_required()</code>: hs_code fallback kaldırıldı, satır GTIP
+                        zorunlu</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><code>models/mdx_inh_account_move_line.py</code></td>
+            <td>
+                <ul>
+                    <li><code>@api.constrains('gtip_kodu', 'istisna_kodu')</code>: Her kayıtta format + zorunluluk
+                        kontrolü</li>
+                    <li><code>@api.onchange('gtip_kodu')</code>: Anlık format uyarısı</li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- BÖLÜM 9: KISITLAMALAR -->
+    <!-- ═══════════════════════════════════════════ -->
+    <h2 id="bolum9">9. Bilinen Kısıtlamalar</h2>
+    <table>
+        <tr>
+            <th>#</th>
+            <th>Kısıtlama</th>
+            <th>Açıklama</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>1.5 saniye bekleme süresi</td>
+            <td>Form açıldıktan sonra computed alanların tamamlanması için 1.5sn beklenir. Çok yavaş formlarda false
+                positive olabilir.</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Cache gecikmesi</td>
+            <td>Kural değişikliklerinin yansıması en fazla 10 saniye sürebilir.</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Inline düzenleme</td>
+            <td>Liste görünümünde yapılan inline düzenlemeler yakalanmaz. Sadece form görünümünde çalışır.</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Many2one display_name</td>
+            <td>Eski değer gösteriminde Many2one alanlarının görünen adı her zaman doğru alınamayabilir.</td>
+        </tr>
+    </table>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- BÖLÜM 10: SSS -->
+    <!-- ═══════════════════════════════════════════ -->
+    <h2 id="bolum10">10. Sık Sorulan Sorular (SSS)</h2>
+
+    <h4>S: Kuralı oluşturdum ama uyarı gelmiyor?</h4>
+    <p><strong>C:</strong> 1) Kuralın "Aktif" olduğundan emin olun. 2) "Düzenlerken Uyar" tikli mi kontrol edin. 3)
+        Sayfayı Cmd+Shift+R ile yenileyin (cache). 4) Model/uygulama filtresi doğru mu bakın.</p>
+
+    <h4>S: Hiçbir değişiklik yapmadan uyarı geliyor?</h4>
+    <p><strong>C:</strong> Formdaki computed alanlar otomatik değişiklik yapıyorsa bu olabilir. 1.5sn bekleme süresi bu
+        durumu engellemeli. Sorun devam ederse destek ekibine bildirin.</p>
+
+    <h4>S: GTIP kodunu girdim ama kabul etmiyor?</h4>
+    <p><strong>C:</strong> GTIP kodu tam olarak 12 haneli olmalı ve sadece rakamlardan oluşmalıdır. Boşluk, tire gibi
+        karakterler otomatik temizlenir ama harf kabul edilmez.</p>
+
+    <h4>S: Kaydı silemiyorum, hata alıyorum?</h4>
+    <p><strong>C:</strong> "Silmeyi Engelle" kuralı aktif olabilir. Sistem yöneticinizle iletişime geçin.</p>
+
+    <h4>S: Uyarı mesajını değiştirdim ama eski mesaj geliyor?</h4>
+    <p><strong>C:</strong> Cache nedeniyle eski mesaj 10 saniye daha görünebilir. Sayfayı yenileyerek hemen güncelleme
+        alabilirsiniz.</p>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- FOOTER -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="footer">
+        <p><strong>MindDX Dijital Dönüşüm Teknolojileri</strong></p>
+        <p>MDX Değişiklik Onay Sistemi — Kullanım Kılavuzu v1.0 — 05.03.2026</p>
+        <p>Bu doküman şirket içi kullanım için hazırlanmıştır. İzinsiz dağıtılamaz.</p>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_mdx_inh_res_company_form" model="ir.ui.view">
+        <field name="name">mdx.inh.res.company.form</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='branches']" position="after">
+                <page string="E-Dönüşüm" name="edonusum_company_tab">
+                    <group>
+                        <!-- <field name="prozon_workplace_code" placeholder="Prozon İş Yeri Kodu"/> -->
+                        <!-- E-Dönüşüm Hesap ve Bakanlık Bilgileri -->
+                        <group string="E-Dönüşüm Hesap ve Bakanlık Bilgileri">
+                            <field name="owner_id" />
+                            <!-- <field name="fiscal_year_length" widget="radio" options="{'horizontal': true}" /> -->
+                            <field name="fiscal_year_start_month" />
+                            <field name="fiscal_year_end_month" />
+                            <field name="gumruk_ticaret_bakanligi_carisi_id" placeholder="Gümrük Ticaret Bakanlığı Cari"/>
+                            <field name="iade_hesabi_id" placeholder="İade Hesabı"/>
+                            <field name="iade_hesabi_kdv_id" placeholder="İade Hesabı KDV"/>
+                            <field name="yurtici_satis_hesabi_id" placeholder="Yurtiçi Satış Hesabı"/>
+                            <field name="yurtdisi_satis_hesabi_id" placeholder="Yurtdışı Satış Hesabı"/>
+                            <field name="efatura_senaryo_id" placeholder="Tercih Edilen E-Fatura Senaryosu"/>
+                            <field name="currency_rate_type" placeholde="Tercih Edilen Kur Tipi"/>
+                        </group>
+
+                        <!-- Müşteri, Vergi ve İletişim Bilgileri -->
+                        <group string="Müşteri, Vergi ve İletişim Bilgileri">
+                            <field name="efatura_musterisi" string="E-Fatura Müşterisi"/>
+                            <field name="earsiv_musterisi" string="E-Arşiv Müşterisi"/>
+                            <field name="eirsaliye_musterisi" string="E-İrsaliye Müşterisi"/>
+                            <field name="edefter_musterisi" string="E-Defter Müşterisi"/>
+                            <field name="hizmet_sektoru" string="Hizmet Sektörü"/>
+                            <field name="legal_name" placeholder="Yasal Ad"/>
+                            <field name="fax" placeholder="Faks"/>
+                            <field name="mersis_no" placeholder="MERSIS No"/>
+                            <field name="ticaret_sicil_no" placeholder="Ticaret Sicil No"/>
+                            <field name="vergi_dairesi" placeholder="Vergi Dairesi"/>
+                            <field name="web_site" placeholder="Web Sitesi"/>
+                        </group>
+                    </group>
+                    <!-- Web Servisleri Bilgileri -->
+                    <group string="Web Servisleri Bilgileri">
+                        <field name="web_service_ids" placeholder="Web Servisleri"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

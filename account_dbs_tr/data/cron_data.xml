@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="dbs_cron_create_batch" model="ir.cron">
+        <field name="name">DBS - Draft Batch Olustur</field>
+        <field name="model_id" ref="model_dbs_batch"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_create_batch()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="nextcall" eval="(DateTime.now() + (relativedelta(days=1) if DateTime.now().hour &gt;= 18 else relativedelta())).replace(hour=18, minute=0, second=0).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="active">False</field>
+    </record>
+
+    <record id="dbs_cron_poll_ack" model="ir.cron">
+        <field name="name">DBS - ACK Kontrol</field>
+        <field name="model_id" ref="model_dbs_batch"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_poll_ack()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active">True</field>
+    </record>
+
+    <record id="dbs_cron_match_statements" model="ir.cron">
+        <field name="name">DBS - Statement Esleme</field>
+        <field name="model_id" ref="account.model_account_bank_statement_line"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_dbs_try_match_lines()</field>
+        <field name="interval_number">15</field>
+        <field name="interval_type">minutes</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

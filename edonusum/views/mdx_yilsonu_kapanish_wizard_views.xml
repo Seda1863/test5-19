@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_mdx_yilsonu_kapanish_wizard_form" model="ir.ui.view">
+        <field name="name">mdx.yilsonu.kapanish.wizard.form</field>
+        <field name="model">mdx.yilsonu.kapanish.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Dönem Sonu Kapanış İşlemleri">
+                <field name="state" invisible="1"/>
+
+                <header>
+                    <button name="action_preview"
+                            string="Ön İzleme Yap"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_create_entries"
+                            string="Kayıtları Oluştur"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'preview'"
+                            confirm="Seçili dönem için yansıtma, kapatma ve 690 devir yevmiyeleri oluşturulacaktır. Onaylıyor musunuz?"/>
+                    <button name="action_preview"
+                            string="Ön İzlemeyi Yenile"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="state != 'preview'"/>
+                    <button name="action_view_created_moves"
+                            string="Oluşturulan Yevmiyeleri Aç"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'done'"/>
+                    <button name="action_view_closing_run"
+                            string="Kapanış Kaydını Aç"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="state != 'done'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,preview,done"
+                           statusbar_colors='{"done": "green"}'/>
+                </header>
+
+                <sheet>
+
+                    <!-- ── Nasıl çalışır (sadece draft'ta) ──────────────── -->
+                    <div class="alert alert-info o_form_no_cog" invisible="state != 'draft'">
+                        <strong>Nasıl çalışır?</strong>
+                        <ol class="mb-0 mt-1">
+                            <li><strong>Dönem &amp; Yevmiye</strong> seçin</li>
+                            <li><strong>Ön İzleme Yap</strong> — hesapları ve tutarları kontrol edin</li>
+                            <li><strong>Kayıtları Oluştur</strong> — taslak yevmiyeler oluşturulur, elle onaylarsınız</li>
+                        </ol>
+                        <hr class="mt-2 mb-1"/>
+                        <small>Oluşturulan kayıtlar taslak olarak gelir; onaylamak size kalmıştır.</small>
+                    </div>
+
+                    <!-- ── Tamamlandı özeti ────────────────────────────────── -->
+                    <div class="alert alert-success o_form_no_cog" invisible="state != 'done'">
+                        <strong>İşlem tamamlandı.</strong>
+                        <br/>
+                        <field name="created_move_count" readonly="1" nolabel="1"/> adet taslak yevmiye oluşturuldu
+                        — <em><field name="period_label" readonly="1" nolabel="1"/></em> dönemi için.
+                        <br/>
+                        Yevmiyeleri inceleyip onaylamayı unutmayın.
+                    </div>
+
+                    <!-- ── Mevcut taslak uyarısı ───────────────────────── -->
+                    <div class="alert alert-danger o_form_no_cog" invisible="not existing_draft_move_ids">
+                        <strong>&#9888; Bu dönem için taslak kapanış yevmiyeleri zaten mevcut!</strong>
+                        Devam ederseniz ek yevmiyeler oluşturulacaktır.
+                        Mevcut taslak sayısı: <field name="existing_draft_move_ids" readonly="1" nolabel="1"
+                                                      widget="many2many_tags"/>
+                    </div>
+
+                    <!-- ── Uyarılar ───────────────────────────────────── -->
+                    <div class="alert alert-warning o_form_no_cog" invisible="not warning_text">
+                        <strong>Uyarılar:</strong>
+                        <field name="warning_text" readonly="1" nolabel="1"/>
+                    </div>
+
+                    <!-- ── Ayarlar (draft ve preview'da görünür) ─────────── -->
+                    <group invisible="state == 'done'">
+                        <group string="Dönem Seçimi">
+                            <field name="preset" readonly="state != 'draft'"/>
+                            <field name="date_from" readonly="state != 'draft'"/>
+                            <field name="date_to" readonly="state != 'draft'"/>
+                            <field name="period_label" readonly="1"/>
+                        </group>
+                        <group string="Yevmiye Ayarları">
+                            <field name="company_id" readonly="state != 'draft'"/>
+                            <field name="journal_id" readonly="state != 'draft'"/>
+                        </group>
+                    </group>
+
+                    <!-- ── Ön izleme tabloları ───────────────────────────── -->
+                    <notebook invisible="state == 'draft'">
+
+                        <!-- ADIM 1 -->
+                        <page string="Adım 1 — Gider Yansıtma">
+                            <div class="alert alert-light o_form_no_cog">
+                                <strong>Yansıtma:</strong>
+                                760 hesap bakiyesi &#8594; Dr 631, Cr 761 &#160;|&#160;
+                                770 hesap bakiyesi &#8594; Dr 632, Cr 771 &#160;|&#160;
+                                780 hesap bakiyesi &#8594; Dr 660, Cr 781
+                            </div>
+                            <field name="yansitma_line_ids" readonly="1" nolabel="1">
+                                <list>
+                                    <field name="account_code" string="Hesap Kodu" optional="show"/>
+                                    <field name="account_name" string="Hesap Adı"/>
+                                    <field name="label" string="Açıklama"/>
+                                    <field name="source_info" string="Kaynak Bakiye" optional="show"/>
+                                    <field name="debit" string="Borç"
+                                           sum="Borç Toplamı"
+                                           decoration-success="debit &gt; 0"/>
+                                    <field name="credit" string="Alacak"
+                                           sum="Alacak Toplamı"
+                                           decoration-info="credit &gt; 0"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <!-- ADIM 2 -->
+                        <page string="Adım 2 — Yansıtma Kapatma">
+                            <div class="alert alert-light o_form_no_cog">
+                                <strong>Kapatma:</strong>
+                                Dr 761, Cr 760 &#160;|&#160;
+                                Dr 771, Cr 770 &#160;|&#160;
+                                Dr 781, Cr 780
+                            </div>
+                            <field name="kapanish_line_ids" readonly="1" nolabel="1">
+                                <list>
+                                    <field name="account_code" string="Hesap Kodu" optional="show"/>
+                                    <field name="account_name" string="Hesap Adı"/>
+                                    <field name="label" string="Açıklama"/>
+                                    <field name="source_info" string="Kaynak Bakiye" optional="show"/>
+                                    <field name="debit" string="Borç"
+                                           sum="Borç Toplamı"
+                                           decoration-success="debit &gt; 0"/>
+                                    <field name="credit" string="Alacak"
+                                           sum="Alacak Toplamı"
+                                           decoration-info="credit &gt; 0"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <!-- ADIM 3 -->
+                        <page string="Adım 3 — 690 Dönem Devri">
+                            <div class="alert alert-light o_form_no_cog">
+                                <strong>690 Devir:</strong>
+                                Alacak bakiyeli gelir hesapları &#8594; Dr hesap, Cr 690 &#160;|&#160;
+                                Borç bakiyeli gider hesapları &#8594; Dr 690, Cr hesap
+                            </div>
+                            <field name="devir_line_ids" readonly="1" nolabel="1">
+                                <list>
+                                    <field name="account_code" string="Hesap Kodu" optional="show"/>
+                                    <field name="account_name" string="Hesap Adı"/>
+                                    <field name="label" string="Açıklama"/>
+                                    <field name="source_info" string="Kaynak Bakiye" optional="show"/>
+                                    <field name="debit" string="Borç"
+                                           sum="Toplam Borç"
+                                           decoration-success="debit &gt; 0"/>
+                                    <field name="credit" string="Alacak"
+                                           sum="Toplam Alacak"
+                                           decoration-info="credit &gt; 0"/>
+                                </list>
+                            </field>
+                        </page>
+
+                    </notebook>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_mdx_yilsonu_kapanish_wizard" model="ir.actions.act_window">
+        <field name="name">Dönem Sonu Kapanış</field>
+        <field name="res_model">mdx.yilsonu.kapanish.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_mdx_yilsonu_kapanish"
+              name="Dönem Sonu Kapanış"
+              parent="account.menu_finance_entries"
+              action="action_mdx_yilsonu_kapanish_wizard"
+              sequence="90"
+              groups="account.group_account_manager"/>
+</odoo>

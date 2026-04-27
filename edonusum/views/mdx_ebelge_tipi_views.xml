@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_mdx_ebelge_tipi_list" model="ir.ui.view">
+        <field name="name">mdx.ebelge.tipi.list</field>
+        <field name="model">mdx.ebelge.tipi</field>
+        <field name="arch" type="xml">
+            <list string="E-Belge Tipi">
+                <field name="active"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="belge_cinsi_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_mdx_ebelge_tipi_form" model="ir.ui.view">
+        <field name="name">mdx.ebelge.tipi.form</field>
+        <field name="model">mdx.ebelge.tipi</field>
+        <field name="arch" type="xml">
+            <form string="E-Belge Tipi">
+                <sheet>
+                    <group>
+                        <field name="code"/>
+                        <field name="name"/>
+                        <field name="description"/>
+                        <field name="belge_cinsi_id"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_mdx_ebelge_tipi" model="ir.actions.act_window">
+        <field name="name">E-Belge Tipi</field>
+        <field name="res_model">mdx.ebelge.tipi</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_mdx_ebelge_tipi" name="E-Belge Tipleri" action="action_mdx_ebelge_tipi"/>
+</odoo>

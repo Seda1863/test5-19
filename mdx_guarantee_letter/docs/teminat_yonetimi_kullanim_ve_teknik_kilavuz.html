@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <title>Teminat Yönetimi Kullanım ve Teknik Kılavuz</title>
+  <style>
+    body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; color: #111827; line-height: 1.5; margin: 34pt; }
+    h1 { font-size: 21pt; margin-bottom: 4pt; color: #0b2545; }
+    h2 { font-size: 14pt; margin-top: 16pt; margin-bottom: 8pt; color: #0b2545; border-bottom: 1px solid #d4d8dd; padding-bottom: 4pt; }
+    h3 { font-size: 12pt; margin-top: 12pt; margin-bottom: 6pt; color: #0f172a; }
+    h4 { font-size: 11pt; margin-top: 10pt; margin-bottom: 5pt; color: #0f172a; }
+    p { margin: 5pt 0; }
+    ul, ol { margin: 5pt 0 8pt 18pt; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8pt; }
+    th, td { border: 1px solid #d1d5db; padding: 6pt; text-align: left; vertical-align: top; }
+    th { background: #eef2f7; }
+    .meta p { margin: 2pt 0; }
+    .label { display: inline-block; min-width: 155pt; font-weight: 700; }
+    .code { font-family: Menlo, Consolas, monospace; font-size: 10pt; background: #f3f4f6; padding: 1pt 3pt; border-radius: 2px; }
+    pre { font-family: Menlo, Consolas, monospace; font-size: 9.5pt; background: #f8fafc; border: 1px solid #e5e7eb; padding: 8pt; white-space: pre-wrap; word-break: break-word; }
+    .note { background: #f9fafb; border-left: 4px solid #64748b; padding: 8pt; margin: 8pt 0; }
+    .warn { background: #fff7ed; border-left: 4px solid #ea580c; padding: 8pt; margin: 8pt 0; }
+    .ok { background: #ecfeff; border-left: 4px solid #0891b2; padding: 8pt; margin: 8pt 0; }
+    .footer { margin-top: 24pt; font-size: 10pt; color: #4b5563; }
+  </style>
+</head>
+<body>
+  <h1>Teminat Yönetimi Kullanım ve Teknik Kılavuz</h1>
+
+  <div class="meta">
+    <p><span class="label">Doküman No:</span> MINDDX-TYM-GUIDE-2026-03</p>
+    <p><span class="label">Yayın Tarihi:</span> 19.03.2026</p>
+    <p><span class="label">Doküman Sürümü:</span> v1.1</p>
+    <p><span class="label">Ürün/Modül:</span> MDX Teminat Mektubu Yönetimi (<span class="code">mdx_guarantee_letter</span>)</p>
+    <p><span class="label">Uygulama Versiyonu:</span> 18.0.1.0.0</p>
+    <p><span class="label">Hazırlayan:</span> MindDX Dijital Dönüşüm Teknolojileri A.Ş.</p>
+    <p><span class="label">Hedef Kitle:</span> Finans Operasyon, ERP Destek, IT Uzmanı, Denetim</p>
+  </div>
+
+  <h2>1. Amaç ve Kapsam</h2>
+  <p>
+    Bu doküman, <span class="code">mdx_guarantee_letter</span> modülünün fonksiyonel kullanımı,
+    teknik mimarisi, muhasebe kayıt kurgusu, kur/limit algoritmaları, hata senaryoları ve işletim
+    kabiliyetlerini kurumsal standartta açıklamak amacıyla hazırlanmıştır.
+  </p>
+
+  <h2>2. Sistem Kabiliyetleri</h2>
+  <ul>
+    <li>Teminat mektubu yaşam döngüsünün uçtan uca yönetimi (taslak, onay, aktif, iade, nakde çevirme).</li>
+    <li>Alınan/Verilen mektup tipine göre otomatik nazım hesap kaydı.</li>
+    <li>Komisyon, blokaj ve tazmin için otomatik finansal yevmiye oluşturma.</li>
+    <li>Kur tipi bazlı (Doviz Alis/Satis, Efektif Alis/Satis, Manuel) döviz dönüşümü.</li>
+    <li>Banka limitlerinin limit para birimi bazında canlı kullanım ve uygunluk kontrolü.</li>
+    <li>7/15/30 gün hatırlatma activity + e-posta otomasyonu.</li>
+    <li>Raporlama (liste, pivot, QWeb PDF), izlenebilirlik (chatter), rol tabanlı güvenlik.</li>
+  </ul>
+
+  <h2>3. Bağımlılıklar ve Ön Koşullar</h2>
+  <h3>3.1 Modül Bağımlılıkları</h3>
+  <table>
+    <thead><tr><th>Bağımlılık</th><th>Gerekçe</th></tr></thead>
+    <tbody>
+      <tr><td><span class="code">account</span></td><td>Yevmiye fişleri, hesap planı, döviz dönüşümü</td></tr>
+      <tr><td><span class="code">mail</span></td><td>Activity, chatter, mail bildirimleri</td></tr>
+      <tr><td><span class="code">project</span></td><td>Teminat-proje ilişkilendirmesi</td></tr>
+      <tr><td><span class="code">contacts</span></td><td>Banka/Lehdar/Muhatap partner yönetimi</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3.2 Operasyonel Ön Koşullar</h3>
+  <ul>
+    <li>En az 1 adet <span class="code">general</span> tipinde yevmiye tanımlı olmalıdır.</li>
+    <li>İlgili hesap kodları aktif olmalıdır: 900, 901, 902, 903, 780, 102, 126, 689, 300, 100, 679.</li>
+    <li>Kur dönüşümü için gerekli döviz kurları ilgili tarihlerde sistemde mevcut olmalıdır.</li>
+    <li>Mail sunucusu doğru yapılandırılmış olmalıdır.</li>
+  </ul>
+
+  <h2>4. Yetki ve Erişim Modeli</h2>
+  <table>
+    <thead><tr><th>Rol</th><th>Teknik Grup</th><th>Yetki Özeti</th></tr></thead>
+    <tbody>
+      <tr><td>Teminat Kullanıcısı</td><td><span class="code">group_guarantee_user</span></td><td>Teminat kaydı oluşturma/güncelleme, görüntüleme</td></tr>
+      <tr><td>Teminat Yöneticisi</td><td><span class="code">group_guarantee_manager</span></td><td>Onay, iade, iptal işlemleri</td></tr>
+      <tr><td>Finans Yöneticisi</td><td><span class="code">group_finance_manager</span></td><td>Nakde çevirme, limit tanımlama/yönetme</td></tr>
+    </tbody>
+  </table>
+
+  <h2>5. İş Akışı</h2>
+  <h3>5.1 Durum Akışı</h3>
+  <p><span class="code">Taslak -> Onay Bekliyor -> Aktif -> (Iade Talep Edildi -> Iade Edildi) / Nakde Cevrildi / Iptal</span></p>
+
+  <h3>5.2 Buton Etkileri</h3>
+  <table>
+    <thead><tr><th>Buton</th><th>Ön Koşul</th><th>Sistem Etkisi</th></tr></thead>
+    <tbody>
+      <tr><td>Onaya Gönder</td><td>Durum = Taslak</td><td>Durum Onay Bekliyor</td></tr>
+      <tr><td>Onayla</td><td>Durum = Onay Bekliyor</td><td>Limit kontrolü + aktif durum + nazım/finansal kayıtlar</td></tr>
+      <tr><td>Iade Talep Et</td><td>Durum = Aktif</td><td>Durum Iade Talep Edildi</td></tr>
+      <tr><td>Iade Edildi</td><td>Durum = Aktif/Iade Talep Edildi</td><td>Nazım ters kayıt + durum Iade Edildi</td></tr>
+      <tr><td>Nakde Cevrildi</td><td>Durum = Aktif</td><td>Nazım ters kayıt + tazmin kaydı + durum Nakde Cevrildi</td></tr>
+      <tr><td>Iptal</td><td>Kapanmış değil</td><td>Durum Iptal</td></tr>
+    </tbody>
+  </table>
+
+  <h2>6. Kur ve Döviz Mantığı</h2>
+  <h3>6.1 Kayıt Üzerindeki Kur Alanları</h3>
+  <ul>
+    <li><span class="code">currency_id</span>: İşlem para birimi (zorunlu değil, boşsa şirket para birimi kullanılır).</li>
+    <li><span class="code">currency_rate_type</span>: Kur seçimi.</li>
+    <li><span class="code">letter_currency_rate</span>: 1 Şirket PB = X İşlem PB.</li>
+    <li><span class="code">letter_currency_inverse_rate</span>: 1 İşlem PB = X Şirket PB.</li>
+  </ul>
+
+  <h3>6.2 Kur Seçim Algoritması</h3>
+  <pre><code># guarantee_letter.py
+if rate_type == 'forexbuying':
+    rate = 1 / rate_obj.forex_buying
+elif rate_type == 'forexselling':
+    rate = 1 / rate_obj.forex_selling
+elif rate_type == 'banknotebuying':
+    rate = 1 / rate_obj.banknote_buying
+elif rate_type == 'banknoteselling':
+    rate = 1 / rate_obj.banknote_selling
+elif rate_type == 'manualexchange':
+    rate = manual_rate
+
+inverse_rate = 1 / rate</code></pre>
+
+  <h3>6.3 Yevmiye Dönüşüm Algoritması</h3>
+  <pre><code># balance (sirket para birimi)
+balance_amount = company_currency.round(amount * inverse_rate)
+
+# doviz izleme alanlari
+line.currency_id = transaction_currency
+line.amount_currency = +amount / -amount</code></pre>
+
+  <div class="ok">
+    TRY seçildiğinde dönüşüm 1.0 kabul edilir; ekran bozulmadan normal muhasebe akışı devam eder.
+  </div>
+
+  <h2>7. Banka Limit Mantığı</h2>
+  <h3>7.1 Canlı Kullanım Hesabı</h3>
+  <p>
+    <span class="code">bank.guarantee.limit</span> üzerindeki kullanılan/kalan tutar, aktif ve iade talep durumundaki
+    mektupların her birini limit para birimine çevirerek hesaplanır.
+  </p>
+  <pre><code># bank_guarantee_limit.py
+for letter in active_letters:
+    used += letter.currency_id._convert(
+        letter.amount,
+        limit.currency_id,
+        limit.company_id,
+        letter.issue_date
+    )
+limit.available_amount = limit.limit_amount - used</code></pre>
+
+  <h3>7.2 Onayda Limit Kontrolü</h3>
+  <p>Onay anında talep edilen mektup tutarı limit para birimine çevrilir ve kalan limit ile karşılaştırılır.</p>
+  <pre><code># guarantee_letter.py::_check_bank_limit
+requested = letter_currency._convert(
+    self.amount,
+    limit.currency_id,
+    self.company_id,
+    self.issue_date
+)
+if limit.available_amount &lt; requested:
+    raise UserError("yeterli limit yok")</code></pre>
+
+  <div class="warn">
+    Örnek: Limit = 900.000 TRY, mektup = 900.000 EUR. Sistem EUR tutarı TRY'ye çevirip kontrol eder;
+    limit aşımı varsa onaya izin vermez.
+  </div>
+
+  <h2>8. Muhasebe Kurgusu</h2>
+  <h3>8.1 Nazım Kayıtlar</h3>
+  <ul>
+    <li>Alınan mektup: 900 borç / 901 alacak</li>
+    <li>Verilen mektup: 903 borç / 902 alacak</li>
+    <li>İade veya nakde çevirme: ters nazım kayıt</li>
+  </ul>
+
+  <h3>8.2 Finansal Kayıtlar</h3>
+  <ul>
+    <li>Komisyon: 780 / 102</li>
+    <li>Blokaj: 126 / 102</li>
+    <li>Tazmin (verilen): 689 / 300</li>
+    <li>Tazmin (alınan): 100 / 679</li>
+  </ul>
+
+  <h3>8.3 e-Dönüşüm Uyum Alanları</h3>
+  <p>Yevmiye oluşturulurken sistem uygun alanları fişe taşır:</p>
+  <ul>
+    <li><span class="code">document_type = receipt</span></li>
+    <li><span class="code">payment_method = bank</span></li>
+    <li><span class="code">currency_rate_type</span>, <span class="code">invoice_currency_rate</span>, <span class="code">invoice_currency_inverse_rate</span></li>
+  </ul>
+
+  <h2>9. Bildirim ve Cron</h2>
+  <h3>9.1 İlk Bilgilendirme</h3>
+  <ul>
+    <li>Kayıt oluşturma/yetkili değişimlerinde ilk atama e-postası gönderilir.</li>
+    <li>Başarılı gönderimde <span class="code">intro_notification_sent</span> işaretlenir.</li>
+  </ul>
+
+  <h3>9.2 Vade Hatırlatıcı</h3>
+  <ul>
+    <li>Cron: <span class="code">Teminat Mektubu Vade Hatırlatıcı</span></li>
+    <li>Hedef günler: 30/15/7</li>
+    <li>Çıktı: mail.activity + mail.mail</li>
+  </ul>
+
+  <h2>10. Hata Senaryoları ve Çözüm Rehberi</h2>
+  <table>
+    <thead><tr><th>Hata</th><th>Neden</th><th>Aksiyon</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Yeterli teminat limiti bulunmamaktadır</td>
+        <td>Talep tutarı (limit para birimi karşılığı) kalan limiti aşıyor</td>
+        <td>Limit artırın veya talep tutarını düşürün; kur tarihini doğrulayın.</td>
+      </tr>
+      <tr>
+        <td>Nazım kayıtlar yalnızca 9 ile başlayan hesap kodlarına atılabilir</td>
+        <td>Nazım hesap kodu 9 ile başlamıyor</td>
+        <td>900/901/902/903 veya uygun 9* hesapları tanımlayın.</td>
+      </tr>
+      <tr>
+        <td>Genel Yevmiye bulunamadı</td>
+        <td><span class="code">type=general</span> yevmiye tanımsız</td>
+        <td>Şirket için genel yevmiye oluşturun.</td>
+      </tr>
+      <tr>
+        <td>Invalid field 'report_template' on model 'mail.template'</td>
+        <td>Odoo 18 ile uyumsuz eski alan kullanımı</td>
+        <td><span class="code">mdx_mutabakat/data/mail_template_data.xml</span> alanını uyumlu hale getirin.</td>
+      </tr>
+      <tr>
+        <td>account.move.line currency_id zorunlu alan hatası</td>
+        <td>Satır para birimi set edilmemiş</td>
+        <td>Güncel sürümde satır para birimi otomatik set edilir; modülü upgrade edin.</td>
+      </tr>
+      <tr>
+        <td>Filestore/asset bulunamadı (500)</td>
+        <td>Odoo.sh asset/filestore tutarsızlığı</td>
+        <td>Asset attachment temizliği + rebuild/restart uygulayın.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>11. Teknik Dosya Haritası</h2>
+  <table>
+    <thead><tr><th>Dosya</th><th>Sorumluluk</th></tr></thead>
+    <tbody>
+      <tr><td><span class="code">models/guarantee_letter.py</span></td><td>Ana model, iş akışı, kur/limit kontrol, muhasebe kayıtları, bildirimler</td></tr>
+      <tr><td><span class="code">models/bank_guarantee_limit.py</span></td><td>Limit tanımı, canlı kullanılan/kalan hesaplama</td></tr>
+      <tr><td><span class="code">views/guarantee_letter_views.xml</span></td><td>Form/list/search/pivot ekranları ve butonlar</td></tr>
+      <tr><td><span class="code">views/bank_guarantee_limit_views.xml</span></td><td>Limit yönetim ekranı</td></tr>
+      <tr><td><span class="code">data/guarantee_cron_data.xml</span></td><td>Vade hatırlatma cron</td></tr>
+      <tr><td><span class="code">report/*.xml</span></td><td>QWeb rapor şablonları</td></tr>
+      <tr><td><span class="code">security/*.xml, *.csv</span></td><td>Rol ve erişim matrisi</td></tr>
+    </tbody>
+  </table>
+
+  <h2>12. İşletim Kontrol Listesi</h2>
+  <ol>
+    <li>Banka limitleri doğru para biriminde tanımlandı mı?</li>
+    <li>Kur tipleri ve kur kaynakları doğrulandı mı?</li>
+    <li>Genel yevmiye ve hesap kodları hazır mı?</li>
+    <li>Mail sunucusu test edildi mi?</li>
+    <li>Rol atamaları doğru gruplara yapıldı mı?</li>
+    <li>Ana senaryolar (onay, iade, tazmin) UAT'ta geçti mi?</li>
+  </ol>
+
+  <h2>13. UAT Test Matrisi</h2>
+  <table>
+    <thead><tr><th>ID</th><th>Senaryo</th><th>Beklenen Sonuç</th></tr></thead>
+    <tbody>
+      <tr><td>UAT-01</td><td>TRY mektup onay</td><td>Nazım kayıt oluşur, limit düşer</td></tr>
+      <tr><td>UAT-02</td><td>EUR mektup + kur tipi Doviz Satis</td><td>TL karşılık doğru hesaplanır, fişte döviz alanları görünür</td></tr>
+      <tr><td>UAT-03</td><td>EUR mektup, limit TRY yetersiz</td><td>Onay engellenir, limit hatası gösterilir</td></tr>
+      <tr><td>UAT-04</td><td>Blokajlı kayıt</td><td>126/102 fişi oluşur</td></tr>
+      <tr><td>UAT-05</td><td>Nakde çevirme</td><td>Ters nazım + tazmin fişi oluşur</td></tr>
+      <tr><td>UAT-06</td><td>7/15/30 gün cron</td><td>Activity ve mail kayıtları oluşur</td></tr>
+    </tbody>
+  </table>
+
+  <h2>14. Değişiklik Geçmişi</h2>
+  <table>
+    <thead><tr><th>Sürüm</th><th>Tarih</th><th>Özet</th></tr></thead>
+    <tbody>
+      <tr><td>v1.0</td><td>17.03.2026</td><td>İlk yayım</td></tr>
+      <tr><td>v1.1</td><td>19.03.2026</td><td>Kur tipi görünürlüğü, TRY fallback, yevmiye kur alanları, limit para birimi bazlı kontrol ve canlı limit hesapları eklendi</td></tr>
+    </tbody>
+  </table>
+
+  <p class="footer">Bu doküman MindDX Dijital Dönüşüm Teknolojileri A.Ş. iç kullanımına yöneliktir.</p>
+</body>
+</html>
+      </tr>
+      <tr>
+        <td>Nazım hesap hatası (9 ile başlamalı)</td>
+        <td>Yanlış hesap kodu veya hesap planı eksik</td>
+        <td>900/901/902/903 (veya alt kodları) aktif hesap olarak tanımlayın.</td>
+      </tr>
+      <tr>
+        <td>Hatırlatma maili gitmiyor</td>
+        <td>Mail server ayarı eksik veya alıcı adresi boş/hatalı</td>
+        <td>SMTP ayarını test edin, reminder user ve e-posta alanını kontrol edin.</td>
+      </tr>
+      <tr>
+        <td>Yevmiye oluşmuyor</td>
+        <td>General journal bulunamıyor veya hesap kodu eksik</td>
+        <td>Şirket için general tipinde yevmiye ve gerekli hesap kodlarını tanımlayın.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>15. Sürüm Tarihçesi</h2>
+  <table>
+    <thead>
+      <tr><th>Tarih</th><th>Sürüm</th><th>Açıklama</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>13.03.2026</td><td>v0.9</td><td>E-dönüşüm uyumu ve temel stabilizasyon.</td></tr>
+      <tr><td>16.03.2026</td><td>v1.0-rc</td><td>Nazım kuralları, alınan/verilen ayrımı, finansal event kayıtları.</td></tr>
+      <tr><td>17.03.2026</td><td>v1.0</td><td>Bildirim sistemi, mail güvenilirliği, menü ve kullanım iyileştirmeleri.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>16. Operasyonel Öneri</h2>
+  <ul>
+    <li>Haftalık olarak vadesi yaklaşan mektuplar pivot ekranından kontrol edilmelidir.</li>
+    <li>Aylık olarak banka limitleri ve kullanılan tutarlar finans ekibi tarafından mutabık hale getirilmelidir.</li>
+    <li>Rol atamaları (özellikle Finans Yöneticisi) periyodik denetlenmelidir.</li>
+  </ul>
+
+  <p class="footer">Bu doküman MindDX Dijital Dönüşüm Teknolojileri A.Ş. iç kullanımına yöneliktir.</p>
+</body>
+</html>

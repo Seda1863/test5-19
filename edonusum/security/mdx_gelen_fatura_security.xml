@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Default internal users: see only invoices assigned to them (or created by them). -->
+    <record id="rule_mdx_gelen_fatura_internal_own" model="ir.rule">
+        <field name="name">Gelen Fatura - Internal Own Records</field>
+        <field name="model_id" ref="model_mdx_gelen_fatura"/>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="domain_force">['&amp;', '|', ('company_id', '=', False), ('company_id', 'in', company_ids), '|', ('responsible_user_id', '=', user.id), ('create_uid', '=', user.id)]</field>
+    </record>
+
+    <!-- Accounting users can view all incoming invoices in allowed companies. -->
+    <record id="rule_mdx_gelen_fatura_account_all" model="ir.rule">
+        <field name="name">Gelen Fatura - Accounting Full Visibility</field>
+        <field name="model_id" ref="model_mdx_gelen_fatura"/>
+        <field name="groups" eval="[(4, ref('account.group_account_user')), (4, ref('account.group_account_manager')), (4, ref('base.group_system'))]"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <!-- Keep line visibility aligned with parent invoice access. -->
+    <record id="rule_mdx_gelen_fatura_line_internal_own" model="ir.rule">
+        <field name="name">Gelen Fatura Satir - Internal Own Records</field>
+        <field name="model_id" ref="model_mdx_gelen_fatura_line"/>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="domain_force">['&amp;', '|', ('gelen_fatura_id.company_id', '=', False), ('gelen_fatura_id.company_id', 'in', company_ids), '|', ('gelen_fatura_id.responsible_user_id', '=', user.id), ('gelen_fatura_id.create_uid', '=', user.id)]</field>
+    </record>
+
+    <record id="rule_mdx_gelen_fatura_line_account_all" model="ir.rule">
+        <field name="name">Gelen Fatura Satir - Accounting Full Visibility</field>
+        <field name="model_id" ref="model_mdx_gelen_fatura_line"/>
+        <field name="groups" eval="[(4, ref('account.group_account_user')), (4, ref('account.group_account_manager')), (4, ref('base.group_system'))]"/>
+        <field name="domain_force">['|', ('gelen_fatura_id.company_id', '=', False), ('gelen_fatura_id.company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>

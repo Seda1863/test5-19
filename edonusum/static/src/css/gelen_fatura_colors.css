@@ -1,0 +1,48 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Gelen Fatura List View - Satır Arka Plan Renkleri (Dolgulu)
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ✅ Yeşil arka plan - Onaylanmış, kaydedilebilir fatura */
+.o_list_view .o_data_row.text-success {
+    background-color: #d4edda !important;
+    border-left: 4px solid #28a745 !important;
+}
+
+.o_list_view .o_data_row.text-success:hover {
+    background-color: #c3e6cb !important;
+}
+
+.o_list_view .o_data_row.text-success td {
+    color: #155724 !important;
+    font-weight: 500;
+}
+
+/* 🔵 Mavi arka plan - Henüz onaylanmamış */
+.o_list_view .o_data_row.text-info {
+    background-color: #cce5ff !important;
+    border-left: 4px solid #007bff !important;
+}
+
+.o_list_view .o_data_row.text-info:hover {
+    background-color: #b8daff !important;
+}
+
+.o_list_view .o_data_row.text-info td {
+    color: #004085 !important;
+    font-weight: 500;
+}
+
+/* 🔴 Kırmızı arka plan - VKN bulunamadı / Cari eşleştirilemedi */
+.o_list_view .o_data_row.text-danger {
+    background-color: #f8d7da !important;
+    border-left: 4px solid #dc3545 !important;
+}
+
+.o_list_view .o_data_row.text-danger:hover {
+    background-color: #f1c1c6 !important;
+}
+
+.o_list_view .o_data_row.text-danger td {
+    color: #721c24 !important;
+    font-weight: 500;
+}

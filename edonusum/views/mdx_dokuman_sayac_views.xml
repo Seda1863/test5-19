@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_mdx_dokuman_sayac_list" model="ir.ui.view">
+        <field name="name">mdx.dokuman.sayac.list</field>
+        <field name="model">mdx.dokuman.sayac</field>
+        <field name="arch" type="xml">
+            <list string="Doküman Sayac">
+                <field name="active"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="company_id"/>
+                <field name="last_used_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_mdx_dokuman_sayac_form" model="ir.ui.view">
+        <field name="name">mdx.dokuman.sayac.form</field>
+        <field name="model">mdx.dokuman.sayac</field>
+        <field name="arch" type="xml">
+            <form string="Doküman Sayac">
+                <sheet>
+                    <group>
+                        <field name="code"/>
+                        <field name="name"/>
+                        <field name="description"/>
+                        <field name="company_id"/>
+                        <field name="active"/>
+                    </group>
+                    <group>
+                        <field name="gonderilecek_sonraki_sira_no" />
+                        <field name="last_used_date"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_mdx_dokuman_sayac" model="ir.actions.act_window">
+        <field name="name">Doküman Sayac</field>
+        <field name="res_model">mdx.dokuman.sayac</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_mdx_dokuman_sayac" name="Doküman Sayacı" action="action_mdx_dokuman_sayac"/>
+</odoo>
+

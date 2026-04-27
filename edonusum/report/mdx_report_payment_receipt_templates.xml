@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit the payment receipt document template to use custom payment_method -->
+    <template id="report_payment_receipt_document_inherit" inherit_id="account.report_payment_receipt_document">
+        <!-- Replace the payment_method div to use custom payment_method field -->
+        <xpath expr="//div[@name='payment_method']" position="replace">
+            <div name="payment_method"
+                 t-if="o.payment_method"
+                 class="col-6">
+                Ödeme Yöntemi: 
+                <span t-if="o.payment_method == 'cash'">Nakit</span>
+                <span t-if="o.payment_method == 'bank'">Banka</span>
+                <span t-if="o.payment_method == 'credit_card'">Kredi Kartı</span>
+                <span t-if="o.payment_method == 'check'">Çek</span>
+                <span t-if="o.payment_method == 'promissory_note'">Senet</span>
+            </div>
+        </xpath>
+    </template>
+</odoo>
