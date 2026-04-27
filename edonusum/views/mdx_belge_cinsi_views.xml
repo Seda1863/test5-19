@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_mdx_belge_cinsi_list" model="ir.ui.view">
+        <field name="name">mdx.belge.cinsi.list</field>
+        <field name="model">mdx.belge.cinsi</field>
+        <field name="arch" type="xml">
+            <list string="Belge Cinsi">
+                <field name="active"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="description"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_mdx_belge_cinsi_form" model="ir.ui.view">
+        <field name="name">mdx.belge.cinsi.form</field>
+        <field name="model">mdx.belge.cinsi</field>
+        <field name="arch" type="xml">
+            <form string="Belge Cinsi">
+                <sheet>
+                    <group>
+                        <field name="code"/>
+                        <field name="name"/>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_mdx_belge_cinsi" model="ir.actions.act_window">
+        <field name="name">Belge Cinsi</field>
+        <field name="res_model">mdx.belge.cinsi</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_mdx_belge_cinsi" name="Belge Cinsleri" action="action_mdx_belge_cinsi"/>
+</odoo>

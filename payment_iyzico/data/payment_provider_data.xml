@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="payment_provider_iyzico" model="payment.provider">
+            <field name="name">Iyzico</field>
+            <field name="code">iyzico</field>
+            <field name="inline_form_view_id" ref="payment_iyzico.iyzico_inline_form"/>
+            <!-- <field name="image_128" type="base64" file="payment_iyzico/static/img/iyzico_icon.png"/> -->
+            <field name="payment_method_ids" eval="[Command.set([ref('payment.payment_method_card')])]"/>
+        </record>
+
+        <record id="account_payment_method_iyzico" model="account.payment.method">
+            <field name="name">Iyzico</field>
+            <field name="code">iyzico</field>
+            <field name="payment_type">inbound</field>
+        </record>
+        
+    </data>
+</odoo>

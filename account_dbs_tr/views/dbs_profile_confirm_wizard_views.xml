@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_dbs_profile_confirm_wizard_form" model="ir.ui.view">
+        <field name="name">dbs.profile.confirm.wizard.form</field>
+        <field name="model">dbs.profile.confirm.wizard</field>
+        <field name="arch" type="xml">
+            <form string="DBS Bilgilerini Tamamla" create="0" delete="0">
+                <header>
+                    <button name="action_open_contract" type="object" string="Sozlesmeyi Aç" class="btn-link"/>
+                    <button name="action_open_move" type="object" string="Faturayı Aç" class="btn-link"/>
+                </header>
+                <sheet>
+                    <group string="Gönderici Bilgileri">
+                        <group>
+                            <field name="move_id" readonly="1"/>
+                            <field name="partner_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="contract_id" readonly="1"/>
+                            <field name="currency_id" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <group string="DBS Sözleşmesi &amp; Banka Bilgileri">
+                        <group>
+                            <field name="contract_bank_id" readonly="1"/>
+                            <field name="contract_bank_account_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="contract_limit" readonly="1"/>
+                            <field name="contract_settlement_journal_id" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <group string="DBS Limit Bilgileri">
+                        <group>
+                            <field name="dbs_limit" widget="monetary"/>
+                            <field name="dbs_used_amount" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="dbs_available_amount" readonly="1"/>
+                            <field name="dbs_required_amount" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <group string="Limit Durumu">
+                        <group>
+                            <field name="dbs_risk_status" readonly="1"/>
+                            <field name="dbs_over_amount" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="dbs_customer_code"/>
+                            <field name="dbs_risk_control"/>
+                        </group>
+                    </group>
+
+                    <group string="Limit Asilinca Yapilacaklar">
+                        <field name="limit_exceeded_action" nolabel="1" readonly="1" widget="text"/>
+                    </group>
+
+                    <group string="Kaynak Fatura Yevmiyeleri" invisible="move_entry_count == 0">
+                        <field name="move_journal_entries_ids" nolabel="1" readonly="1">
+                            <list>
+                                <field name="name" string="Yevmiye No"/>
+                                <field name="date" string="Tarih"/>
+                                <field name="journal_id" string="Yevmiye"/>
+                                <field name="state" string="Durum"/>
+                                <field name="amount_total" string="Toplam"/>
+                            </list>
+                        </field>
+                    </group>
+
+                    <group string="Ek Bilgi">
+                        <field name="message" nolabel="1" readonly="1" widget="text"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_confirm" type="object" string="Kaydet ve DBS'ye Gonder" class="btn-primary"/>
+                    <button name="action_cancel" type="object" string="Iptal" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

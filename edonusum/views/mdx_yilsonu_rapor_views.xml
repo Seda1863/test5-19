@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ── Liste görünümü ─────────────────────────────────────────────── -->
+    <record id="view_mdx_yilsonu_rapor_list" model="ir.ui.view">
+        <field name="name">mdx.yilsonu.rapor.list</field>
+        <field name="model">account.move</field>
+        <field name="arch" type="xml">
+            <list string="Dönem Sonu Kapanış Hareketleri"
+                  default_group_by="mdx_closing_period"
+                  decoration-success="state == 'posted'"
+                  decoration-warning="state == 'draft'">
+
+                <!-- Seçili kayıtlara toplu aksiyon butonu -->
+                <header>
+                    <button name="action_post"
+                            string="Seçilenleri Onayla"
+                            type="object"
+                            class="btn-primary"/>
+                </header>
+
+                <field name="mdx_closing_period" string="Dönem" optional="show"/>
+                <field name="mdx_closing_step" string="Kapanış Adımı" widget="badge"
+                       decoration-success="mdx_closing_step == 'yansitma'"
+                       decoration-info="mdx_closing_step == 'kapanish'"
+                       decoration-warning="mdx_closing_step == 'devir'"/>
+                <field name="name" string="Yevmiye No"/>
+                <field name="date" string="Tarih"/>
+                <field name="ref" string="Açıklama"/>
+                <field name="journal_id" string="Yevmiye Defteri" optional="show"/>
+                <field name="company_id" string="Şirket" optional="show"
+                       groups="base.group_multi_company"/>
+                <field name="state" string="Durum" widget="badge"
+                       decoration-success="state == 'posted'"
+                       decoration-warning="state == 'draft'"/>
+                <field name="amount_total" string="Tutar" sum="Toplam"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Arama görünümü ────────────────────────────────────────────── -->
+    <record id="view_mdx_yilsonu_rapor_search" model="ir.ui.view">
+        <field name="name">mdx.yilsonu.rapor.search</field>
+        <field name="model">account.move</field>
+        <field name="arch" type="xml">
+            <search string="Dönem Sonu Kapanış Ara">
+                <field name="mdx_closing_period" string="Dönem"/>
+                <field name="ref" string="Açıklama"/>
+                <field name="name" string="Yevmiye No"/>
+                <field name="journal_id" string="Yevmiye Defteri"/>
+
+                <!-- Adım filtreleri -->
+                <separator/>
+                <filter name="filter_yansitma"
+                        string="Yansıtma"
+                        domain="[('mdx_closing_step', '=', 'yansitma')]"/>
+                <filter name="filter_kapanish"
+                        string="Kapatma"
+                        domain="[('mdx_closing_step', '=', 'kapanish')]"/>
+                <filter name="filter_devir"
+                        string="690 Devir"
+                        domain="[('mdx_closing_step', '=', 'devir')]"/>
+
+                <!-- Durum filtreleri -->
+                <separator/>
+                <filter name="filter_draft"
+                        string="Onay Bekleyenler"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter name="filter_posted"
+                        string="Onaylananlar"
+                        domain="[('state', '=', 'posted')]"/>
+
+                <!-- Gruplandırma -->
+                <group expand="1" string="Gruplandır">
+                    <filter name="group_by_period"
+                            string="Dönem"
+                            context="{'group_by': 'mdx_closing_period'}"/>
+                    <filter name="group_by_step"
+                            string="Kapanış Adımı"
+                            context="{'group_by': 'mdx_closing_step'}"/>
+                    <filter name="group_by_state"
+                            string="Durum"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_by_journal"
+                            string="Yevmiye Defteri"
+                            context="{'group_by': 'journal_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ── Aksiyon ───────────────────────────────────────────────────── -->
+    <record id="action_mdx_yilsonu_rapor" model="ir.actions.act_window">
+        <field name="name">Dönem Sonu Kapanış Hareketleri</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('mdx_closing_step', '!=', False)]</field>
+        <field name="context">{
+            'search_default_group_by_period': 1,
+            'search_default_group_by_step': 1
+        }</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_mdx_yilsonu_rapor_list')})]"/>
+    </record>
+
+    <!-- ── Menü ──────────────────────────────────────────────────────── -->
+    <menuitem id="menu_mdx_yilsonu_rapor"
+              name="Dönem Sonu Hareketleri"
+              parent="account.menu_finance_entries"
+              action="action_mdx_yilsonu_rapor"
+              sequence="91"
+              groups="account.group_account_manager"/>
+</odoo>

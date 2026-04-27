@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_mdx_inh_account_move_form" model="ir.ui.view">
+        <field name="name">mdx.inh.account.move.form</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="attributes">
+                <attribute name="domain">[('id', 'in', filtered_partner_ids)]</attribute>
+            </field>
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="gelen_fatura_id" invisible="move_type != 'in_invoice'"/>
+            </xpath>
+            <xpath expr="//button[@name='action_open_business_doc']" position="before">
+                <button name="button_open_check_leaf" type="object" class="oe_stat_button" icon="fa-ticket" invisible="not cheque_leaf_id or move_type != 'entry'" groups="account.group_account_user,account.group_account_readonly">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Çek Yaprağı</span>
+                    </div>
+                </button>
+            </xpath>
+            <xpath expr="//form/header" position="inside">
+                <button name="action_send_einvoice"
+                        type="object"
+                        class="btn-primary"
+                        string="E-Fatura Gönder"
+                        icon="fa-paper-plane"
+                        invisible="efatura_gonderilebilir == False"
+                        />
+                <!-- <button name="view_invoice_pdf_on_newtab"
+                        type="object"
+                        class="btn-primary"
+                        string="E-Fatura Görüntüle"
+                        icon="fa-file-pdf-o"
+                        invisible="ekli_belge_id == False"
+                        /> -->
+                <button name="view_invoice_pdf_on_newtab"
+                        type="object"
+                        class="btn-primary"
+                        string="E-Fatura Görüntüle"
+                        icon="fa-file-pdf-o"
+                        invisible="ekli_belge_id == False"
+                        />
+                <button name="refresh_api_response"
+                        type="object"
+                        class="btn-primary"
+                        string=""
+                        icon="fa-refresh"
+                        invisible="belge_oid_kod == False"
+                        />
+                <!-- action_preview_efatura butonu -->
+                <button name="action_preview_efatura"
+                        type="object"
+                        class="btn-secondary"
+                        string="E-Fatura Önizleme"
+                        icon="fa-eye"
+                        invisible="efatura_gonderilebilir == False"
+                        />
+            </xpath>
+            <xpath expr="//form[1]/sheet[1]/group[1]/group[2]/field[@name='date']" position="attributes">
+                <attribute name="invisible">False</attribute>
+            </xpath>
+            <xpath expr="//div[@name='currency_div']" position="attributes">
+                <attribute name="invisible">move_type == 'entry' and origin_payment_id != False</attribute>
+            </xpath>
+            <xpath expr="//div[@name='currency_conversion_div']" position="attributes">
+                <attribute name="invisible">move_type == 'entry' and origin_payment_id != False</attribute>
+            </xpath>
+            <xpath expr="//field[@name='invoice_currency_rate']" position="attributes">
+                <attribute name="readonly">currency_rate_type != 'manualexchange'</attribute>
+            </xpath>
+            <xpath expr="//div[@name='currency_conversion_div']" position="after">
+                <div name="currency_conversion_div_2"
+                    class="d-flex text-muted float-start"
+                    invisible="False">
+                    <span>1 </span>
+                    <field name="currency_id" readonly="True" options="{'no_open': True}"/>
+                    <span> = </span>
+                    <field name="invoice_currency_inverse_rate" digits="[12,6]" readonly="currency_rate_type != 'manualexchange'"/>
+                    <span> </span>
+                    <field name="company_currency_id" readonly="True" options="{'no_open': True}"/>
+                </div>
+            </xpath>
+            <xpath expr="//div[@name='currency_conversion_div_2']" position="after">
+                <div name="currency_conversion_div_3"
+                    class="d-flex text-muted float-start"
+                    style="clear: both;"
+                    invisible="False">
+                    <field name="currency_rate_type" string="Kur Seçimi"/>
+                </div>
+            </xpath>
+            <xpath expr="//form/sheet/notebook" position="inside">
+                <page string="E-Dönüşüm" name="edonusum_page">
+                    <group>
+                        <!-- Genel Bilgiler -->
+                        <group string="Genel Bilgiler">
+                            <field name="irsaliyesiz_faturalandir" help="İrsaliyesiz faturalandırma yapılacaksa işaretleyin."/>
+                            <field name="mikro_ihracat" help="Mikro ihracat faturası ise işaretleyin." invisible="move_type != 'out_invoice'"/>
+                            <field name="iade_edilen_fatura_no" invisible="reversed_entry_id == False and move_type != 'in_refund'" placeholder="İade edilen fatura numarasını girin"/>
+                            <field name="iade_edilen_fatura_tarihi" invisible="reversed_entry_id == False and move_type != 'in_refund'" placeholder="İade edilen fatura tarihini girin"/>
+                            <!-- <div name="currency_conversion_div_2"
+                                    class="d-flex text-muted float-start"
+                                    invisible="currency_id == company_currency_id">
+                                <span>1 </span>
+                                <field name="currency_id" readonly="True" options="{'no_open': True}"/>
+                                <span> = </span>
+                                <field name="invoice_currency_inverse_rate" digits="[12,6]" readonly="True"/>
+                                <span> </span>
+                                <field name="company_currency_id" readonly="True" options="{'no_open': True}"/>
+                            </div> -->
+                            <!-- <field name="hesap_virman" placeholder="Hesap virman işlemi yapılacak mı?" invisible="!context.get('edonusum.is_license_active')"/> -->
+                            <field name="hesap_virman" placeholder="Hesap virman işlemi yapılacak mı?" />
+                            <!-- <field name="stock_move_id" readonly="1"/> -->
+                            <field name="kayit_aciklamasi" placeholder="Kayıt açıklaması girin"/>
+                            <field name="fatura_no" placeholder="Fatura numarasını yazın"/>
+                            <field name="uuid" placeholder="Eşsiz bir UUID girin" readonly="ekli_belge_id != False"/>
+                            <field name="belge_oid_kod" placeholder="Belge OID kodunu yazın"/>
+                            <field name="fatura_aciklama" force_save="1" placeholder="Fatura ile ilgili açıklama yazın"/>
+                            <!-- <field name="hide_post_button"/> -->
+                            <!-- <field name="expense_sheet_id" placeholder="Masrafı seçin"/> -->
+                        </group>
+
+                        <!-- E-Fatura Bilgileri -->
+                        <group string="E-Fatura Bilgileri">
+                            <field name="efatura_turu_id" placeholder="E-Fatura türünü seçin"/>
+                            <field name="efatura_senaryo_id" placeholder="E-Fatura senaryosunu seçin"/>
+                            <field name="fatura_tipi_id" placeholder="E-Fatura tipini seçin"/>
+                            <field name="fatura_alt_tipi_id" placeholder="Fatura alt tipini seçin"/>
+                            <field name="fatura_statu_id" placeholder="Fatura statüsünü seçin"/>
+                            <field name="fatura_seri_id" placeholder="Fatura serisini girin" context="{
+                                'default_code':            fatura_seri_id and fatura_seri_id.name or False,
+                                'default_ebelge_turu_id':  efatura_turu_id and efatura_turu_id.id or False,
+                            }"/>
+
+                        </group>
+
+                        <!-- E-Fatura Teknik -->
+                        <group string="E-Fatura Teknik">
+                            <field name="efatura_gonderilebilir"/>                           
+                            <field name="fatura_gonderim_hata_kodu"/>
+                            <field name="fatura_durum_detay"/>        
+                        </group>
+
+                        <!-- Gönderim ve Ekli Belgeler -->
+                        <group string="Gönderim ve Belgeler">
+                            <field name="ekli_belge_id" placeholder="Ekli belgeyi seçin"/>
+                            <field name="belge_gonderim_sekli" placeholder="Belge gönderim şeklini seçin"/>
+                            <field name="fatura_xml" placeholder="Fatura XML dosyasını ekleyin"/>
+                            <field name="xml_ekli_belge_id" placeholder="XML ekli belgeyi seçin"/>
+                        </group>
+
+                        <!-- Teslim ve Ödeme Bilgileri -->
+                        <group string="Teslim ve Ödeme Bilgileri">
+                            <field name="teslim_sarti_id" placeholder="Teslim şartını seçin"/>
+                            <field name="gonderim_sekli_id" placeholder="Gönderim şeklini seçin"/>
+                            <field name="odeme_yontemi_id" placeholder="Ödeme yöntemini seçin"/>
+                            <field name="gcb_tescil_no" placeholder="GÇB tescil numarasını yazın"/>
+                            <field name="gtb_referans_no" placeholder="GTB referans numarasını yazın"/>
+                        </group>
+
+                        <!-- Ağırlık ve Paketleme -->
+                        <group string="Ağırlık ve Paketleme">
+                            <field name="net_kg" placeholder="Net ağırlığı (kg) girin"/>
+                            <field name="brut_kg" placeholder="Brüt ağırlığı (kg) girin"/>
+                            <field name="bulundugu_kabin_numarasi" placeholder="Kabın numarasını yazın"/>
+                            <field name="bulundugu_kabin_markasi" placeholder="Kabın markasını yazın"/>
+                            <field name="bulundugu_kabin_adedi" placeholder="Kabın adedini girin"/>
+                            <field name="bulundugu_kabin_cinsi_ve_nevi_id" placeholder="Paket kap/cins seçin"/>
+                        </group>
+
+                        <!-- Vergi ve Kimlik Bilgileri -->
+                        <group string="Vergi ve Kimlik Bilgileri">
+                            <field name="vkn_tckn" placeholder="Vergi Kimlik Numarası (VKN) veya TC Kimlik Numarası (TCKN) girin"/>
+                        </group>
+
+                        <group>
+                            <field name="state" string="STATE"/>
+                            <!-- <field name="reversed_entry_id" string="Reversed Entry" optional="show"/> -->
+                            <!-- <field name="is_storno" string="is_storno"/> -->
+                            <field  name="logging_field1" string="LOG1"/>
+                            <field  name="logging_field2" string="LOG2"/>
+                            <field  name="logging_field3" string="LOG3"/>
+                            <field  name="logging_field4" string="LOG4"/>
+                            <field  name="logging_field5" string="LOG5"/>
+                            <field  name="logging_field6" string="LOG6"/>
+                            <!-- <field  name="logging_field7" string="LOG7"/>
+                            <field  name="logging_field8" string="LOG8"/> -->
+                        </group>
+                    </group>
+                </page>
+                <!-- <page string="E-Defter" name="edefter_page">
+                    <group>
+                        <field  name="entry_sequence_no" string="Yevmiye No" readonly="1"/>
+                        <field  name="payment_method" />
+                        <field  name="document_type" />
+                        <field  name="document_type_description_id" readonly="document_type != 'other'"/>
+                        <field  name="document_number" />
+                        <field  name="document_date" />
+                    </group>
+                </page> -->
+            </xpath>
+            <xpath expr="//notebook" position="before">
+                <!-- <notebook> -->
+                <group string="E-Defter" name="edefter_group">
+                    <group>
+                        <!-- <field name="entry_sequence_no" string="Yevmiye No" readonly="1"/> -->
+                        <field name="payment_method" required="1"/>
+                        <field name="document_type" required="1"/>
+                        <field name="document_type_description_id" readonly="document_type != 'other'"/>
+                        <field name="document_number" />
+                        <field name="document_date" />
+                    </group>
+                    <group invisible="payment_method != 'check' and payment_ids == []">
+                        <!-- payment_type 'outbound' ise no_create True -->
+                        <field name="cheque_leaf_id"  />
+                        <field name="cheque_status" options="{'no_create': True}" readonly="cheque_leaf_id == False"/>
+                        <field name="cheque_amount" />
+                        <field name="bring_cheque_amount"/>
+                        <field name="expiry_date" />
+                        <field name="difference" />
+                    </group>
+                </group>
+                <!-- </notebook> -->
+            </xpath>
+            <!-- <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='invoice_tab']/field[@name='invoice_line_ids']/list[1]/field[@name='price_subtotal']" position="after"> -->
+            <xpath expr="//form/sheet/notebook/page[@name='invoice_tab']/field[@name='invoice_line_ids']/list" position="inside" invisible="move_type == 'entry'">
+                <!-- <field name="tax_base_amount" string="tax_base_amount" optional="show"/> -->
+                <field name="gtip_kodu" string="GTIP Kodu" optional="show" placeholder="GTIP kodunu girin" readonly="False" />
+                <!-- Urunu Ac butonu kaldırıldı - kullanıcı zaten başka yerden açabiliyor -->
+                <!-- <field name="product_template_open_url" widget="url" string="Urunu Ac" text="Urunu Ac" optional="show" readonly="1" invisible="not product_id or gtip_kodu or not istisna_kodu"/> -->
+                <field name="istisna_kodu" string="İstisna Kodu" optional="show" placeholder="İstisna kodunu seçin" readonly="False" />
+                <field name="tevkifat_kodu" string="Tevkifat Kodu" optional="show" placeholder="Tevkifat kodunu seçin" readonly="False" />
+                <field name="ihrac_kayit_kodu" string="İhrac Kayıt Kodu" optional="show" placeholder="İhraç kayıt kodunu girin" readonly="False" />
+                <field name="vergi_kodu" string="Vergi Kodu" optional="show" placeholder="Vergi kodunu seçin" readonly="False" />
+                <field name="purchase_line_id" string="Satınalma Satırı" optional="show"/>
+                <field name="purchase_order_id" string="Satınalma Siparişi" optional="show"/>
+            </xpath>
+            <xpath expr="//form/sheet/notebook/page[@name='invoice_tab']/field[@name='invoice_line_ids']/list/field[@name='product_id']" position="after">
+                <field name="line_description" optional="show" readonly="False" />
+            </xpath>
+            <!-- tax_ids her zaman seçilebilir, istisna kodu olsa bile kullanıcı değiştirebilir -->
+            <xpath expr="//form/sheet/notebook/page[@name='invoice_tab']/field[@name='invoice_line_ids']/list/field[@name='tax_ids']" position="attributes">
+                <attribute name="readonly">False</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- <record id="view_mdx_account_move_form_inherit" model="ir.ui.view">
+        <field name="name">mdx.account.move.form</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_line_ids']/list/field[@name='account_id']" position="before">
+                <field name="line_sequence_no"/>
+            </xpath>
+        </field>
+    </record> -->
+         
+    <record id="view_mdx_inh_move_line_pivot" model="ir.ui.view">
+        <field name="name">mdx.inh.account.move.line.pivot</field>
+        <field name="model">account.move.line</field>
+        <field name="inherit_id" ref="account.view_move_line_pivot"/>
+        <field name="arch" type="xml">
+            <xpath expr="//pivot" position="replace">
+                <pivot string="Özel Journal Items" sample="1">
+                    <field name="partner_id" type="row"/>
+                    <!-- <field name="move_id" type="row"/> -->
+                    <field name="display_move_identifier" type="row"/>
+                    <field name="currency_id" type="col"/>
+                    <field name="amount_residual_currency" type="measure" operator="sum"/>
+                </pivot>
+            </xpath>
+        </field>
+    </record>
+    
+    <record id="invoice_form" model="ir.ui.view">
+        <field name="name">related.pickings.account.invoice.form</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form" />
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <field name="picking_ids" invisible="1" />
+                <button type="object" name="action_show_picking" class="oe_stat_button" icon="fa-truck" invisible="picking_count == 0">
+                    <field name="picking_count" widget="statinfo" string="Delivery" />
+                </button>
+            </div>
+            <xpath expr="//field[@name='invoice_line_ids']//list" position="inside">
+                <field name="move_line_ids" force_save="1" column_invisible="1" />
+            </xpath>
+            <xpath expr="//field[@name='line_ids']//list" position="inside">
+                <field name="move_line_ids" force_save="1" column_invisible="1" />
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

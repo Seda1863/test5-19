@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_service_creation_wizard_form" model="ir.ui.view">
+        <field name="name">mdx.service.creation.wizard.form</field>
+        <field name="model">mdx.service.creation.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Manuel Hizmet Oluşturma">
+                <!-- Yeni Hizmet Oluşturulacak Bilgisi -->
+                <p>Yeni hizmet oluşturulacak, onaylıyor musunuz? Aksi takdirde, eşleştirilemediği için gelen fatura bilgileri ile otomatik olarak oluşturulacak ve eşleştirilecektir.</p>
+                <footer>
+                    <button string="Onayla" type="object" name="action_confirm" class="btn-primary"/>
+                    <button string="İptal" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_service_creation_wizard" model="ir.actions.act_window">
+        <field name="name">Hizmet Oluşturma Sihirbazı</field>
+        <field name="res_model">mdx.service.creation.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_service_creation_wizard_form"/>
+        <field name="target">new</field>
+    </record>
+</odoo>

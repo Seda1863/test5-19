@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_mdx_edefter_doctype_desc_list" model="ir.ui.view">
+        <field name="name">mdx.edefter.doctype.desc.list</field>
+        <field name="model">mdx.edefter.doctype.desc</field>
+        <field name="arch" type="xml">
+            <list string="E-Defter Belge Tipi Açıklaması">
+                <field name="active"/>
+                <field name="name"/>
+                <field name="description"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_mdx_edefter_doctype_desc_form" model="ir.ui.view">
+        <field name="name">mdx.edefter.doctype.desc.form</field>
+        <field name="model">mdx.edefter.doctype.desc</field>
+        <field name="arch" type="xml">
+            <form string="E-Defter Belge Tipi Açıklaması">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="description"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_mdx_edefter_doctype_desc" model="ir.actions.act_window">
+        <field name="name">E-Defter Belge Tipi Açıklaması</field>
+        <field name="res_model">mdx.edefter.doctype.desc</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- <menuitem id="menu_mdx_edefter_doctype_desc" name="E-Defter Belge Tipi Açıklamaları" action="action_mdx_edefter_doctype_desc"/> -->
+</odoo>

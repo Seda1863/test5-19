@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Operasyonlar menüsü altına "Gelen İrsaliye" ana menüsünü ekleme -->
+        <menuitem id="menu_mdx_gelen_irsaliye_root" 
+                  name="Gelen İrsaliye" 
+                  parent="stock.menu_stock_warehouse_mgmt"
+                  sequence="10"/>
+
+        <!-- Gelen İrsaliyeler alt menüsü -->
+        <menuitem id="menu_mdx_gelen_irsaliye" 
+                  name="Gelen İrsaliyeler" 
+                  parent="menu_mdx_gelen_irsaliye_root" 
+                  action="action_mdx_gelen_irsaliye"
+                  sequence="20"/>
+
+        <!-- Hizmet Eşleştirme alt menüsü -->
+        <!-- <menuitem id="menu_mdx_gelen_hizmet_eslestirme" 
+                  name="Hizmet Eşleştirme" 
+                  parent="menu_mdx_gelen_fatura_root" 
+                  action="action_mdx_gelen_eslestirme"
+                  sequence="30"/> -->
+    </data>
+</odoo>

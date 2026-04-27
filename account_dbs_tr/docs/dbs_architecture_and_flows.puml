@@ -1,0 +1,237 @@
+@startuml
+' ------------------------------------------------------------
+' Diagram 1: Module dependencies
+' ------------------------------------------------------------
+left to right direction
+skinparam componentStyle rectangle
+skinparam shadowing false
+
+title Odoo 18 TR DBS - Module Dependency Map
+
+package "Odoo Standard Modules" {
+  [account]
+  [mail]
+}
+
+package "DBS Modules" {
+  [account_dbs_tr]
+  [account_dbs_tr_stubbank]
+}
+
+package "External Bank Layer" {
+  [Bank API / SFTP / File Channel]
+}
+
+[account_dbs_tr] --> [account] : depends
+[account_dbs_tr] --> [mail] : depends
+[account_dbs_tr_stubbank] --> [account_dbs_tr] : depends
+
+[account_dbs_tr] --> [Bank API / SFTP / File Channel] : adapter pattern
+[account_dbs_tr_stubbank] --> [Bank API / SFTP / File Channel] : concrete adapter
+
+note bottom of [account_dbs_tr]
+Core responsibilities:
+- dbs.contract / dbs.batch / dbs.batch.line
+- ACK import + batch send
+- statement auto-match
+- partner and invoice extensions
+end note
+
+@enduml
+
+@startuml
+' ------------------------------------------------------------
+' Diagram 2: Core data model relationships
+' ------------------------------------------------------------
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+title Odoo 18 TR DBS - Core Data Model
+
+class "res.partner" as Partner {
+  +dbs_enabled: Boolean
+  +dbs_status: active|suspended|closed
+  +dbs_contract_id: Many2one(dbs.contract)
+  +dbs_customer_code: Char
+  +dbs_limit: Monetary
+  +dbs_limit_available: Monetary(compute)
+}
+
+class "dbs.contract" as Contract {
+  +name: Char
+  +company_id: Many2one(res.company)
+  +currency_id: Many2one(res.currency)
+  +bank_partner_id: Many2one(res.partner)
+  +settlement_bank_journal_id: Many2one(account.journal)
+  +suspense_account_id: Many2one(account.account)
+  +integration_type: manual|sftp|api
+  +adapter_code: Char
+  +active: Boolean
+}
+
+class "dbs.batch" as Batch {
+  +name: Sequence(DBSB/YYYY/NNNN)
+  +date: Date
+  +contract_id: Many2one(dbs.contract)
+  +state: draft|sent|ack|settled|closed|cancel
+  +bank_reference: Char
+  +export_file: Binary
+  +ack_file: Binary
+}
+
+class "dbs.batch.line" as BatchLine {
+  +dbs_line_ref: Char(unique)
+  +move_id: Many2one(account.move)
+  +partner_id: Many2one(res.partner)
+  +partner_customer_code: Char
+  +due_date: Date
+  +amount: Monetary
+  +state: to_send|sent|accepted|rejected|settled|returned
+  +reject_code: Char
+  +last_message: Char
+  +retry_count: Integer
+  +last_retry_at: Datetime
+  +warned_at: Datetime
+  +action_retry_rejected()
+  +action_warn_customer()
+  +action_suspend_customer_profile()
+}
+
+class "account.move" as Move {
+  +dbs_state: Selection(compute)
+  +dbs_line_ref: Char(compute)
+  +dbs_line_count: Integer(compute)
+  +dbs_history: Text(compute)
+  +action_send_to_dbs()
+  +action_view_dbs_lines()
+}
+
+class "account.bank.statement.line" as StLine {
+  +dbs_batch_line_id: Many2one(dbs.batch.line)
+  +_dbs_try_match()
+}
+
+class "dbs.message.log" as MsgLog {
+  +level: info|warning|error
+  +model: Char
+  +res_id: Integer
+  +message: Text
+}
+
+Contract "1" <-- "0..*" Partner : dbs_contract_id
+Contract "1" <-- "0..*" Batch : contract_id
+Batch "1" <-- "1..*" BatchLine : line_ids
+Partner "1" <-- "0..*" BatchLine : partner_id
+Move "1" <-- "0..*" BatchLine : move_id
+BatchLine "0..1" --> "0..*" StLine : matched by ref
+Batch "1" <-- "0..*" MsgLog : logs
+Contract "1" <-- "0..*" MsgLog : logs
+
+@enduml
+
+@startuml
+' ------------------------------------------------------------
+' Diagram 4: UI / Screen map
+' ------------------------------------------------------------
+left to right direction
+skinparam shadowing false
+
+title Odoo 18 TR DBS - UI Map
+
+rectangle "DBS Sozlesmeleri\n(dbsv.contract form/list)" as UI_Contract {
+  [Test Baglanti]
+  [Sozlesmeyi Aktif Et]
+  [Integration Type]
+  [Technical Params]
+}
+
+rectangle "DBS Musterileri\n(res.partner > DBS tab)" as UI_Partner {
+  [DBS Aktif]
+  [DBS Durumu]
+  [DBS Sozlesmesi]
+  [DBS Musteri Kodu]
+  [DBS Ic Limit]
+  [Kullanilabilir DBS Limit]
+}
+
+rectangle "Faturalar\n(account.move form)" as UI_Invoice {
+  [DBS Durumu]
+  [DBS Ref]
+  [DBS Gecmisi]
+  [DBS'ye Gonder]
+  [DBS Gecmisini Gor]
+}
+
+rectangle "DBS Batch\n(dbs.batch form)" as UI_Batch {
+  [Gonder]
+  [ACK Iceri Al]
+  [Kapat]
+  [Iptal]
+  [Satirlar]
+  [Export Dosyasi]
+  [ACK Dosyasi]
+}
+
+rectangle "Retler ve Hatalar\n(dbs.batch.line list/form)" as UI_Rejected {
+  [Yeniden Dene]
+  [Musteriyi Uyar]
+  [DBS Profilini Askiya Al]
+  [Ret Kodu]
+  [Mesaj]
+  [Retry Count]
+}
+
+UI_Contract --> UI_Batch : contract selects bank rules
+UI_Partner --> UI_Invoice : customer eligibility & limit
+UI_Invoice --> UI_Batch : send invoice to DBS
+UI_Batch --> UI_Rejected : rejected rows
+UI_Rejected --> UI_Partner : suspend customer profile
+
+note bottom of UI_Batch
+Batch screen is the operational center:
+- export CSV
+- import ACK
+- inspect line states
+- trace logs
+end note
+
+@enduml
+
+@startuml
+' ------------------------------------------------------------
+' Diagram 3: End-to-end flow
+' ------------------------------------------------------------
+skinparam shadowing false
+
+title Odoo 18 TR DBS - Operational Flow (MVP)
+
+actor "Finance User" as User
+participant "account.move\n(Customer Invoice)" as Inv
+participant "dbs.batch" as Batch
+participant "dbs.adapter.*" as Adapter
+participant "Bank Channel" as Bank
+participant "account.bank.statement.line" as StLine
+participant "Reconciliation" as Recon
+
+User -> Inv : Click "DBS'ye Gonder"
+Inv -> Batch : _add_invoices(moves)
+Batch -> Batch : validations + dbs_line_ref generation
+
+User -> Batch : action_send()
+Batch -> Adapter : export_batch(batch)
+Adapter -> Bank : send payload (file/api/sftp)
+Adapter --> Batch : export_file + bank_reference
+Batch -> Batch : state = sent
+
+User -> Batch : upload ACK file + action_import_ack()
+Batch -> Adapter : import_ack(contract, content)
+Adapter --> Batch : line statuses (accepted/rejected/settled)
+Batch -> Batch : state = ack/settled
+
+Bank -> StLine : payment statement imported
+StLine -> StLine : _extract_dbs_ref()
+StLine -> Batch : find dbs.batch.line by dbs_line_ref
+StLine -> Recon : create payment + reconcile invoice
+StLine -> Batch : dbs.batch.line.state = settled
+
+@enduml

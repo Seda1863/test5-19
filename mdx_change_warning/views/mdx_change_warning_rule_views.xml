@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================ -->
+    <!-- Kural Form View                              -->
+    <!-- ============================================ -->
+    <record id="view_mdx_change_warning_rule_form" model="ir.ui.view">
+        <field name="name">mdx.change.warning.rule.form</field>
+        <field name="model">mdx.change.warning.rule</field>
+        <field name="arch" type="xml">
+            <form string="Değişiklik Uyarı Kuralı">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <field name="active" widget="boolean_favorite" nolabel="1"/>
+                        <button class="oe_stat_button" icon="fa-bar-chart"
+                                name="action_view_logs" type="object">
+                            <field name="trigger_count" string="Tetiklenme" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Kural adı giriniz..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Kapsam">
+                            <field name="module_ids" widget="many2many_tags"
+                                   options="{'no_create': True}"
+                                   placeholder="Boş = Tüm Uygulamalar"/>
+                            <field name="model_ids" widget="many2many_tags"
+                                   options="{'no_create': True}"
+                                   placeholder="Boş = Uygulamadaki tüm modeller"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group string="Uyarı Mesajı">
+                            <field name="warning_message"
+                                   placeholder="Boş bırakılırsa varsayılan mesaj kullanılır..."/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Kural Tipleri">
+                            <field name="warn_on_edit"/>
+                            <field name="warn_on_delete"/>
+                            <field name="prevent_delete"/>
+                            <field name="warn_on_archive"/>
+                        </group>
+                        <group string="Kullanıcı Filtresi">
+                            <field name="user_ids" widget="many2many_tags"
+                                   options="{'no_create': True}"
+                                   placeholder="Boş = Tüm kullanıcılar"/>
+                        </group>
+                    </group>
+                    <group string="İstatistikler" invisible="trigger_count == 0">
+                        <group>
+                            <field name="trigger_count"/>
+                            <field name="last_triggered"/>
+                            <field name="last_triggered_by"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================ -->
+    <!-- Kural List View                              -->
+    <!-- ============================================ -->
+    <record id="view_mdx_change_warning_rule_list" model="ir.ui.view">
+        <field name="name">mdx.change.warning.rule.list</field>
+        <field name="model">mdx.change.warning.rule</field>
+        <field name="arch" type="xml">
+            <list string="Değişiklik Uyarı Kuralları">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="module_ids" widget="many2many_tags" optional="show"/>
+                <field name="model_ids" widget="many2many_tags" optional="show"/>
+                <field name="warn_on_edit"/>
+                <field name="warn_on_delete"/>
+                <field name="prevent_delete"/>
+                <field name="warn_on_archive"/>
+                <field name="trigger_count" string="Tetiklenme"/>
+                <field name="user_ids" widget="many2many_tags" optional="hide"/>
+                <field name="active" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============================================ -->
+    <!-- Kural Search View                            -->
+    <!-- ============================================ -->
+    <record id="view_mdx_change_warning_rule_search" model="ir.ui.view">
+        <field name="name">mdx.change.warning.rule.search</field>
+        <field name="model">mdx.change.warning.rule</field>
+        <field name="arch" type="xml">
+            <search string="Uyarı Kuralları">
+                <field name="name"/>
+                <field name="module_ids"/>
+                <field name="model_ids"/>
+                <filter name="active" string="Aktif" domain="[('active', '=', True)]"/>
+                <filter name="inactive" string="Pasif" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter name="warn_edit" string="Düzenleme" domain="[('warn_on_edit', '=', True)]"/>
+                <filter name="warn_delete" string="Silme" domain="[('warn_on_delete', '=', True)]"/>
+                <filter name="prevent_del" string="Silme Engeli" domain="[('prevent_delete', '=', True)]"/>
+                <filter name="warn_archive" string="Arşivleme" domain="[('warn_on_archive', '=', True)]"/>
+                <separator/>
+                <filter name="most_triggered" string="En Çok Tetiklenen" domain="[('trigger_count', '>', 0)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================ -->
+    <!-- Kural Action                                 -->
+    <!-- ============================================ -->
+    <record id="action_mdx_change_warning_rule" model="ir.actions.act_window">
+        <field name="name">Değişiklik Uyarıları</field>
+        <field name="res_model">mdx.change.warning.rule</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_mdx_change_warning_rule_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                İlk değişiklik uyarı kuralınızı oluşturun!
+            </p>
+            <p>
+                Uygulama veya model bazında düzenleme, silme, arşivleme
+                işlemlerinde kullanıcıya uyarı göstermek için kurallar tanımlayın.
+            </p>
+        </field>
+    </record>
+
+    <!-- ============================================ -->
+    <!-- Log List View                                -->
+    <!-- ============================================ -->
+    <record id="view_mdx_change_warning_log_list" model="ir.ui.view">
+        <field name="name">mdx.change.warning.log.list</field>
+        <field name="model">mdx.change.warning.log</field>
+        <field name="arch" type="xml">
+            <list string="Uyarı Logları" create="false" edit="false">
+                <field name="create_date" string="Tarih"/>
+                <field name="rule_id"/>
+                <field name="user_id"/>
+                <field name="model_name"/>
+                <field name="record_id"/>
+                <field name="action_type"/>
+                <field name="user_response" decoration-success="user_response == 'confirmed'"
+                       decoration-danger="user_response == 'cancelled'"
+                       decoration-warning="user_response == 'blocked'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============================================ -->
+    <!-- Log Search View                              -->
+    <!-- ============================================ -->
+    <record id="view_mdx_change_warning_log_search" model="ir.ui.view">
+        <field name="name">mdx.change.warning.log.search</field>
+        <field name="model">mdx.change.warning.log</field>
+        <field name="arch" type="xml">
+            <search string="Uyarı Logları">
+                <field name="rule_id"/>
+                <field name="user_id"/>
+                <field name="model_name"/>
+                <filter name="confirmed" string="Onaylanan" domain="[('user_response', '=', 'confirmed')]"/>
+                <filter name="cancelled" string="İptal Edilen" domain="[('user_response', '=', 'cancelled')]"/>
+                <filter name="blocked" string="Engellenen" domain="[('user_response', '=', 'blocked')]"/>
+                <group expand="0" string="Grupla">
+                    <filter string="Kural" name="group_rule" context="{'group_by': 'rule_id'}"/>
+                    <filter string="Kullanıcı" name="group_user" context="{'group_by': 'user_id'}"/>
+                    <filter string="İşlem Tipi" name="group_action" context="{'group_by': 'action_type'}"/>
+                    <filter string="Tarih" name="group_date" context="{'group_by': 'create_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================ -->
+    <!-- Log Action                                   -->
+    <!-- ============================================ -->
+    <record id="action_mdx_change_warning_log" model="ir.actions.act_window">
+        <field name="name">Uyarı Logları</field>
+        <field name="res_model">mdx.change.warning.log</field>
+        <field name="view_mode">list,pivot,graph</field>
+        <field name="search_view_id" ref="view_mdx_change_warning_log_search"/>
+        <field name="context">{'search_default_group_rule': 1}</field>
+    </record>
+
+    <!-- ============================================ -->
+    <!-- Menüler                                      -->
+    <!-- ============================================ -->
+    <menuitem id="menu_mdx_change_warning_root"
+              name="Değişiklik Uyarıları"
+              parent="base.menu_custom"
+              sequence="100"/>
+
+    <menuitem id="menu_mdx_change_warning_rules"
+              name="Kurallar"
+              parent="menu_mdx_change_warning_root"
+              action="action_mdx_change_warning_rule"
+              sequence="10"/>
+
+    <menuitem id="menu_mdx_change_warning_logs"
+              name="Loglar ve İstatistikler"
+              parent="menu_mdx_change_warning_root"
+              action="action_mdx_change_warning_log"
+              sequence="20"/>
+</odoo>

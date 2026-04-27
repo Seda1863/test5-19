@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_mdx_inh_stock_picking_form" model="ir.ui.view">
+        <field name="name">mdx.inh.stock.picking.form</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="attributes">
+                <attribute name="domain">[('id', 'in', filtered_partner_ids)]</attribute>
+            </field>
+            <xpath expr="//form/header" position="inside">
+                <button name="action_send_waybill"
+                        type="object"
+                        class="btn-primary"
+                        string="E-İrsaliye Gönder"
+                        icon="fa-paper-plane"
+                        invisible="eirsaliye_gonderilebilir == False"
+                        />
+            </xpath>
+            <xpath expr="//form/header" position="inside">
+                <!-- <button name="view_waybill_pdf_on_newtab"
+                        type="object"
+                        class="btn-primary"
+                        string="E-İrsaliye Görüntüle"
+                        icon="fa-file-pdf-o"
+                        invisible="ekli_belge_id == False"
+                        /> -->
+                 
+                <button name="view_waybill_pdf_on_newtab"
+                        type="object"
+                        class="btn-primary"
+                        string="E-İrsaliye Görüntüle"
+                        icon="fa-file-pdf-o"
+                        invisible="ekli_belge_id == False"
+                        />
+            </xpath>
+            <xpath expr="//form/header" position="inside">
+                <button name="refresh_api_response"
+                        type="object"
+                        class="btn-primary"
+                        string=""
+                        icon="fa-refresh"
+                        invisible="belge_oid_kod == False"
+                        />
+                <!-- action_preview_eirsaliye butonu -->
+                <button name="action_preview_eirsaliye"
+                        type="object"
+                        class="btn-secondary"
+                        string="E-İrsaliye Önizleme"
+                        icon="fa-eye"
+                        invisible="eirsaliye_gonderilebilir == False"
+                        />
+            </xpath>
+            <xpath expr="//form/sheet/notebook" position="inside">
+                <page string="E-Dönüşüm" name="edonusum_page">
+                    <group>
+                        <!-- Genel Bilgiler -->
+                        <group string="Genel Bilgiler">
+                            <!-- <field name="mdx_origin_id" string="ORIGIN ID"/> -->
+                            <field name="gelen_irsaliye_id" />
+                            <field name="purchase_id" string="PURCHASE ID"/>
+                            <field name="picking_type_id" string="TYPE ID"/>    
+                            <field name="picking_type_code" string="TYPE CODE"/>
+                            <field name="kayit_aciklamasi" placeholder="Kayıt açıklaması girin"/>
+                            <field name="irsaliye_no" placeholder="İrsaliye numarasını yazın"/>
+                            <field name="uuid" placeholder="Eşsiz bir UUID girin"/>
+                            <field name="belge_oid_kod" placeholder="Belge OID kodunu yazın"/>
+                            <field name="irsaliye_aciklama" force_save="1" placeholder="İrsaliye ile ilgili açıklama yazın"/>
+                            <!-- <field name="hide_post_button"/> -->
+                            <!-- <field name="expense_sheet_id" placeholder="Masrafı seçin"/> -->
+                        </group>
+
+                        <!-- E-İrsaliye Bilgileri -->
+                        <group string="E-İrsaliye Bilgileri">
+                            <field name="ebelge_turu_id" placeholder="E-İrsaliye türünü seçin"/>
+                            <field name="eirsaliye_senaryo_id" placeholder="E-İrsaliye senaryosunu seçin"/>
+                            <field name="irsaliye_tipi_id" placeholder="E-İrsaliye tipini seçin"/>
+                            <!-- <field name="fatura_alt_tipi_id" placeholder="İrsaliye alt tipini seçin"/> -->
+                            <field name="irsaliye_statu_id" placeholder="İrsaliye statüsünü seçin"/>
+                            <field name="irsaliye_seri_id" placeholder="İrsaliye serisini girin"/>
+                        </group>
+
+                        <!-- E-Fatura Teknik -->
+                        <group string="E-İrsaliye Teknik">
+                            <field name="eirsaliye_gonderilebilir"/>                           
+                            <field name="irsaliye_gonderim_hata_kodu"/>
+                            <field name="irsaliye_durum_detay"/>        
+                        </group>
+
+                        <!-- Gönderim ve Ekli Belgeler -->
+                        <group string="Gönderim ve Belgeler">
+                            <field name="matbuu_belge_no" placeholder="Matbuu belge numarasını girin"/>
+                            <field name="matbuu_belge_tarihi" placeholder="Matbuu belge tarihini girin"/>
+                            <field name="ekli_belge_id" placeholder="Ekli belgeyi seçin"/>
+                            <!-- <field name="belge_gonderim_sekli" placeholder="Belge gönderim şeklini seçin"/> -->
+                            <!-- <field name="fatura_xml" placeholder="Fatura XML dosyasını ekleyin"/>
+                            <field name="xml_ekli_belge_id" placeholder="XML ekli belgeyi seçin"/> -->
+                        </group>
+
+                        <!-- Nakliye Bilgileri -->
+                        <group string="Nakliye Bilgileri">
+                            <field name="nakliye_sirketi_id" placeholder="Nakliye şirketini seçin"/>
+                            <field name="sofor_adi" placeholder="Şoför adını yazın"/>
+                            <field name="sofor_soyadi" placeholder="Şoför soyadını yazın"/>
+                            <field name="sofor_tc_no" placeholder="Şoför TC numarasını yazın"/>
+                            <field name="arac_plaka_no" placeholder="Araç plaka numarasını yazın"/>
+                            <field name="dorse_plaka_no_1" placeholder="Dorse Plaka No 1"/>
+                            <field name="dorse_plaka_no_2" placeholder="Dorse Plaka No 2"/>
+                            <field name="sofor_ilce" placeholder="Şoför ilçesini yazın"/>
+                            <field name="sofor_il" placeholder="Şoför ilini yazın"/>
+                            <field name="sofor_ulke" placeholder="Şoför ülkesini yazın"/>
+                            <field name="sofor_zip" placeholder="Şoför posta kodunu yazın"/>
+                        </group>
+
+                        <group>
+                            <!-- move_ids -->
+                            <field name="move_ids" widget="one2many_list" />
+                        </group>
+
+                        <group>
+                            <field name="state" string="STATE"/>
+                            <!-- <field name="reversed_entry_id" string="Reversed Entry" optional="show"/> -->
+                            <!-- <field name="is_storno" string="is_storno"/> -->
+                            <field  name="logging_field1" string="LOG1"/>
+                            <field  name="logging_field2" string="LOG2"/>
+                            <field  name="logging_field3" string="LOG3"/>
+                            <field  name="logging_field4" string="LOG4"/>
+                            <field  name="logging_field5" string="LOG5"/>
+                            <field  name="logging_field6" string="LOG6"/>
+                            <!-- <field  name="logging_field7" string="LOG7"/>
+                            <field  name="logging_field8" string="LOG8"/> -->
+                        </group>
+                    </group>
+                </page>
+                <page string="E-Defter" name="edefter_page">
+                    <group>
+                        <!-- <field  name="entry_sequence_no" string="Yevmiye No" readonly="1"/> -->
+                        <field  name="payment_method" />
+                        <field  name="document_type" />
+                        <field  name="document_type_description_id" readonly="document_type != 'other'"/>
+                        <field  name="document_number" />
+                        <field  name="document_date" />
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    
+    <!-- stock.picking -->
+    <record id="view_picking_form" model="ir.ui.view">
+        <field name="name">stock_picking_invoice_link.stock.picking.form</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form" />
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <field name="invoice_ids" invisible="1" />
+                <button type="object" name="action_view_invoice" class="oe_stat_button" icon="fa-pencil-square-o" invisible="invoice_count == 0">
+                    <field name="invoice_count" widget="statinfo" string="Invoice" />
+                </button>
+            </div>
+        </field>
+    </record>
+    <!-- stock.move -->
+    <record id="view_move_form" model="ir.ui.view">
+        <field name="name">stock_picking_invoice_link.stock.move.form</field>
+        <field name="model">stock.move</field>
+        <field name="inherit_id" ref="stock.view_move_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//group" position="after">
+                <group name="invoice_line" string="Invoice Lines" invisible="invoice_line_ids == []">
+                    <field name="invoice_line_ids" nolabel="1" colspan="2" groups="account.group_account_invoice" widget="one2many_list" />
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

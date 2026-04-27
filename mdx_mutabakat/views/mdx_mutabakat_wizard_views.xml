@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ════════════════════════════════ -->
+    <!-- WIZARD FORM VIEW -->
+    <!-- ════════════════════════════════ -->
+    <record id="mdx_mutabakat_wizard_form_view" model="ir.ui.view">
+        <field name="name">mdx.mutabakat.wizard.form</field>
+        <field name="model">mdx.mutabakat.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Mutabakat Gönder">
+                <group>
+                    <group string="Dönem Seçimi">
+                        <field name="period_start"/>
+                        <field name="period_end"/>
+                    </group>
+                    <group string="Gönderim Ayarları">
+                        <field name="sender_email"/>
+                        <field name="auto_send" widget="boolean_toggle"/>
+                        <field name="partner_count" string="Seçili Tedarikçi"/>
+                    </group>
+                </group>
+                <group string="Tedarikçiler">
+                    <field name="partner_ids" nolabel="1" widget="many2many_tags"/>
+                </group>
+                <group string="E-Posta Mesajı">
+                    <div class="text-muted mb-2" colspan="2">
+                        Varsayılan mesaj aşağıdadır; isterseniz değiştirebilirsiniz.
+                    </div>
+                    <field name="email_message" nolabel="1" colspan="2"/>
+                </group>
+                <footer>
+                    <button name="action_create_mutabakat" type="object"
+                            string="Mutabakat Oluştur" class="oe_highlight"
+                            icon="fa-paper-plane"/>
+                    <button string="İptal" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════ -->
+    <!-- SERVER ACTION: Tedarikçi listesinden "Mutabakat Gönder" -->
+    <!-- ════════════════════════════════ -->
+    <record id="action_send_mutabakat_wizard" model="ir.actions.act_window">
+        <field name="name">Mutabakat Gönder</field>
+        <field name="res_model">mdx.mutabakat.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_view_types">list</field>
+    </record>
+
+</odoo>

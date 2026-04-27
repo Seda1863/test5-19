@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Cheque Book list View -->
+    <record id="mdx_cheque_book_list" model="ir.ui.view">
+        <field name="name">mdx.cheque.book.list</field>
+        <field name="model">mdx.cheque.book</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="account_id"/>
+                <field name="bank_name"/>
+                <field name="bank_branch"/>
+                <field name="currency_id"/>
+                <field name="cheque_leaf_number"/>
+                <field name="cheque_book_status"/>
+                <field name="company_id" column_invisible="True"/>
+                <field name="company_id" groups="base.group_multi_company" readonly="1" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Cheque Book Form View -->
+    <record id="mdx_cheque_book_form" model="ir.ui.view">
+        <field name="name">mdx.cheque.book.form</field>
+        <field name="model">mdx.cheque.book</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <!-- <button name="action_create_cheque_book" type="object" string="Defteri Oluştur" 
+                            class="oe_highlight" invisible="cheque_book_status != 'draft'"/> -->
+                    <field name="cheque_book_status" widget="statusbar" statusbar_visible="draft,created"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="description"/>
+                            <field name="account_id"/>
+                            <field name="bank_name"/>
+                            <field name="bank_branch"/>
+                            <field name="currency_id"/>
+                        </group>
+                        <group>
+                            <field name="prefix"/>
+                            <field name="cheque_leaf_start_number"/>
+                            <field name="cheque_leaf_number"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Çek Yaprakları">
+                            <field name="cheque_leaf_ids" context="{'list_view_ref': 'mdx_cheque.mdx_cheque_leaf_list'}">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="cheque_status"/>
+                                    <field name="amount"/>
+                                    <field name="currency_id"/>
+                                    <field name="due_date"/>
+                                    <field name="receiver_id"/>
+                                    <field name="issuer_id"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Cheque Leaf list View -->
+    <record id="mdx_cheque_leaf_list" model="ir.ui.view">
+        <field name="name">mdx.cheque.leaf.list</field>
+        <field name="model">mdx.cheque.leaf</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="cheque_status"/>
+                <field name="amount"/>
+                <field name="currency_id"/>
+                <field name="due_date"/>
+                <field name="receiver_id"/>
+                <field name="issuer_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Cheque Leaf Form View -->
+    <record id="mdx_cheque_leaf_form" model="ir.ui.view">
+        <field name="name">mdx.cheque.leaf.form</field>
+        <field name="model">mdx.cheque.leaf</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div name="button_box" class="oe_button_box">
+                        <button name="action_open_cheque_book" class="oe_stat_button" icon="fa-book" type="object" invisible="not cheque_book_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Çek Defteri</span>
+                            </div>
+                        </button>
+                        <button name="action_open_outbound_payment" class="oe_stat_button text-danger" icon="fa-bars" type="object" invisible="not outbound_payment_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Tedarikçi Ödemesi</span>
+                            </div>
+                        </button>
+                        <button name="action_open_inbound_payment" class="oe_stat_button text-success" icon="fa-bars" type="object" invisible="not inbound_payment_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Müşteri Ödemesi</span>
+                            </div>
+                        </button>
+                        <!-- <button name="action_open_account_move" class="oe_stat_button text-warning" icon="fa-bars" type="object" invisible="not account_move_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Yevmiye Kaydı</span>
+                            </div>
+                        </button> -->
+                    </div>
+                    <group>
+                        <group>
+                            <field name="cheque_book_id"/>
+                            <field name="name" readonly='created_with_cheque_book'/>
+                            <field name="prefix" readonly='created_with_cheque_book' invisible='created_with_cheque_book'/>
+                            <field name="cheque_number" readonly='created_with_cheque_book' invisible='created_with_cheque_book'/>
+                            <field name="cheque_status"/>
+                            <field name="due_date"/>
+                        </group>
+                        <group>
+                            <field name="amount"/>
+                            <field name="currency_id"/>
+                            <field name="account_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="receiver_id"/>
+                            <field name="issuer_id" readonly='created_with_cheque_book'/>
+                        </group>
+                        <group>
+                            <field name="first_owner_id" readonly='created_with_cheque_book'/>
+                            <field name="owner_type"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_mdx_cheque_book" model="ir.actions.act_window">
+        <field name="name">Çek Defterleri</field>
+        <field name="res_model">mdx.cheque.book</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_mdx_cheque_leaf" model="ir.actions.act_window">
+        <field name="name">Çek Yaprakları</field>
+        <field name="res_model">mdx.cheque.leaf</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

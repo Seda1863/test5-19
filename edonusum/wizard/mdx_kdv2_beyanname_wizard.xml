@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_mdx_kdv2_beyanname_wizard_form" model="ir.ui.view">
+        <field name="name">mdx.kdv2.beyanname.wizard.form</field>
+        <field name="model">mdx.kdv2.beyanname.wizard</field>
+        <field name="arch" type="xml">
+            <form string="KDV2 Beyanname">
+                <group>
+                    <group>
+                        <field name="company_id" readonly="1"/>
+                        <field name="yil"/>
+                        <field name="ay"/>
+                    </group>
+                    <group>
+                        <field name="xml_file" filename="xml_filename" invisible="not xml_file"/>
+                        <field name="xml_filename" invisible="1"/>
+                    </group>
+                </group>
+                <notebook>
+                    <page string="Rapor Sonuçları" name="report_results">
+                        <field name="line_ids" readonly="1">
+                            <list decoration-bf="is_subtotal == True" decoration-info="is_subtotal == True">
+                                <field name="islem_turu" string="İşlem Türü"/>
+                                <field name="soyadi" string="Soyadı (Ünvan)"/>
+                                <field name="adi" string="Adı (Ünvan Devamı)"/>
+                                <field name="tc_kimlik_no" string="T.C. Kimlik No"/>
+                                <field name="vergi_kimlik_no" string="Vergi Kimlik No"/>
+                                <field name="yurt_disi_kimlik_no" string="Yurt Dışı Kimlik No" optional="hide"/>
+                                <field name="matrah" string="Vergiye Tabi Matrah" sum="Toplam Matrah"/>
+                                <field name="kdv_orani" string="KDV Oranı"/>
+                                <field name="tevkif_edilen_kdv" string="Tevkif Edilen KDV" sum="Toplam Tevkif Edilen KDV"/>
+                                <field name="is_subtotal" column_invisible="True"/>
+                            </list>
+                        </field>
+                    </page>
+                </notebook>
+                <footer>
+                    <button name="action_generate_report" string="Rapor Oluştur" type="object" class="btn-primary"/>
+                    <button name="action_generate_xml" string="XML Oluştur" type="object" class="btn-success"/>
+                    <button string="Kapat" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_mdx_kdv2_beyanname_wizard" model="ir.actions.act_window">
+        <field name="name">KDV2 Beyanname</field>
+        <field name="res_model">mdx.kdv2.beyanname.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_mdx_kdv2_beyanname"
+              name="KDV2 Beyanname"
+              parent="account.menu_finance_reports"
+              action="action_mdx_kdv2_beyanname_wizard"
+              sequence="100"/>
+</odoo>

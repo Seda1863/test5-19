@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="edonusum_res_config_settings_view_form_inherit" model="ir.ui.view">
+        <field name="name">edonusum.res.config.settings.view.form.inherit</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="E-Dönüşüm" string="MindDX E-Dönüşüm" name="edonusum">
+                    <block title="Lisans Yönetimi" name="license_management">
+                        <setting string="Lisans Ayarları" help="Lisans yönetimi için temel ayarlar">
+                            <div class="row">
+                                <div class="col-12">
+                                    <field name="edonusum_license_expiration_date" 
+                                           widget="date" 
+                                           options="{'format': 'yyyy-mm-dd'}"
+                                           class="oe_inline"/>
+                                    <field name="is_edonusum_license_active" 
+                                           string="Lisans Aktif Mi?"
+                                           class="oe_inline ml-3"/>
+                                </div>
+                                <div class="col-12 mt-3 d-flex align-items-center">
+                                    <field name="edonusum_license_key" 
+                                        placeholder="Lisans anahtarınızı girin"
+                                        class="flex-grow-1"
+                                        readonly="is_edonusum_license_active"
+                                    />
+                                </div>
+                                <div class="col-12 mt-3 d-flex align-items-center">
+                                    <field name="validation_message" 
+                                        class="flex-grow-1"
+                                    />
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_mdx_mutabakat" model="ir.actions.report">
+        <field name="name">Mutabakat Mektubu (PDF)</field>
+        <field name="model">mdx.mutabakat</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">mdx_mutabakat.report_mdx_mutabakat</field>
+        <field name="report_file">mdx_mutabakat.report_mdx_mutabakat</field>
+        <field name="print_report_name">'Mutabakat_%s' % (object.name or 'dokuman')</field>
+        <field name="binding_model_id" ref="model_mdx_mutabakat"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

@@ -1,0 +1,75 @@
+<odoo>
+    <data>
+        <record id="view_mdx_prozon_api_test_form" model="ir.ui.view">
+            <field name="name">mdx.prozon.api.test.form</field>
+            <field name="model">mdx.prozon.api.test</field>
+            <field name="arch" type="xml">
+                <form string="Prozon API Test">
+                    <!-- Header with name and description -->
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="description"/>
+                        </group>
+
+                        <!-- Authentication Section -->
+                        <group string="Authentication">
+                            <field name="username"/>
+                            <field name="password" password="True"/>
+                        </group>
+
+                        <!-- Endpoint Selection -->
+                        <group string="Endpoint Configuration">
+                            <field name="endpoint"/>
+                            <field name="workplace_code"/>
+                            <field name="employee_identity_number" />
+                        </group>
+
+                        <!-- Request Details -->
+                        <group string="Request Details" colspan="2">
+                            <field name="request_method" readonly="1"/>
+                            <field name="request_url" readonly="1"/>
+                            <field name="request_headers" widget="textarea" />
+                            <field name="request_body" widget="textarea" />
+                        </group>
+
+                        <group>
+                            <button name="execute_request" string="Execute Request" type="object" class="btn-primary"/>
+
+                            <button string="Open Prozon" type="object" name="action_open_data_url" invisible= "data_url == False" class="btn-secondary"/>
+                        </group>
+
+                        <!-- Response Section -->
+                        <group string="Response" />
+                        <group>
+                            <field name="response_status_code" />
+                            <!-- <field name="response_headers" widget="textarea" /> -->
+                            <field name="response_body" widget="textarea" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Tree View -->
+        <record id="view_mdx_prozon_api_test_list" model="ir.ui.view">
+            <field name="name">mdx.prozon.api.test.list</field>
+            <field name="model">mdx.prozon.api.test</field>
+            <field name="arch" type="xml">
+                <list string="Prozon API Tests">
+                    <field name="name"/>
+                    <field name="endpoint"/>
+                    <field name="response_status_code"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_mdx_prozon_api_test" model="ir.actions.act_window">
+            <field name="name">Prozon API Tests</field>
+            <field name="res_model">mdx.prozon.api.test</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

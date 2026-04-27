@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Vendors (Hesaplar - Ödemeler) menüsü altına "Gelen Fatura" ana menüsünü ekleme -->
+        <menuitem id="menu_mdx_gelen_fatura_root" 
+                  name="Gelen Fatura" 
+                  parent="account.menu_finance_payables"
+                  sequence="10"/>
+
+        <!-- Gelen Faturalar alt menüsü -->
+        <menuitem id="menu_mdx_gelen_faturalar" 
+                  name="Gelen Faturalar" 
+                  parent="menu_mdx_gelen_fatura_root" 
+                  action="action_mdx_gelen_fatura"
+                  sequence="20"/>
+                  
+        <menuitem id="menu_mdx_edefter_root" 
+                  name="E-Defter" 
+                  parent="account.menu_finance_entries"
+                  sequence="10"/>
+
+        <menuitem id="menu_mdx_edefter"
+                  name="E-Defter" 
+                  parent="menu_mdx_edefter_root" 
+                  action="action_mdx_edefter"
+                  sequence="20"/>
+
+        <menuitem id="menu_mdx_cheque_main"
+                  name="Çek Yönetimi"
+                  parent="account.menu_finance_entries"
+                  sequence="10"/>
+                  
+        <menuitem id="menu_mdx_cheque_book"
+                    name="Çek Defterleri"
+                    parent="menu_mdx_cheque_main"
+                    action="action_mdx_cheque_book"
+                    sequence="20"/>
+
+        <menuitem id="menu_mdx_cheque_leaf"
+                    name="Çek Yaprakları"
+                    parent="menu_mdx_cheque_main"
+                    action="action_mdx_cheque_leaf"
+                    sequence="30"/>
+        <!-- Hizmet Eşleştirme alt menüsü -->
+        <!-- <menuitem id="menu_mdx_gelen_hizmet_eslestirme" 
+                  name="Hizmet Eşleştirme" 
+                  parent="menu_mdx_gelen_fatura_root" 
+                  action="action_mdx_gelen_eslestirme"
+                  sequence="30"/> -->
+    </data>
+</odoo>

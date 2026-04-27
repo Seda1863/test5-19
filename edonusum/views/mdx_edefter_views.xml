@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_mdx_edefter_form" model="ir.ui.view">
+        <field name="name">mdx.edefter.form</field>
+        <field name="model">mdx.edefter</field>
+        <field name="arch" type="xml">
+            <form string="E-Defter">
+                <header>
+                    <!-- Yevmiye Kayıtlarını Numaralandır Butonu -->
+                    <button name="action_create_entry_sequence" string="Kayıtları Numaralandır" type="object" class="oe_highlight"/>
+                    <!-- CSV Oluştur butonu -->
+                    <button name="action_create_csv" string="CSV Oluştur" type="object" class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="company_id"/>
+                        <field name="owner_id"/>
+                        <field name="fiscal_year_start_date"/>
+                        <field name="fiscal_year_end_date"/>
+                        <field name="month"/>
+                        <field name="year"/>
+                        <field name="entry_sequence_start_no"/>
+                        <field name="entry_sequence_end_no"/>
+                        <field name="line_sequence_start_no"/>
+                        <field name="line_sequence_end_no"/>
+                        <field name="user_id" readonly="1"/>
+                        <field name="date" readonly="1"/>
+                        <field name="active"/>
+                        <field name="journal_entry_line_ids" widget="one2many_list" default_order="line_sequence_no asc, date asc"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- inherited from view_move_line_tree -->
+    <record id="view_mdx_edefter_tree" model="ir.ui.view">
+        <field name="name">mdx.edefter.tree</field>
+        <field name="model">account.move.line</field>
+        <field name="inherit_id" ref="account.view_move_line_tree"/>
+        <field name="arch" type="xml">
+            <!-- Mevcut date alanının sonrasına yeni alanları ekliyoruz -->
+            <xpath expr="//field[@name='date']" position="after">
+                <field name="entry_sequence_no" string="Yevmiye No"/>
+                <field name="line_sequence_no" string="Sıra No"/>
+            </xpath>
+            <!-- Tree etiketine default_order özniteliğini ekliyoruz -->
+            <xpath expr="//list" position="attributes">
+                <attribute name="default_order">line_sequence_no asc, date asc</attribute>
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="view_mdx_edefter_list" model="ir.ui.view">
+        <field name="name">mdx.edefter.list</field>
+        <field name="model">mdx.edefter</field>
+        <field name="arch" type="xml">
+            <list string="E-Defter">
+                <field name="name"/>
+                <field name="month"/>
+                <field name="year"/>
+                <field name="entry_sequence_start_no"/>
+                <field name="entry_sequence_end_no"/>
+                <field name="line_sequence_start_no"/>
+                <field name="line_sequence_end_no"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_mdx_edefter" model="ir.actions.act_window">
+        <field name="name">E-Defter</field>
+        <field name="res_model">mdx.edefter</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                E-Defter kayıtlarınızı buradan yönetebilirsiniz.
+            </p>
+        </field>
+    </record>
+
+
+
+</odoo>

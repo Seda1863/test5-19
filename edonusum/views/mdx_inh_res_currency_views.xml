@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_mdx_inh_res_currency_form" model="ir.ui.view">
+        <field name="name">mdx.inh.res.currency.form</field>
+        <field name="model">res.currency</field>
+        <field name="inherit_id" ref="base.view_currency_form"/>
+        <field name="arch" type="xml">
+            <!-- <xpath expr="//field[@name='vat']" position="after">
+                <button name="efatura_mukellef_sorgulama"
+                        type="object"
+                        string="E-Fatura Mükellef Sorgulama"
+                        class="oe_highlight"/>
+            </xpath> -->
+            <xpath expr="//page[@name='rates']" position="after">
+                <page string="E-Dönüşüm" name="edonusum_tab">
+                    <group>
+                        <!-- Genel Bilgiler -->
+                        <group string="Türkçe Karşılıklar">
+                            <field name="currency_unit_label_efatura" string="Currency Unit (E-Invoice)"/>
+                            <field name="currency_subunit_label_efatura" string="Currency Subunit (E-Invoice)"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+            <xpath expr="//page[@name='rates']/field[@name='rate_ids']/list" position="inside">
+                    <field name="forex_buying" digits="[12,6]"/>
+                    <field name="forex_selling" digits="[12,6]"/>
+                    <field name="banknote_buying" digits="[12,6]"/>
+                    <field name="banknote_selling" digits="[12,6]"/>
+                </xpath>
+        </field>
+    </record>
+
+    <!-- Inherit Tree View (Liste Görünümü) -->
+        <record id="view_mdx_inh_currency_rate_tree" model="ir.ui.view">
+            <field name="name">mdx.inh.res.currency.rate.tree</field>
+            <field name="model">res.currency.rate</field>
+            <field name="inherit_id" ref="base.view_currency_rate_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//list" position="inside">
+                    <field name="forex_buying" digits="[12,6]"/>
+                    <field name="forex_selling" digits="[12,6]"/>
+                    <field name="banknote_buying" digits="[12,6]"/>
+                    <field name="banknote_selling" digits="[12,6]"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit Form View (Detay Form Görünümü) -->
+        <record id="view_mdx_currency_rate_form" model="ir.ui.view">
+            <field name="name">mdx.inh.res.currency.rate.form</field>
+            <field name="model">res.currency.rate</field>
+            <field name="inherit_id" ref="base.view_currency_rate_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group/group[field[@name='rate']]" position="after">
+                    <group>
+                        <field name="forex_buying" digits="[12,6]"/>
+                        <field name="forex_selling" digits="[12,6]"/>
+                        <field name="banknote_buying" digits="[12,6]"/>
+                        <field name="banknote_selling" digits="[12,6]"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_currency_tree_inherit" model="ir.ui.view">
+            <field name="name">res.currency.list.inherit</field>
+            <field name="model">res.currency</field>
+            <field name="inherit_id" ref="base.view_currency_tree"/>
+            <field name="arch" type="xml">
+                <!-- <xpath expr="//field[@name='rate']" position="replace"/>
+                <xpath expr="//field[@name='inverse_rate']" position="replace"/> -->
+                
+                <xpath expr="//list" position="inside">
+                    <field name="forex_buying" digits="[12,6]"/>
+                    <field name="forex_selling" digits="[12,6]"/>
+                    <field name="banknote_buying" digits="[12,6]"/>
+                    <field name="banknote_selling" digits="[12,6]"/>
+                </xpath>
+            </field>
+        </record>
+
+</odoo>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_mdx_gelen_eslestirme_list" model="ir.ui.view">
+        <field name="name">mdx.gelen.eslestirme.list</field>
+        <field name="model">mdx.gelen.eslestirme</field>
+        <field name="arch" type="xml">
+            <list string="Gelen Fatura Hizmet Eşleştirme">
+                <field name="name"/>
+                <!-- <field name="service_name"/>
+                <field name="service_code"/> -->
+                <field name="supplier_service_name"/>
+                <field name="supplier_service_code"/>
+                <field name="account_id"/>
+                <field name="supplier_id"/>
+                <field name="matched_count"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_mdx_gelen_eslestirme_form" model="ir.ui.view">
+        <field name="name">mdx.gelen.eslestirme.form</field>
+        <field name="model">mdx.gelen.eslestirme</field>
+        <field name="arch" type="xml">
+            <form string="Gelen Fatura Hizmet Eşleştirme">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="company_id" readonly="1"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <!-- <field name="service_name"/>
+                            <field name="service_code"/> -->
+                            <field name="supplier_service_name"/>
+                            <field name="supplier_service_code"/>
+                            <field name="account_id"/>
+                            <field name="supplier_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Eşleştirme Bilgileri">
+                            <field name="manually_created_from_gelen_fatura_line_id" readonly="1"/>
+                            <field name="first_matched_gelen_fatura_id" readonly="1"/>
+                            <field name="last_matched_gelen_fatura_id" readonly="1"/>
+                            <field name="first_matched_gelen_fatura_line_id" readonly="1"/>
+                            <field name="last_matched_gelen_fatura_line_id" readonly="1"/>
+                            <field name="matched_count" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_mdx_gelen_eslestirme_search" model="ir.ui.view">
+        <field name="name">mdx.gelen.eslestirme.search</field>
+        <field name="model">mdx.gelen.eslestirme</field>
+        <field name="arch" type="xml">
+            <search string="Gelen Fatura Hizmet Eşleştirme">
+                <field name="name"/>
+                <!-- <field name="service_name"/>
+                <field name="service_code"/> -->
+                <field name="supplier_service_name"/>
+                <field name="supplier_service_code"/>
+                <field name="account_id"/>
+                <field name="supplier_id"/>
+                <field name="active"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_mdx_gelen_eslestirme" model="ir.actions.act_window">
+        <field name="name">Gelen Fatura Hizmet Eşleştirme</field>
+        <field name="res_model">mdx.gelen.eslestirme</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Henüz bir hizmet eşleştirme kaydı oluşturulmamış.
+            </p>
+        </field>
+    </record>
+</odoo>

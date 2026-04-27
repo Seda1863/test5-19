@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Kontrol Paneli Dashboard Override - Portföy Çekleri ve Bakiye Güncelleme -->
+    <record id="mdx_account_journal_dashboard_kanban_inherit" model="ir.ui.view">
+        <field name="name">mdx.account.journal.dashboard.kanban.inherit</field>
+        <field name="model">account.journal</field>
+        <field name="inherit_id" ref="account.account_journal_dashboard_kanban_view"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <!-- Bank/Cash Dashboard'a Portföy Çekleri Bilgisi Ekle -->
+            <xpath expr="//t[@t-name='JournalBodyBankCash']//div[@id='dashboard_bank_cash_right']" position="inside">
+                <!-- Portföydeki Çekler (Alınan Çekler) -->
+                <div class="row" t-if="dashboard.has_portfolio_cheques">
+                    <div id="dashboard_portfolio_cheques" class="col overflow-hidden text-start">
+                        <a type="object" name="action_open_portfolio_cheques" class="text-info">
+                            <i class="fa fa-money me-1"/>
+                            <t t-out="dashboard.portfolio_cheque_count"/> Portföydeki Çek
+                        </a>
+                    </div>
+                    <div class="col-auto text-end">
+                        <span class="text-info" dir="ltr"><t t-out="dashboard.portfolio_cheque_amount"/></span>
+                    </div>
+                </div>
+            </xpath>
+
+            <!-- Bakiye gösterimini güncelle - Diğer işlemler dahil olduğunu belirt -->
+            <xpath expr="//div[@id='dashboard_bank_cash_balance']" position="attributes">
+                <attribute name="title">Bakiye (Diğer İşlemler Dahil)</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

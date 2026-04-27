@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <record id="view_mdx_audit_rule_tree" model="ir.ui.view">
+      <field name="name">mdx.audit.rule.tree</field>
+      <field name="model">mdx.audit.rule</field>
+      <field name="arch" type="xml">
+        <list string="Audit Rules" create="1" edit="1" delete="1">
+          <field name="name"/>
+          <field name="active"/>
+          <field name="models"/>
+          <field name="track_create"/>
+          <field name="track_write"/>
+          <field name="track_unlink"/>
+        </list>
+      </field>
+    </record>
+
+    <record id="view_mdx_audit_rule_form" model="ir.ui.view">
+      <field name="name">mdx.audit.rule.form</field>
+      <field name="model">mdx.audit.rule</field>
+      <field name="arch" type="xml">
+        <form string="Audit Rule">
+          <header>
+            <button name="action_view_logs" type="object" string="View Logs" class="oe_highlight"/>
+          </header>
+          <sheet>
+            <group>
+              <field name="name"/>
+              <field name="active"/>
+              <field name="model_ids" widget="many2many_tags" options="{'no_create': True}"/>
+              <field name="models" readonly="1"/>
+            </group>
+
+            <group string="Operations">
+              <field name="track_create"/>
+              <field name="track_write"/>
+              <field name="track_unlink"/>
+            </group>
+
+            <group string="Tracked Fields">
+              <field name="field_ids" widget="many2many_tags" options="{'no_create': True}"/>
+              <field name="excluded_field_ids" widget="many2many_tags" options="{'no_create': True}"/>
+              <div class="o_form_label">Boş bırakılırsa: tüm field değişiklikleri loglanır (hariç tutulanlar hariç).</div>
+            </group>
+
+            <group string="Users &amp; Groups">
+              <field name="user_ids" widget="many2many_tags"/>
+              <field name="group_ids" widget="many2many_tags"/>
+              <field name="excluded_user_ids" widget="many2many_tags" context="{'active_test': False}"/>
+              <div class="o_form_label">Boş bırakılırsa: tüm kullanıcılar için geçerlidir.</div>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record id="action_mdx_audit_rule" model="ir.actions.act_window">
+      <field name="name">Audit Rules</field>
+      <field name="res_model">mdx.audit.rule</field>
+      <field name="view_mode">list,form</field>
+      <field name="groups_id" eval="[(6, 0, [ref('base.group_system')])]"/>
+    </record>
+
+  </data>
+</odoo>

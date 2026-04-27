@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_dbs_root"
+              name="DBS"
+              parent="account.menu_finance_entries"
+              sequence="80"
+              groups="account_dbs_tr.group_dbs_user,account_dbs_tr.group_dbs_manager"/>
+
+    <menuitem id="menu_dbs_contract"
+              name="Sozlesmeler"
+              parent="menu_dbs_root"
+              action="action_dbs_contract"
+              sequence="10"
+              groups="account_dbs_tr.group_dbs_manager"/>
+
+    <menuitem id="menu_dbs_batches_admin"
+              name="DBS Toplu Islemler"
+              parent="menu_dbs_root"
+              action="action_dbs_batch"
+              sequence="20"
+              groups="account_dbs_tr.group_dbs_user,account_dbs_tr.group_dbs_manager"/>
+
+    <menuitem id="menu_dbs_customers"
+              name="DBS Musteriler"
+              parent="menu_dbs_root"
+              action="action_dbs_customers"
+              sequence="40"
+              groups="account_dbs_tr.group_dbs_user,account_dbs_tr.group_dbs_manager"/>
+
+    <menuitem id="menu_dbs_report_summary"
+              name="DBS Rapor Ozeti"
+              parent="menu_dbs_root"
+              action="action_dbs_report_summary"
+              sequence="50"
+              groups="account_dbs_tr.group_dbs_user,account_dbs_tr.group_dbs_manager"/>
+</odoo>

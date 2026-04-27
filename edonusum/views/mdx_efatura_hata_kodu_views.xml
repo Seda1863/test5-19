@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== LIST VIEW ==================== -->
+    <record id="view_mdx_efatura_hata_kodu_list" model="ir.ui.view">
+        <field name="name">mdx.efatura.hata.kodu.list</field>
+        <field name="model">mdx.efatura.hata.kodu</field>
+        <field name="arch" type="xml">
+            <list string="E-Fatura Hata Kodları" decoration-danger="severity == 'critical'" 
+                  decoration-warning="severity == 'error'" decoration-info="severity == 'warning'">
+                <field name="code"/>
+                <field name="category"/>
+                <field name="severity"/>
+                <field name="document_type"/>
+                <field name="is_retryable"/>
+                <field name="user_message_tr"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ==================== FORM VIEW ==================== -->
+    <record id="view_mdx_efatura_hata_kodu_form" model="ir.ui.view">
+        <field name="name">mdx.efatura.hata.kodu.form</field>
+        <field name="model">mdx.efatura.hata.kodu</field>
+        <field name="arch" type="xml">
+            <form string="E-Fatura Hata Kodu">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+                    <group>
+                        <group name="main_info">
+                            <field name="code"/>
+                            <field name="category"/>
+                            <field name="severity"/>
+                            <field name="document_type"/>
+                        </group>
+                        <group name="retry_config">
+                            <field name="is_retryable"/>
+                            <field name="max_retry_count" invisible="not is_retryable"/>
+                            <field name="retry_delay_seconds" invisible="not is_retryable"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Mesajlar (TR)" name="messages_tr">
+                            <group>
+                                <field name="user_message_tr"/>
+                                <field name="solution_hint_tr"/>
+                            </group>
+                        </page>
+                        <page string="Mesajlar (EN)" name="messages_en">
+                            <group>
+                                <field name="user_message_en"/>
+                                <field name="solution_hint_en"/>
+                            </group>
+                        </page>
+                        <page string="Teknik Detaylar" name="technical">
+                            <group>
+                                <field name="technical_description"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== SEARCH VIEW ==================== -->
+    <record id="view_mdx_efatura_hata_kodu_search" model="ir.ui.view">
+        <field name="name">mdx.efatura.hata.kodu.search</field>
+        <field name="model">mdx.efatura.hata.kodu</field>
+        <field name="arch" type="xml">
+            <search string="Hata Kodu Ara">
+                <field name="code"/>
+                <field name="user_message_tr"/>
+                <field name="solution_hint_tr"/>
+                <separator/>
+                <filter name="filter_retryable" string="Yeniden Denenebilir" domain="[('is_retryable', '=', True)]"/>
+                <filter name="filter_critical" string="Kritik" domain="[('severity', '=', 'critical')]"/>
+                <filter name="filter_error" string="Hata" domain="[('severity', '=', 'error')]"/>
+                <separator/>
+                <filter name="filter_auth" string="Kimlik Doğrulama" domain="[('category', '=', 'AUTH')]"/>
+                <filter name="filter_val_receiver" string="Alıcı Doğrulama" domain="[('category', '=', 'VAL_RECEIVER')]"/>
+                <filter name="filter_val_sender" string="Satıcı Doğrulama" domain="[('category', '=', 'VAL_SENDER')]"/>
+                <filter name="filter_val_line" string="Satır Doğrulama" domain="[('category', '=', 'VAL_LINE')]"/>
+                <filter name="filter_val_tax" string="Vergi Doğrulama" domain="[('category', '=', 'VAL_TAX')]"/>
+                <filter name="filter_series" string="Seri/Numara" domain="[('category', '=', 'SERIES')]"/>
+                <filter name="filter_system" string="Sistem" domain="[('category', '=', 'SYSTEM')]"/>
+                <filter name="filter_export" string="İhracat" domain="[('category', '=', 'EXPORT')]"/>
+                <filter name="filter_despatch" string="E-İrsaliye" domain="[('category', '=', 'DESPATCH')]"/>
+                <separator/>
+                <filter name="filter_efatura" string="E-Fatura" domain="[('document_type', 'in', ['EFATURA', 'ALL'])]"/>
+                <filter name="filter_earsiv" string="E-Arşiv" domain="[('document_type', 'in', ['EARSIV', 'ALL'])]"/>
+                <filter name="filter_irsaliye" string="E-İrsaliye" domain="[('document_type', 'in', ['IRSALIYE', 'ALL'])]"/>
+                <separator/>
+                <filter name="filter_inactive" string="Arşivlenmiş" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Grupla">
+                    <filter name="group_by_category" string="Kategori" context="{'group_by': 'category'}"/>
+                    <filter name="group_by_severity" string="Önem Seviyesi" context="{'group_by': 'severity'}"/>
+                    <filter name="group_by_document_type" string="Belge Türü" context="{'group_by': 'document_type'}"/>
+                    <filter name="group_by_retryable" string="Yeniden Denenebilir" context="{'group_by': 'is_retryable'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ==================== KANBAN VIEW ==================== -->
+    <record id="view_mdx_efatura_hata_kodu_kanban" model="ir.ui.view">
+        <field name="name">mdx.efatura.hata.kodu.kanban</field>
+        <field name="model">mdx.efatura.hata.kodu</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="code"/>
+                <field name="category"/>
+                <field name="severity"/>
+                <field name="is_retryable"/>
+                <field name="user_message_tr"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <span t-esc="record.code.value"/>
+                                        </strong>
+                                    </div>
+                                    <div class="o_kanban_record_top_right">
+                                        <span t-if="record.severity.raw_value == 'critical'" class="badge bg-danger">Kritik</span>
+                                        <span t-if="record.severity.raw_value == 'error'" class="badge bg-warning">Hata</span>
+                                        <span t-if="record.severity.raw_value == 'warning'" class="badge bg-info">Uyarı</span>
+                                        <span t-if="record.severity.raw_value == 'info'" class="badge bg-secondary">Bilgi</span>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <span t-esc="record.user_message_tr.value"/>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <span class="badge bg-secondary" t-esc="record.category.value"/>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <span t-if="record.is_retryable.raw_value" class="fa fa-refresh text-success" title="Yeniden Denenebilir"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ==================== ACTIONS ==================== -->
+    <record id="action_mdx_efatura_hata_kodu" model="ir.actions.act_window">
+        <field name="name">Hata Kodları</field>
+        <field name="res_model">mdx.efatura.hata.kodu</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Henüz hata kodu tanımlanmamış
+            </p>
+            <p>
+                Hata kodları, e-fatura gönderim ve alım işlemlerinde karşılaşılan hataların 
+                kullanıcı dostu mesajlarla açıklanmasını sağlar.
+            </p>
+        </field>
+    </record>
+
+    <!-- ==================== MENU ==================== -->
+    <!-- Alt menü: TR-Lokalizasyon > Ayarlar > Hata Kodları -->
+    <menuitem id="menu_mdx_efatura_hata_kodu"
+              name="Hata Kodları"
+              parent="action_mdx_lokalizasyon_ayarlar"
+              action="action_mdx_efatura_hata_kodu"
+              sequence="50"/>
+              
+</odoo>

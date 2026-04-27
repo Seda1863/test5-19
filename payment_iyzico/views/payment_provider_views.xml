@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_payment_provider_form_iyzico" model="ir.ui.view">
+        <field name="name">payment.provider.form.iyzico</field>
+        <field name="model">payment.provider</field>
+        <field name="inherit_id" ref="payment.payment_provider_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Provider credentials grubuna ekleme -->
+            <xpath expr="//group[@name='provider_credentials']" position="inside">
+                <group name="iyzico_credentials" invisible="code != 'iyzico'">
+                    <separator string="Iyzico API Credentials"/>
+
+                    <field
+                        name="iyzico_key_id"
+                        string="API Key ID"
+                        readonly="state == 'enabled'"
+                        required="code == 'iyzico' and state != 'disabled'"/>
+
+                    <field
+                        name="iyzico_key_secret"
+                        string="API Secret Key"
+                        password="True"
+                        readonly="state == 'enabled'"
+                        required="code == 'iyzico' and state != 'disabled'"/>
+
+                    <p class="text-muted" style="margin-top: 10px;">
+                        <i class="fa fa-info-circle"/> 
+                        Use <b>Enabled</b> for Production or <b>Disabled</b> for Sandbox mode.
+                    </p>
+                </group>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

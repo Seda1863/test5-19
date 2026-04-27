@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_product_creation_wizard_form" model="ir.ui.view">
+        <field name="name">mdx.product.creation.wizard.form</field>
+        <field name="model">mdx.product.creation.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Manuel Ürün Oluşturma">
+                <!-- Yeni Ürün Oluşturulacak Bilgisi -->
+                <p>Yeni ürün oluşturulacak, onaylıyor musunuz? Aksi takdirde, eşleştirilemediği için gelen fatura bilgileri ile otomatik olarak oluşturulacak ve eşleştirilecektir.</p>
+                <footer>
+                    <button string="Onayla" type="object" name="action_confirm" class="btn-primary"/>
+                    <button string="İptal" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_product_creation_wizard" model="ir.actions.act_window">
+        <field name="name">Ürün Oluşturma Sihirbazı</field>
+        <field name="res_model">mdx.product.creation.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_product_creation_wizard_form"/>
+        <field name="target">new</field>
+    </record>
+</odoo>

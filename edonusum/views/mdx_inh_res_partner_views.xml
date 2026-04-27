@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_mdx_inh_res_partner_form" model="ir.ui.view">
+        <field name="name">mdx.inh.res.partner.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <!-- <xpath expr="//field[@name='vat']" position="after">
+                <button name="efatura_mukellef_sorgulama"
+                        type="object"
+                        string="E-Fatura Mükellef Sorgulama"
+                        class="oe_highlight"/>
+            </xpath> -->
+            <xpath expr="//page[@name='internal_notes']" position="after">
+                <page string="E-Dönüşüm" name="edonusum_tab">
+                    <group>
+                        <!-- Genel Bilgiler -->
+                        <group string="Genel Bilgiler">
+                            <field name="type" string="TYPE"/> <!-- TODO : TYPE field will remove -->
+                            <field name="legal_name" placeholder="Yasal Ad"/>
+                            <field name="ticari_sicil_no" placeholder="Ticari Sicil No"/>
+                            <field name="mersis_no" placeholder="MERSIS No"/>
+                            <field name="vergi_dairesi" placeholder="Vergi Dairesi"/>
+                            <field name="ozel_not" placeholder="Özel Not" colspan="2"/>
+                        </group>
+
+                        <!-- Müşteri ve Tedarikçi Durumları -->
+                        <group string="Müşteri/Tedarikçi Durumları">
+                            <field name="is_customer" string="Müşteri"/>
+                            <field name="is_supplier" string="Tedarikçi"/>
+                            <field name="is_carrier" string="Taşıyıcı"/>
+                            <field name="efatura_musterisi" string="E-Fatura Müşterisi"/>
+                            <field name="earsiv_musterisi" string="E-Arşiv Müşterisi"/>
+                            <field name="eirsaliye_musterisi" string="E-İrsaliye Müşterisi"/>
+                        </group>
+
+                        <!-- E-Dönüşüm Bilgileri -->
+                        <group string="E-Dönüşüm Bilgileri">
+                            <field name="efatura_turu_id" placeholder="E-Fatura Türü"/>
+                            <field name="efatura_senaryo_id" placeholder="E-Fatura Senaryo" readonly="efatura_senaryo_readonly"/>
+                            <field name="fatura_tipi_id" placeholder="Fatura Tipi" readonly="fatura_tipi_readonly"/>
+                            <field name="fatura_alt_tipi_id" placeholder="Fatura Alt Tipi"/>
+                            <field name="eirsaliye_turu_id" placeholder="E-İrsaliye Türü"/>
+                            <field name="eirsaliye_senaryo_id" placeholder="E-İrsaliye Senaryo"/>
+                            <field name="eirsaliye_tipi_id" placeholder="E-İrsaliye Tipi"/>
+                        </group>
+
+                        <!-- Vergi ve Kodu Alanları -->
+                        <group string="Vergi ve Diğer Kodu Alanları">
+                            <field name="vergi_kodu" placeholder="Vergi Kodu"/>
+                            <field name="tevkifat_kodu" placeholder="Tevkifat Kodu"/>
+                            <field name="istisna_kodu" placeholder="İstisna Kodu"/>
+                            <field name="ozel_matrah_kodu" placeholder="Özel Matrah Kodu"/>
+                            <field name="ihrac_kayit_kodu" placeholder="İhraç Kayıt Kodu"/>
+                        </group>
+
+                        <!-- Para Birimi -->
+                        <group string="Para Birimi">
+                            <field name="currency_id" placeholder="Para Birimi"/>
+                        </group>
+
+                        <!-- Logging Fields -->
+                        <group>
+                            <field name="logging_field1" placeholder="LOG1"/>
+                            <field name="logging_field2" placeholder="LOG2"/>
+                            <field name="logging_field3" placeholder="LOG3"/>
+                            <field name="logging_field4" placeholder="LOG4"/>
+                            <field name="logging_field5" placeholder="LOG5"/>
+                            <field name="logging_field6" placeholder="LOG6"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    
+    <!-- DENEYSEL -->
+</odoo>

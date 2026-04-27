@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+    <record id="guarantee_type_bid" model="guarantee.letter.type">
+        <field name="name">Geçici Teminat</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="guarantee_type_performance" model="guarantee.letter.type">
+        <field name="name">Kesin Teminat</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="guarantee_type_advance" model="guarantee.letter.type">
+        <field name="name">Avans Teminatı</field>
+        <field name="sequence">30</field>
+    </record>
+
+    <record id="guarantee_type_execution" model="guarantee.letter.type">
+        <field name="name">Performans Teminatı</field>
+        <field name="sequence">40</field>
+    </record>
+
+    <record id="guarantee_type_customs" model="guarantee.letter.type">
+        <field name="name">Gümrük Teminatı</field>
+        <field name="sequence">50</field>
+    </record>
+</odoo>

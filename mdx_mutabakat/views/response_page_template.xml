@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Yanıt sayfası template'i -->
+    <template id="response_page" name="Mutabakat Yanıt Sayfası">
+        <t t-call="web.frontend_layout">
+            <div style="max-width: 600px; margin: 60px auto; padding: 40px; text-align: center; font-family: 'Segoe UI', Arial, sans-serif;">
+
+                <t t-if="success">
+                    <div style="width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px;
+                                display: flex; align-items: center; justify-content: center; font-size: 40px;"
+                         t-attf-style="background: {{ 'agreed' in (mutabakat.state or '') and '#d4edda' or '#f8d7da' }};">
+                        <t t-if="'agreed' in (mutabakat.state or '')">✅</t>
+                        <t t-else="">❌</t>
+                    </div>
+                </t>
+                <t t-else="">
+                    <div style="width: 80px; height: 80px; border-radius: 50%; background: #fff3cd;
+                                margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 40px;">
+                        ⚠️
+                    </div>
+                </t>
+
+                <h1 style="color: #1a1a2e; font-size: 24px; margin-bottom: 10px;">
+                    <t t-out="title"/>
+                </h1>
+
+                <p style="color: #666; font-size: 16px; line-height: 1.6;">
+                    <t t-out="message"/>
+                </p>
+
+                <t t-if="mutabakat">
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin-top: 30px; text-align: left;">
+                        <table style="width: 100%; font-size: 14px;">
+                            <tr>
+                                <td style="padding: 6px 0; color: #666;">Mutabakat No:</td>
+                                <td style="padding: 6px 0;"><strong><t t-out="mutabakat.name"/></strong></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 6px 0; color: #666;">Firma:</td>
+                                <td style="padding: 6px 0;"><t t-out="mutabakat.company_id.name"/></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 6px 0; color: #666;">Dönem:</td>
+                                <td style="padding: 6px 0;">
+                                    <t t-out="mutabakat.period_start"/> — <t t-out="mutabakat.period_end"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </t>
+
+                <p style="color: #999; font-size: 12px; margin-top: 40px;">
+                    Bu sayfa MindDX Dijital Dönüşüm Teknolojileri tarafından oluşturulmuştur.
+                </p>
+
+            </div>
+        </t>
+    </template>
+
+    <!-- Online Onay Sayfası -->
+    <template id="confirmation_page" name="Mutabakat Onay Sayfası">
+        <t t-call="web.frontend_layout">
+            <div style="max-width: 700px; margin: 40px auto; padding: 30px; font-family: 'Segoe UI', Arial, sans-serif;">
+
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h1 style="color: #1a1a2e; font-size: 22px;">Mutabakat Onay Sayfası</h1>
+                    <p style="color: #666; font-size: 14px;">
+                        Aşağıdaki mutabakat bilgilerini inceleyip onaylayınız.
+                    </p>
+                </div>
+
+                <!-- Mutabakat Bilgileri -->
+                <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                    <h3 style="margin-top:0; color: #1a1a2e; border-bottom: 1px solid #dee2e6; padding-bottom: 10px;">
+                        Mutabakat Bilgileri
+                    </h3>
+                    <table style="width: 100%; font-size: 14px;">
+                        <tr>
+                            <td style="padding: 6px 0; color: #666; width: 35%;">Mutabakat No:</td>
+                            <td style="padding: 6px 0;"><strong><t t-out="mutabakat.name"/></strong></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 0; color: #666;">Gönderen Firma:</td>
+                            <td style="padding: 6px 0;"><t t-out="mutabakat.company_id.name"/></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 0; color: #666;">Cari:</td>
+                            <td style="padding: 6px 0;"><t t-out="mutabakat.partner_id.name"/></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 0; color: #666;">Dönem:</td>
+                            <td style="padding: 6px 0;">
+                                <t t-out="mutabakat.period_start"/> — <t t-out="mutabakat.period_end"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 0; color: #666;">Toplam Tutar:</td>
+                            <td style="padding: 6px 0;">
+                                <strong><t t-out="'%.2f' % mutabakat.total_amount"/> <t t-out="mutabakat.currency_id.symbol"/></strong>
+                            </td>
+                        </tr>
+                        <t t-if="mutabakat.response_due_date">
+                            <tr>
+                                <td style="padding: 6px 0; color: #666;">Son Yanıt Tarihi:</td>
+                                <td style="padding: 6px 0; color: #dc3545;">
+                                    <strong><t t-out="mutabakat.response_due_date"/></strong>
+                                </td>
+                            </tr>
+                        </t>
+                    </table>
+                </div>
+
+                <!-- Hareket Detayları -->
+                <t t-if="mutabakat.line_ids">
+                    <div style="background: #fff; border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                        <h3 style="margin-top:0; color: #1a1a2e; border-bottom: 1px solid #dee2e6; padding-bottom: 10px;">
+                            Mutabakat Detayları
+                        </h3>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                            <thead>
+                                <tr style="background: #f8f9fa;">
+                                    <th style="padding: 8px; border: 1px solid #dee2e6; text-align: left;">Tip</th>
+                                    <th style="padding: 8px; border: 1px solid #dee2e6; text-align: left;">Dönem</th>
+                                    <th style="padding: 8px; border: 1px solid #dee2e6; text-align: center;">Belge Sayısı</th>
+                                    <th style="padding: 8px; border: 1px solid #dee2e6; text-align: right;">Tutar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="mutabakat.line_ids" t-as="line">
+                                    <tr>
+                                        <td style="padding: 8px; border: 1px solid #dee2e6;">
+                                            <t t-if="line.mutabakat_type == 'alacak'">Alacak</t>
+                                            <t t-if="line.mutabakat_type == 'borc'">Borç</t>
+                                        </td>
+                                        <td style="padding: 8px; border: 1px solid #dee2e6;">
+                                            <t t-out="line.period or ''"/>
+                                        </td>
+                                        <td style="padding: 8px; border: 1px solid #dee2e6; text-align: center;">
+                                            <t t-out="line.invoice_count"/>
+                                        </td>
+                                        <td style="padding: 8px; border: 1px solid #dee2e6; text-align: right;">
+                                            <t t-out="'%.2f' % line.amount"/> <t t-out="line.currency_id.symbol"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+
+                <!-- Onay Butonları -->
+                <div style="text-align: center; margin-top: 30px;">
+                    <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
+                        Yukarıdaki mutabakat bilgilerini onaylıyor musunuz?
+                    </p>
+                    <a t-attf-href="/mutabakat/response/{{ mutabakat.token }}/agree"
+                       style="display: inline-block; padding: 14px 40px; background: #28a745; color: white;
+                              text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: bold; margin: 0 10px;">
+                        ✅ Mutabıkız
+                    </a>
+                    <a t-attf-href="/mutabakat/response/{{ mutabakat.token }}/disagree"
+                       style="display: inline-block; padding: 14px 40px; background: #dc3545; color: white;
+                              text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: bold; margin: 0 10px;">
+                        ❌ Mutabık Değiliz
+                    </a>
+                </div>
+
+                <p style="color: #999; font-size: 12px; margin-top: 40px; text-align: center;">
+                    Bu sayfa MindDX Dijital Dönüşüm Teknolojileri tarafından oluşturulmuştur.
+                </p>
+
+            </div>
+        </t>
+    </template>
+
+</odoo>

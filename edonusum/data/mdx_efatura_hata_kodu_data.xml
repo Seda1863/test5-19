@@ -1,0 +1,1443 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- ==================== REST API ERRORS (1000-1021) ==================== -->
+        <record id="error_rest_1000" model="mdx.efatura.hata.kodu">
+            <field name="code">1000</field>
+            <field name="category">AUTH</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Token yok. Kimlik doğrulama başarısız.</field>
+            <field name="solution_hint_tr">Web servis ayarlarını kontrol edin.</field>
+        </record>
+        
+        <record id="error_rest_1001" model="mdx.efatura.hata.kodu">
+            <field name="code">1001</field>
+            <field name="category">AUTH</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">True</field>
+            <field name="user_message_tr">Token geçersiz. Oturum yenileniyor...</field>
+            <field name="solution_hint_tr">Sistem otomatik olarak yeni token alacaktır.</field>
+        </record>
+        
+        <record id="error_rest_1002" model="mdx.efatura.hata.kodu">
+            <field name="code">1002</field>
+            <field name="category">AUTH</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Authorization header formatı hatalı.</field>
+            <field name="solution_hint_tr">Teknik destek ile iletişime geçin.</field>
+        </record>
+        
+        <record id="error_rest_1011" model="mdx.efatura.hata.kodu">
+            <field name="code">1011</field>
+            <field name="category">AUTH</field>
+            <field name="severity">critical</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Client ID, Client Secret veya Grant Type eşleştirilemedi.</field>
+            <field name="solution_hint_tr">Web servis kimlik bilgilerini kontrol edin.</field>
+        </record>
+        
+        <record id="error_rest_1021" model="mdx.efatura.hata.kodu">
+            <field name="code">1021</field>
+            <field name="category">AUTH</field>
+            <field name="severity">critical</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Kullanıcı adı veya şifre hatalı.</field>
+            <field name="solution_hint_tr">E-Fatura web servis kullanıcı bilgilerinizi kontrol edin.</field>
+        </record>
+        
+        <!-- ==================== E-FATURA SYSTEM ERRORS (EF0001-EF0010) ==================== -->
+        <record id="error_ef0001" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0001</field>
+            <field name="category">SYSTEM</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">True</field>
+            <field name="user_message_tr">Sistem hatası oluştu. Lütfen birkaç dakika sonra tekrar deneyin.</field>
+            <field name="solution_hint_tr">Bu hata genellikle geçicidir. 5-10 dakika bekleyip tekrar deneyin.</field>
+        </record>
+        
+        <record id="error_ef0002" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0002</field>
+            <field name="category">AUTH</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">True</field>
+            <field name="user_message_tr">Oturumunuzun süresi dolmuş olabilir. Yeniden bağlanılıyor...</field>
+            <field name="solution_hint_tr">Sistem otomatik olarak yeniden oturum açmayı deneyecektir.</field>
+        </record>
+        
+        <record id="error_ef0003" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0003</field>
+            <field name="category">AUTH</field>
+            <field name="severity">critical</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">E-Fatura servis kullanıcı adı veya şifresi hatalı.</field>
+            <field name="solution_hint_tr">Ayarlar > E-Dönüşüm > Web Servisleri bölümünden kullanıcı bilgilerinizi kontrol edin. "Şifremi Unuttum" seçeneğini kullanabilirsiniz.</field>
+        </record>
+        
+        <record id="error_ef0004" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0004</field>
+            <field name="category">AUTH</field>
+            <field name="severity">critical</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Bu servisi çağırmak için gerekli yetkiniz bulunmamaktadır.</field>
+            <field name="solution_hint_tr">Firma yöneticinizle iletişime geçerek yetki talep edin.</field>
+        </record>
+        
+        <record id="error_ef0005" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0005</field>
+            <field name="category">FORMAT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Zorunlu alan seçilmemiş.</field>
+            <field name="solution_hint_tr">Belirtilen alanı doldurun.</field>
+        </record>
+        
+        <record id="error_ef0010" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0010</field>
+            <field name="category">FORMAT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Zorunlu alan girilmemiş.</field>
+            <field name="solution_hint_tr">Belirtilen zorunlu alanı doldurun.</field>
+        </record>
+        
+        <!-- ==================== VKN/TCKN ERRORS ==================== -->
+        <record id="error_ef0020" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0020</field>
+            <field name="category">VAL_RECEIVER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Vergi Kimlik No alanı boş olamaz.</field>
+            <field name="solution_hint_tr">Müşteri/Tedarikçi kartında VKN alanını doldurun.</field>
+        </record>
+        
+        <record id="error_ef0028" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0028</field>
+            <field name="category">VAL_RECEIVER</field>
+            <field name="severity">warning</field>
+            <field name="is_retryable">True</field>
+            <field name="user_message_tr">Alıcı firma e-fatura sistemine kayıtlı değil.</field>
+            <field name="solution_hint_tr">Alıcı firmanın e-fatura mükellefi olup olmadığını kontrol edin. E-Fatura mükellefi değilse E-Arşiv fatura gönderin.</field>
+        </record>
+        
+        <record id="error_ef0032" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0032</field>
+            <field name="category">VAL_SENDER</field>
+            <field name="severity">critical</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Girilen VKN başka bir kurum tarafından kullanılıyor.</field>
+            <field name="solution_hint_tr">VKN bilgisini kontrol edin.</field>
+        </record>
+        
+        <record id="error_ef0033" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0033</field>
+            <field name="category">VAL_SENDER</field>
+            <field name="severity">critical</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Girilen TCKN başka bir şahıs tarafından kullanılıyor.</field>
+            <field name="solution_hint_tr">TCKN bilgisini kontrol edin.</field>
+        </record>
+        
+        <record id="error_ef0034" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0034</field>
+            <field name="category">FORMAT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">VKN/TCKN alanı en az 10 karakter olmalıdır.</field>
+            <field name="solution_hint_tr">VKN 10, TCKN 11 haneli olmalıdır.</field>
+        </record>
+        
+        <record id="error_ef0035" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0035</field>
+            <field name="category">FORMAT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">VKN/TCKN alanı en fazla 11 karakter olabilir.</field>
+            <field name="solution_hint_tr">VKN 10, TCKN 11 haneli olmalıdır.</field>
+        </record>
+        
+        <record id="error_ef0036" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0036</field>
+            <field name="category">VAL_SENDER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">VKN girilmişse ünvan da girilmelidir.</field>
+            <field name="solution_hint_tr">Şirket/Müşteri kartında ünvan alanını doldurun.</field>
+        </record>
+        
+        <record id="error_ef0037" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0037</field>
+            <field name="category">VAL_SENDER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">VKN girilmişse ad/soyad girilmemelidir.</field>
+            <field name="solution_hint_tr">Tüzel kişi için sadece ünvan kullanın.</field>
+        </record>
+        
+        <record id="error_ef0038" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0038</field>
+            <field name="category">VAL_SENDER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">TCKN girilmişse ad/soyad da girilmelidir.</field>
+            <field name="solution_hint_tr">Gerçek kişi için ad ve soyad alanlarını doldurun.</field>
+        </record>
+        
+        <record id="error_ef0039" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0039</field>
+            <field name="category">VAL_SENDER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">TCKN girilmişse ünvan girilmemelidir.</field>
+            <field name="solution_hint_tr">Gerçek kişi için ünvan yerine ad/soyad kullanın.</field>
+        </record>
+        
+        <!-- ==================== SERIES ERRORS ==================== -->
+        <record id="error_ef0044" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0044</field>
+            <field name="category">SERIES</field>
+            <field name="severity">critical</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Bu fatura numarası daha önce kullanılmış!</field>
+            <field name="solution_hint_tr">Fatura serisi atlamış olabilir. Sistem yöneticinizle iletişime geçin.</field>
+        </record>
+        
+        <record id="error_ef0152" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0152</field>
+            <field name="category">SERIES</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Seri tanımı 2 karakter olmalıdır.</field>
+            <field name="solution_hint_tr">Fatura serisi ayarlarından seri kodunu düzeltin.</field>
+        </record>
+        
+        <record id="error_ef0155" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0155</field>
+            <field name="category">SERIES</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Girilen seri tanımı sistemde zaten kayıtlı.</field>
+            <field name="solution_hint_tr">Farklı bir seri kodu kullanın.</field>
+        </record>
+        
+        <record id="error_ef0156" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0156</field>
+            <field name="category">SERIES</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Seri tanımı 'A' ile başlayamaz.</field>
+            <field name="solution_hint_tr">'A' harfi GİB tarafından rezerve edilmiştir.</field>
+        </record>
+        
+        <record id="error_ef0157" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0157</field>
+            <field name="category">SERIES</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Seri tanımı ilk karakter geçersiz.</field>
+            <field name="solution_hint_tr">BCDEFGHIJKLMNOPRSTUVYZQWX karakterlerinden biri kullanılabilir.</field>
+        </record>
+        
+        <record id="error_ef0158" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0158</field>
+            <field name="category">SERIES</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Seri tanımı ikinci karakter geçersiz.</field>
+            <field name="solution_hint_tr">ABCDEFGHIJKLMNOPRSTUVYZQWX karakterlerinden biri kullanılabilir.</field>
+        </record>
+        
+        <record id="error_ef0191" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0191</field>
+            <field name="category">SERIES</field>
+            <field name="severity">critical</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Bu numaralı fatura zaten kayıtlı!</field>
+            <field name="solution_hint_tr">Fatura durum sorgulama yapın. Seri senkronizasyonu bozulmuş olabilir.</field>
+        </record>
+        
+        <record id="error_ef0192" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0192</field>
+            <field name="category">SERIES</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Girilen seri tanımı sistemde kayıtlı değil.</field>
+            <field name="solution_hint_tr">Önce seri tanımlaması yapın.</field>
+        </record>
+        
+        <record id="error_ef0290" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0290</field>
+            <field name="category">SERIES</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Faturanın şubesi için default seri numarası tanımlanmamış.</field>
+            <field name="solution_hint_tr">E-Dönüşüm ayarlarından şube için varsayılan seri tanımlayın.</field>
+        </record>
+        
+        <record id="error_ef0341" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0341</field>
+            <field name="category">SERIES</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Bu seri numarası ile ilk faturadır. Fatura numarası 1'den başlamalıdır.</field>
+            <field name="solution_hint_tr">Yeni seri için numarayı 1'den başlatın.</field>
+        </record>
+        
+        <record id="error_ef0346" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0346</field>
+            <field name="category">SERIES</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Fatura numarası sıralı değil. Beklenen numaradan farklı.</field>
+            <field name="solution_hint_tr">Belirtilen seri numarasından devam edin.</field>
+        </record>
+        
+        <!-- ==================== RECEIVER VALIDATION ERRORS ==================== -->
+        <record id="error_ef0089" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0089</field>
+            <field name="category">VAL_RECEIVER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Alıcı bilgilerinde TCKN/VKN alanı boş olamaz.</field>
+            <field name="solution_hint_tr">Müşteri kartında VKN veya TCKN alanını doldurun.</field>
+        </record>
+        
+        <record id="error_ef0090" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0090</field>
+            <field name="category">VAL_RECEIVER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Alıcı adres bilgilerinin girilmesi zorunludur.</field>
+            <field name="solution_hint_tr">Müşteri kartında adres bilgilerini eksiksiz doldurun.</field>
+        </record>
+        
+        <record id="error_ef0091" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0091</field>
+            <field name="category">VAL_RECEIVER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Alıcı adres bilgilerinde şehir alanı boş olamaz.</field>
+            <field name="solution_hint_tr">Müşteri kartında şehir alanını seçin.</field>
+        </record>
+        
+        <record id="error_ef0092" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0092</field>
+            <field name="category">VAL_RECEIVER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Alıcı adres bilgilerinde ilçe alanı boş olamaz.</field>
+            <field name="solution_hint_tr">Müşteri kartında ilçe/semt alanını doldurun.</field>
+        </record>
+        
+        <record id="error_ef0119" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0119</field>
+            <field name="category">VAL_RECEIVER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Alıcı bilgilerinde hem TCKN hem VKN kaydı olamaz.</field>
+            <field name="solution_hint_tr">Müşteri kartında sadece VKN veya TCKN alanlarından birini doldurun.</field>
+        </record>
+        
+        <record id="error_ef0120" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0120</field>
+            <field name="category">VAL_RECEIVER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Alıcı bilgilerinde TCKN veya VKN bilgilerinden birinin bulunması gerekli.</field>
+            <field name="solution_hint_tr">Müşteri kartında VKN veya TCKN alanını doldurun.</field>
+        </record>
+        
+        <record id="error_ef0121" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0121</field>
+            <field name="category">VAL_RECEIVER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Alıcı VKN'si girildiyse ünvan alanı dolu olmalıdır.</field>
+            <field name="solution_hint_tr">Müşteri kartında firma ünvanını girin.</field>
+        </record>
+        
+        <record id="error_ef0122" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0122</field>
+            <field name="category">VAL_RECEIVER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Alıcı TCKN'si girildiyse ad ve soyad alanları dolu olmalıdır.</field>
+            <field name="solution_hint_tr">Müşteri kartında ad ve soyad alanlarını doldurun.</field>
+        </record>
+        
+        <record id="error_ef0135" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0135</field>
+            <field name="category">VAL_RECEIVER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Alıcının vergi dairesi seçili olmalıdır.</field>
+            <field name="solution_hint_tr">Müşteri kartında vergi dairesi alanını seçin.</field>
+        </record>
+        
+        <record id="error_ef0261" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0261</field>
+            <field name="category">VAL_RECEIVER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Alıcı adres bilgilerinde ülke alanı boş olamaz.</field>
+            <field name="solution_hint_tr">Müşteri kartında ülke alanını seçin.</field>
+        </record>
+        
+        <!-- ==================== SENDER VALIDATION ERRORS ==================== -->
+        <record id="error_ef0093" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0093</field>
+            <field name="category">VAL_SENDER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Satıcı bilgilerinde TCKN/VKN alanı boş olamaz.</field>
+            <field name="solution_hint_tr">Şirket ayarlarında VKN alanını doldurun.</field>
+        </record>
+        
+        <record id="error_ef0094" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0094</field>
+            <field name="category">VAL_SENDER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Satıcı adres bilgilerinin girilmesi zorunludur.</field>
+            <field name="solution_hint_tr">Şirket ayarlarında adres bilgilerini eksiksiz doldurun.</field>
+        </record>
+        
+        <record id="error_ef0095" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0095</field>
+            <field name="category">VAL_SENDER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Satıcı adres bilgilerinde ülke alanı boş olamaz.</field>
+            <field name="solution_hint_tr">Şirket ayarlarında ülke seçin.</field>
+        </record>
+        
+        <record id="error_ef0096" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0096</field>
+            <field name="category">VAL_SENDER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Satıcı adres bilgilerinde şehir alanı boş olamaz.</field>
+            <field name="solution_hint_tr">Şirket ayarlarında şehir seçin.</field>
+        </record>
+        
+        <record id="error_ef0097" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0097</field>
+            <field name="category">VAL_SENDER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Satıcı adres bilgilerinde ilçe alanı boş olamaz.</field>
+            <field name="solution_hint_tr">Şirket ayarlarında ilçe/semt doldurun.</field>
+        </record>
+        
+        <record id="error_ef0123" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0123</field>
+            <field name="category">VAL_SENDER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Satıcı bilgilerinde hem TCKN hem VKN kaydı olamaz.</field>
+            <field name="solution_hint_tr">Şirket ayarlarında sadece VKN kullanın.</field>
+        </record>
+        
+        <record id="error_ef0124" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0124</field>
+            <field name="category">VAL_SENDER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Satıcı bilgilerinde TCKN veya VKN bilgilerinden birinin bulunması gerekli.</field>
+            <field name="solution_hint_tr">Şirket ayarlarında VKN alanını doldurun.</field>
+        </record>
+        
+        <record id="error_ef0125" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0125</field>
+            <field name="category">VAL_SENDER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Satıcı VKN'si girildiyse ünvan alanı dolu olmalıdır.</field>
+            <field name="solution_hint_tr">Şirket ayarlarında firma ünvanını girin.</field>
+        </record>
+        
+        <record id="error_ef0126" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0126</field>
+            <field name="category">VAL_SENDER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Satıcı TCKN'si girildiyse ad ve soyad alanları dolu olmalıdır.</field>
+            <field name="solution_hint_tr">Şahıs için ad ve soyad alanlarını doldurun.</field>
+        </record>
+        
+        <record id="error_ef0136" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0136</field>
+            <field name="category">VAL_SENDER</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Satıcının vergi dairesi seçili olmalıdır.</field>
+            <field name="solution_hint_tr">Şirket ayarlarında vergi dairesi seçin.</field>
+        </record>
+        
+        <!-- ==================== LINE ITEM ERRORS ==================== -->
+        <record id="error_ef0098" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0098</field>
+            <field name="category">VAL_LINE</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Fatura satırında mal/hizmet ile ilgili alanlar dolu olmalıdır.</field>
+            <field name="solution_hint_tr">Fatura satırlarını kontrol edin.</field>
+        </record>
+        
+        <record id="error_ef0099" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0099</field>
+            <field name="category">VAL_LINE</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Fatura satırında ürün adı alanı boş olamaz!</field>
+            <field name="solution_hint_tr">Her satırda ürün/hizmet açıklaması olmalıdır.</field>
+        </record>
+        
+        <record id="error_ef0100" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0100</field>
+            <field name="category">VAL_LINE</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Fatura satırında miktar alanı boş olamaz.</field>
+            <field name="solution_hint_tr">Miktar değeri girin.</field>
+        </record>
+        
+        <record id="error_ef0101" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0101</field>
+            <field name="category">VAL_LINE</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Fatura satırında birim alanı boş olamaz.</field>
+            <field name="solution_hint_tr">Ürün için birim seçin (Adet, Kg, vb.).</field>
+        </record>
+        
+        <record id="error_ef0102" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0102</field>
+            <field name="category">VAL_LINE</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Fatura satırında birim fiyat alanı boş olamaz.</field>
+            <field name="solution_hint_tr">Birim fiyat değeri girin.</field>
+        </record>
+        
+        <record id="error_ef0129" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0129</field>
+            <field name="category">VAL_LINE</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">En az bir adet mal/hizmet bilgisi girilmiş olmalıdır.</field>
+            <field name="solution_hint_tr">Faturaya en az bir satır ekleyin.</field>
+        </record>
+        
+        <record id="error_ef0145" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0145</field>
+            <field name="category">VAL_LINE</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">İskonto/Masraf oran/tutar değeri negatif olamaz.</field>
+            <field name="solution_hint_tr">İskonto değerini pozitif olarak girin.</field>
+        </record>
+        
+        <record id="error_ef0363" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0363</field>
+            <field name="category">VAL_LINE</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Ürün Kodu boş olamaz.</field>
+            <field name="solution_hint_tr">Satırda ürün kodu tanımlayın.</field>
+        </record>
+        
+        <record id="error_ef0364" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0364</field>
+            <field name="category">VAL_LINE</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Ürün Adı boş olamaz.</field>
+            <field name="solution_hint_tr">Satırda ürün adı girin.</field>
+        </record>
+        
+        <record id="error_ef0365" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0365</field>
+            <field name="category">VAL_LINE</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Miktar boş olamaz.</field>
+            <field name="solution_hint_tr">Miktar değeri girin.</field>
+        </record>
+        
+        <record id="error_ef0366" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0366</field>
+            <field name="category">VAL_LINE</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Miktar azami limiti aştı. Azami Limit: 999999999999</field>
+            <field name="solution_hint_tr">Miktar değerini kontrol edin.</field>
+        </record>
+        
+        <record id="error_ef0367" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0367</field>
+            <field name="category">VAL_LINE</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Birim boş olamaz.</field>
+            <field name="solution_hint_tr">Birim seçin.</field>
+        </record>
+        
+        <record id="error_ef0368" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0368</field>
+            <field name="category">VAL_LINE</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Birim Fiyatı boş olamaz.</field>
+            <field name="solution_hint_tr">Birim fiyat girin.</field>
+        </record>
+        
+        <record id="error_ef0374" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0374</field>
+            <field name="category">VAL_LINE</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Birim hatalı girilmiştir.</field>
+            <field name="solution_hint_tr">Geçerli bir GİB birim kodu kullanın.</field>
+        </record>
+        
+        <!-- ==================== TAX ERRORS ==================== -->
+        <record id="error_ef0128" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0128</field>
+            <field name="category">VAL_TAX</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Vergi girilirken vergi çeşidi seçili olmalıdır.</field>
+            <field name="solution_hint_tr">Vergi türünü seçin (KDV, ÖTV, vb.).</field>
+        </record>
+        
+        <record id="error_ef0130" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0130</field>
+            <field name="category">VAL_TAX</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">En az bir adet vergi girilmiş olmalıdır.</field>
+            <field name="solution_hint_tr">Fatura satırlarına vergi ekleyin.</field>
+        </record>
+        
+        <record id="error_ef0131" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0131</field>
+            <field name="category">VAL_TAX</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Vergi miktarı, vergi oranı veya vergi muafiyet sebebi alanlarından en az biri dolu olmalıdır.</field>
+            <field name="solution_hint_tr">Vergi bilgilerini eksiksiz girin.</field>
+        </record>
+        
+        <record id="error_ef0150" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0150</field>
+            <field name="category">VAL_TAX</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Vergi tutarı 0 ise vergi muafiyet sebebi girilmiş olmalıdır.</field>
+            <field name="solution_hint_tr">%0 KDV için muafiyet kodu ve sebebini girin.</field>
+        </record>
+        
+        <record id="error_ef0163" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0163</field>
+            <field name="category">VAL_TAX</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Stopaj tutarı KDV matrahından fazla olamaz.</field>
+            <field name="solution_hint_tr">Stopaj tutarını kontrol edin.</field>
+        </record>
+        
+        <record id="error_ef0164" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0164</field>
+            <field name="category">VAL_TAX</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Mera fonu tutarı KDV matrahından fazla olamaz.</field>
+            <field name="solution_hint_tr">Mera fonu tutarını kontrol edin.</field>
+        </record>
+        
+        <record id="error_ef0165" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0165</field>
+            <field name="category">VAL_TAX</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">KDV tevkifat tutarı KDV tutarından fazla olamaz.</field>
+            <field name="solution_hint_tr">Tevkifat tutarını kontrol edin.</field>
+        </record>
+        
+        <record id="error_ef0166" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0166</field>
+            <field name="category">VAL_TAX</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">ÖTV tevkifat tutarı ÖTV tutarından fazla olamaz.</field>
+            <field name="solution_hint_tr">ÖTV tevkifat tutarını kontrol edin.</field>
+        </record>
+        
+        <record id="error_ef0195" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0195</field>
+            <field name="category">VAL_TAX</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Fatura satırında vergi tutarı 0 ise muafiyet sebebi girilmelidir.</field>
+            <field name="solution_hint_tr">KDV %0 ise muafiyet sebebi girin.</field>
+        </record>
+        
+        <record id="error_ef0216" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0216</field>
+            <field name="category">VAL_TAX</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">ÖTV Tevkifatı girilmiş ise satırda en az bir adet ÖTV 1.Liste vergisi girilmiş olmalıdır.</field>
+            <field name="solution_hint_tr">ÖTV vergisi ekleyin.</field>
+        </record>
+        
+        <record id="error_ef0217" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0217</field>
+            <field name="category">VAL_TAX</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Girilen KDV Tevkifatının vergi kodu ile oranının eşleşmesi gerekir.</field>
+            <field name="solution_hint_tr">Tevkifat kodu ve oranını uyumlu hale getirin.</field>
+        </record>
+        
+        <record id="error_ef0226" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0226</field>
+            <field name="category">VAL_TAX</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">KDV Tevkifatı girilmiş ise satırda KDV girilmiş olmalıdır.</field>
+            <field name="solution_hint_tr">KDV vergisi ekleyin.</field>
+        </record>
+        
+        <record id="error_ef0230" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0230</field>
+            <field name="category">VAL_TAX</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Vergi tutarı sıfırdan küçük olamaz.</field>
+            <field name="solution_hint_tr">Vergi tutarını pozitif girin.</field>
+        </record>
+        
+        <record id="error_ef0371" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0371</field>
+            <field name="category">VAL_TAX</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">KDV Oranı hatalı girilmiştir. KDV Oranları: 0, 1, 8, 10, 20</field>
+            <field name="solution_hint_tr">Geçerli bir KDV oranı seçin.</field>
+        </record>
+        
+        <record id="error_ef0372" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0372</field>
+            <field name="category">VAL_TAX</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">KDV Muafiyet Kodu hatalı girilmiştir.</field>
+            <field name="solution_hint_tr">Geçerli bir KDV muafiyet kodu seçin.</field>
+        </record>
+        
+        <record id="error_ef0373" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0373</field>
+            <field name="category">VAL_TAX</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">KDV Muafiyet Kodu girilmişse KDV Muafiyet Sebebi boş olamaz.</field>
+            <field name="solution_hint_tr">Muafiyet sebebini de girin.</field>
+        </record>
+        
+        <record id="error_ef0525" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0525</field>
+            <field name="category">VAL_TAX</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Tevkifat Kodu hatalı girilmiştir.</field>
+            <field name="solution_hint_tr">Geçerli bir tevkifat kodu seçin.</field>
+        </record>
+        
+        <!-- ==================== FORMAT ERRORS ==================== -->
+        <record id="error_ef0106" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0106</field>
+            <field name="category">FORMAT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Fatura UBL versiyon numarası doğru değil.</field>
+            <field name="solution_hint_tr">Teknik destek ile iletişime geçin.</field>
+        </record>
+        
+        <record id="error_ef0107" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0107</field>
+            <field name="category">FORMAT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Fatura özelleştirme numarası hatalı.</field>
+            <field name="solution_hint_tr">Teknik destek ile iletişime geçin.</field>
+        </record>
+        
+        <record id="error_ef0108" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0108</field>
+            <field name="category">FORMAT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Fatura senaryosu hatalı.</field>
+            <field name="solution_hint_tr">Fatura türü ayarlarını kontrol edin (TEMELFATURA, TICARIFATURA, vb.).</field>
+        </record>
+        
+        <record id="error_ef0109" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0109</field>
+            <field name="category">FORMAT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Fatura numarası formatı hatalı.</field>
+            <field name="solution_hint_tr">Fatura numarası ABC2024000000001 formatında olmalıdır.</field>
+        </record>
+        
+        <record id="error_ef0110" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0110</field>
+            <field name="category">FORMAT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Fatura UUID formatı hatalı.</field>
+            <field name="solution_hint_tr">UUID otomatik oluşturulur. Tekrar deneyin.</field>
+        </record>
+        
+        <record id="error_ef0111" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0111</field>
+            <field name="category">FORMAT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Fatura tarihi hatalı. Fatura tarihi ileri bir tarih olamaz.</field>
+            <field name="solution_hint_tr">Fatura tarihini bugün veya geçmiş bir tarih olarak ayarlayın.</field>
+        </record>
+        
+        <record id="error_ef0112" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0112</field>
+            <field name="category">FORMAT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Fatura tipi kodu hatalı.</field>
+            <field name="solution_hint_tr">Geçerli fatura tipi seçin (SATIS, IADE, vb.).</field>
+        </record>
+        
+        <record id="error_ef0113" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0113</field>
+            <field name="category">FORMAT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Fatura döviz kodu hatalı.</field>
+            <field name="solution_hint_tr">Geçerli bir para birimi seçin (TRY, USD, EUR, vb.).</field>
+        </record>
+        
+        <record id="error_ef0221" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0221</field>
+            <field name="category">FORMAT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Fatura tarihi çok eski. Belirtilen gün sayısından öncesine fatura kesilemez.</field>
+            <field name="solution_hint_tr">Fatura tarihini güncelleyin.</field>
+        </record>
+
+        <!-- ==================== PAYMENT/KONTOR ERRORS ==================== -->
+        <record id="error_ef0153" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0153</field>
+            <field name="category">PAYMENT</field>
+            <field name="severity">critical</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Kontör yetersiz! Fatura göndermek için yeterli kontörünüz bulunmamaktadır.</field>
+            <field name="solution_hint_tr">Kontör satın alın veya entegratör firmanızla iletişime geçin.</field>
+        </record>
+        
+        <record id="error_ef0262" model="mdx.efatura.hata.kodu">
+            <field name="code">EF00262</field>
+            <field name="category">PAYMENT</field>
+            <field name="severity">critical</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Kontör yetersiz. Belirtilen sayıda kontör gereklidir.</field>
+            <field name="solution_hint_tr">Kontör satın alın.</field>
+        </record>
+        
+        <!-- ==================== CONNECTION/SYSTEM ERRORS ==================== -->
+        <record id="error_ef0247" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0247</field>
+            <field name="category">SYSTEM</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">True</field>
+            <field name="user_message_tr">GİB E-Fatura Merkez sorgulamasında hata oluştu.</field>
+            <field name="solution_hint_tr">GİB sistemlerinde geçici sorun olabilir. Birkaç dakika sonra tekrar deneyin.</field>
+        </record>
+        
+        <record id="error_ef0248" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0248</field>
+            <field name="category">SYSTEM</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">True</field>
+            <field name="user_message_tr">GİB E-Fatura Merkez sistemi ile bağlantı kurulamıyor!</field>
+            <field name="solution_hint_tr">GİB sistemlerinde bakım olabilir. Birkaç dakika sonra tekrar deneyin.</field>
+        </record>
+        
+        <record id="error_ef0228" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0228</field>
+            <field name="category">SYSTEM</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">İmzalanan fatura dosyası doğrulamadan geçemedi.</field>
+            <field name="solution_hint_tr">Mali mühür/e-imza sertifikanızı kontrol edin.</field>
+        </record>
+        
+        <!-- ==================== EXPORT INVOICE ERRORS ==================== -->
+        <record id="error_ef0311" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0311</field>
+            <field name="category">EXPORT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">İhracat faturasının alıcısı Gümrük ve Ticaret Bakanlığı (GTB) olmalıdır.</field>
+            <field name="solution_hint_tr">Alıcı olarak GTB seçin (VKN: 1460415308).</field>
+        </record>
+        
+        <record id="error_ef0314" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0314</field>
+            <field name="category">EXPORT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">İhracat faturası istisna tipinde olmalıdır.</field>
+            <field name="solution_hint_tr">Fatura tipini İstisna olarak seçin.</field>
+        </record>
+        
+        <record id="error_ef0315" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0315</field>
+            <field name="category">EXPORT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">İhracat faturası için CS-XML V1 veya V2 kullanılmamalıdır.</field>
+            <field name="solution_hint_tr">UBL 2.1 formatı kullanın.</field>
+        </record>
+        
+        <record id="error_ef0316" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0316</field>
+            <field name="category">EXPORT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">İhracat faturasında teslimat posta kodu boş olamaz.</field>
+            <field name="solution_hint_tr">Teslimat adresinde posta kodunu girin.</field>
+        </record>
+        
+        <record id="error_ef0320" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0320</field>
+            <field name="category">EXPORT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">İhracat faturasında teslimat şartı boş olamaz.</field>
+            <field name="solution_hint_tr">Teslimat şartını seçin (FOB, CIF, vb.).</field>
+        </record>
+        
+        <record id="error_ef0321" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0321</field>
+            <field name="category">EXPORT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">İhracat faturasında eşya bilgileri boş olamaz.</field>
+            <field name="solution_hint_tr">Sevkiyat eşya bilgilerini doldurun.</field>
+        </record>
+        
+        <record id="error_ef0322" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0322</field>
+            <field name="category">EXPORT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">İhracat faturasında GTİP No boş olamaz.</field>
+            <field name="solution_hint_tr">GTİP numarasını girin.</field>
+        </record>
+        
+        <record id="error_ef0330" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0330</field>
+            <field name="category">EXPORT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">İhracat faturasında teslimat ülkesi boş olamaz.</field>
+            <field name="solution_hint_tr">Teslimat ülkesini seçin.</field>
+        </record>
+        
+        <record id="error_ef0344" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0344</field>
+            <field name="category">EXPORT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">İhracat faturası için satır KDV Muafiyet Kodu "301 - 11/1 - a Mal ihracatı" olmalıdır.</field>
+            <field name="solution_hint_tr">KDV muafiyet kodunu 301 olarak ayarlayın.</field>
+        </record>
+        
+        <record id="error_ef0351" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0351</field>
+            <field name="category">EXPORT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">İhracat faturası oluşturmaya izin verilmemektedir.</field>
+            <field name="solution_hint_tr">İhracat faturası yetkisi için firma yöneticinizle görüşün.</field>
+        </record>
+        
+        <record id="error_ef0393" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0393</field>
+            <field name="category">EXPORT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">GTİP numarası 12 karakterden oluşmalıdır.</field>
+            <field name="solution_hint_tr">GTİP numarasını 12 hane olarak girin.</field>
+        </record>
+        
+        <record id="error_ef0394" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0394</field>
+            <field name="category">EXPORT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">GTİP numarası sadece rakamlardan oluşmalıdır.</field>
+            <field name="solution_hint_tr">GTİP numarasına sadece rakam girin.</field>
+        </record>
+        
+        <!-- ==================== TOURIST INVOICE ERRORS ==================== -->
+        <record id="error_ef0310" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0310</field>
+            <field name="category">TOURIST</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Yolcu Beraber Faturanın alıcısı Gümrük ve Ticaret Bakanlığı (GTB) olmalıdır.</field>
+            <field name="solution_hint_tr">Alıcı olarak GTB seçin.</field>
+        </record>
+        
+        <record id="error_ef0312" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0312</field>
+            <field name="category">TOURIST</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">TaxFreeConnectorServis'ten sadece Yolcu Beraber Fatura gönderilebilir.</field>
+            <field name="solution_hint_tr">Fatura türünü Yolcu Beraber olarak seçin.</field>
+        </record>
+        
+        <record id="error_ef0313" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0313</field>
+            <field name="category">TOURIST</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Yolcu Beraber Fatura istisna tipinde olmalıdır.</field>
+            <field name="solution_hint_tr">Fatura tipini İstisna olarak seçin.</field>
+        </record>
+        
+        <record id="error_ef0343" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0343</field>
+            <field name="category">TOURIST</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Yolcu beraber fatura için satır KDV Muafiyet Kodu "501 - Türkiye'de İkamet Etmeyenlere Yapılan Satışlar" olmalıdır.</field>
+            <field name="solution_hint_tr">KDV muafiyet kodunu 501 olarak ayarlayın.</field>
+        </record>
+        
+        <!-- ==================== SGK INVOICE ERRORS ==================== -->
+        <record id="error_ef0396" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0396</field>
+            <field name="category">SGK</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">SGK Faturanın alıcısı Sosyal Güvenlik Kurumu (SGK) olmalıdır.</field>
+            <field name="solution_hint_tr">Alıcı olarak SGK seçin.</field>
+        </record>
+        
+        <record id="error_ef0397" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0397</field>
+            <field name="category">SGK</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Tanımlı SGK alt fatura tipi girilmelidir.</field>
+            <field name="solution_hint_tr">SGK fatura alt tipini seçin.</field>
+        </record>
+        
+        <record id="error_ef0398" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0398</field>
+            <field name="category">SGK</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">SGK faturası için mükellef kodu girilmelidir.</field>
+            <field name="solution_hint_tr">SGK mükellef kodunu girin.</field>
+        </record>
+        
+        <record id="error_ef0399" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0399</field>
+            <field name="category">SGK</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">SGK faturası için mükellef adı girilmelidir.</field>
+            <field name="solution_hint_tr">SGK mükellef adını girin.</field>
+        </record>
+        
+        <record id="error_ef0400" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0400</field>
+            <field name="category">SGK</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">SGK faturası için dönem başlangıç tarihi girilmelidir.</field>
+            <field name="solution_hint_tr">Hizmet dönem başlangıcını girin.</field>
+        </record>
+        
+        <record id="error_ef0404" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0404</field>
+            <field name="category">SGK</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">SGK faturası temel fatura türünde olmalıdır.</field>
+            <field name="solution_hint_tr">Fatura türünü Temel Fatura olarak seçin.</field>
+        </record>
+        
+        <!-- ==================== PUBLIC INVOICE ERRORS ==================== -->
+        <record id="error_ef0459" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0459</field>
+            <field name="category">PUBLIC</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Kamu'ya oluşturulan faturalar için Sınıflandırma Kodu zorunludur.</field>
+            <field name="solution_hint_tr">Ürün için CPV/UNSPSC sınıflandırma kodu girin.</field>
+        </record>
+        
+        <record id="error_ef0460" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0460</field>
+            <field name="category">PUBLIC</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Kamu'ya oluşturulan faturalar için Menşei bilgisi zorunludur.</field>
+            <field name="solution_hint_tr">Ürün menşei ülkesini seçin.</field>
+        </record>
+        
+        <record id="error_ef0461" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0461</field>
+            <field name="category">PUBLIC</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Kamu'ya oluşturulan faturalar için Ödeme Şekilleri'nde IBAN zorunludur.</field>
+            <field name="solution_hint_tr">IBAN bilgisini girin.</field>
+        </record>
+        
+        <record id="error_ef0466" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0466</field>
+            <field name="category">PUBLIC</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Kamu'ya oluşturulan faturalar için Fatura Türü TEMELFATURA veya KAMU olmalıdır.</field>
+            <field name="solution_hint_tr">Fatura türünü Temel Fatura veya Kamu olarak seçin.</field>
+        </record>
+        
+        <record id="error_ef0467" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0467</field>
+            <field name="category">PUBLIC</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Girilen IBAN hatalıdır.</field>
+            <field name="solution_hint_tr">IBAN numarasını kontrol edin.</field>
+        </record>
+        
+        <record id="error_ef0518" model="mdx.efatura.hata.kodu">
+            <field name="code">EF0518</field>
+            <field name="category">PUBLIC</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Kamu faturalarının alıcısı Kamu kurumu olmalıdır.</field>
+            <field name="solution_hint_tr">Alıcı olarak kamu kurumu seçin.</field>
+        </record>
+        
+        <!-- ==================== AE SYSTEM CODES ==================== -->
+        <record id="error_ae00000" model="mdx.efatura.hata.kodu">
+            <field name="code">AE00000</field>
+            <field name="category">SYSTEM</field>
+            <field name="severity">info</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">İşlem başarılı.</field>
+        </record>
+        
+        <record id="error_ae00001" model="mdx.efatura.hata.kodu">
+            <field name="code">AE00001</field>
+            <field name="category">SYSTEM</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">True</field>
+            <field name="user_message_tr">Sistem hatası oluştu.</field>
+            <field name="solution_hint_tr">Birkaç dakika sonra tekrar deneyin.</field>
+        </record>
+        
+        <record id="error_ae00003" model="mdx.efatura.hata.kodu">
+            <field name="code">AE00003</field>
+            <field name="category">FORMAT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Fatura belgesi validasyon işlemi başarısız!</field>
+            <field name="solution_hint_tr">Fatura verilerini kontrol edin.</field>
+        </record>
+        
+        <record id="error_ae00014" model="mdx.efatura.hata.kodu">
+            <field name="code">AE00014</field>
+            <field name="category">SERIES</field>
+            <field name="severity">critical</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Bu işlem ID ile daha önce fatura gönderildi!</field>
+            <field name="solution_hint_tr">Fatura durum sorgulama yapın. Zaten gönderilmiş olabilir.</field>
+        </record>
+        
+        <record id="error_ae00018" model="mdx.efatura.hata.kodu">
+            <field name="code">AE00018</field>
+            <field name="category">SERIES</field>
+            <field name="severity">critical</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Veritabanında belirtilen UUID ile kayıtlı fatura numarası gönderilen fatura numarasıyla eşleşmiyor.</field>
+            <field name="solution_hint_tr">UUID ve fatura numarası uyumsuzluğu var. Teknik destek ile iletişime geçin.</field>
+        </record>
+        
+        <record id="error_ae00040" model="mdx.efatura.hata.kodu">
+            <field name="code">AE00040</field>
+            <field name="category">FORMAT</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Faturayı oluşturduğunuz tarihten en fazla 36 gün öncesine kesebilirsiniz.</field>
+            <field name="solution_hint_tr">Fatura tarihini güncelleyin.</field>
+        </record>
+        
+        <record id="error_ae00041" model="mdx.efatura.hata.kodu">
+            <field name="code">AE00041</field>
+            <field name="category">SERIES</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Konfigürasyonda kayıtlı fatura serisiyle geçmiş tarihe fatura kesemezsiniz!</field>
+            <field name="solution_hint_tr">Geçmiş tarih için farklı seri kullanın veya tarihte ilerleyin.</field>
+        </record>
+        
+        <record id="error_ae00042" model="mdx.efatura.hata.kodu">
+            <field name="code">AE00042</field>
+            <field name="category">SERIES</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Fatura sistemde kayıtlı değil!</field>
+            <field name="solution_hint_tr">Fatura bulunamadı. Tekrar oluşturun.</field>
+        </record>
+        
+        <record id="error_ae00043" model="mdx.efatura.hata.kodu">
+            <field name="code">AE00043</field>
+            <field name="category">SYSTEM</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">True</field>
+            <field name="user_message_tr">Fatura hatalı durumda!</field>
+            <field name="solution_hint_tr">Fatura tekrar gönderilmeye çalışılacak.</field>
+        </record>
+        
+        <record id="error_ae00044" model="mdx.efatura.hata.kodu">
+            <field name="code">AE00044</field>
+            <field name="category">SYSTEM</field>
+            <field name="severity">info</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Fatura işlemde.</field>
+        </record>
+        
+        <record id="error_ae00050" model="mdx.efatura.hata.kodu">
+            <field name="code">AE00050</field>
+            <field name="category">SYSTEM</field>
+            <field name="severity">warning</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">İptal edilmek istenen fatura imzalı duruma ulaşmamış. İptal işlemi yapılamaz.</field>
+            <field name="solution_hint_tr">Faturanın imzalanmasını bekleyin.</field>
+        </record>
+        
+        <record id="error_ae00051" model="mdx.efatura.hata.kodu">
+            <field name="code">AE00051</field>
+            <field name="category">SERIES</field>
+            <field name="severity">critical</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Bu UUID ile daha önce fatura gönderilmiş ve imzalanmış!</field>
+            <field name="solution_hint_tr">Bu fatura zaten başarıyla gönderilmiş. Durum sorgulama yapın.</field>
+        </record>
+        
+        <record id="error_ae00063" model="mdx.efatura.hata.kodu">
+            <field name="code">AE00063</field>
+            <field name="category">FORMAT</field>
+            <field name="severity">info</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Fatura UBL'i şema doğrulaması başarılı.</field>
+        </record>
+        
+        <record id="error_ae00064" model="mdx.efatura.hata.kodu">
+            <field name="code">AE00064</field>
+            <field name="category">SYSTEM</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">True</field>
+            <field name="user_message_tr">Fatura görüntüsü oluşturulurken hata oluştu.</field>
+            <field name="solution_hint_tr">Tekrar deneyin.</field>
+        </record>
+        
+        <record id="error_ae00083" model="mdx.efatura.hata.kodu">
+            <field name="code">AE00083</field>
+            <field name="category">SERIES</field>
+            <field name="severity">critical</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Bu fatura numarası ve UUID ile daha önce kayıt var!</field>
+            <field name="solution_hint_tr">Durum sorgulama yapın.</field>
+        </record>
+        
+        <record id="error_ae00084" model="mdx.efatura.hata.kodu">
+            <field name="code">AE00084</field>
+            <field name="category">VAL_SENDER</field>
+            <field name="severity">critical</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">VKN'si e-Fatura kayıtlı kullanıcısıdır. E-Arşiv faturası kesilemez.</field>
+            <field name="solution_hint_tr">Bu müşteriye E-Fatura gönderin.</field>
+        </record>
+        
+        <record id="error_ae00087" model="mdx.efatura.hata.kodu">
+            <field name="code">AE00087</field>
+            <field name="category">SYSTEM</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">E-Arşiv ürününüz yok!</field>
+            <field name="solution_hint_tr">E-Arşiv aktivasyonu için entegratör firmanızla iletişime geçin.</field>
+        </record>
+        
+        <record id="error_ae00094" model="mdx.efatura.hata.kodu">
+            <field name="code">AE00094</field>
+            <field name="category">SERIES</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Gönderilen işlem ID ile sistemde mevcut işlem ID uyuşmuyor.</field>
+            <field name="solution_hint_tr">Tekrar deneyin veya teknik destek ile iletişime geçin.</field>
+        </record>
+        
+        <record id="error_ae00095" model="mdx.efatura.hata.kodu">
+            <field name="code">AE00095</field>
+            <field name="category">SERIES</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">VKN'si için gönderilen işlem ID ile farklı UUID'ye sahip kayıt mevcut.</field>
+            <field name="solution_hint_tr">Yeni UUID ile tekrar deneyin.</field>
+        </record>
+        
+        <record id="error_ae90000" model="mdx.efatura.hata.kodu">
+            <field name="code">AE90000</field>
+            <field name="category">SYSTEM</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Bu işlev henüz desteklenmiyor.</field>
+            <field name="solution_hint_tr">Farklı bir yöntem deneyin.</field>
+        </record>
+        
+        <record id="error_ae99999" model="mdx.efatura.hata.kodu">
+            <field name="code">AE99999</field>
+            <field name="category">SYSTEM</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">True</field>
+            <field name="user_message_tr">İstek zaman aşımına uğradı.</field>
+            <field name="solution_hint_tr">Birkaç dakika sonra tekrar deneyin.</field>
+        </record>
+        
+        <!-- ==================== E-IRSALIYE ERRORS ==================== -->
+        <record id="error_ei0001" model="mdx.efatura.hata.kodu">
+            <field name="code">EI0001</field>
+            <field name="category">DESPATCH</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">İrsaliye gönderene ait değil.</field>
+            <field name="solution_hint_tr">İrsaliyeyi doğru şirket/şube ile gönderin.</field>
+            <field name="document_type">IRSALIYE</field>
+        </record>
+        
+        <record id="error_ei0002" model="mdx.efatura.hata.kodu">
+            <field name="code">EI0002</field>
+            <field name="category">DESPATCH</field>
+            <field name="severity">warning</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Bu irsaliye için yanıt beklenmiyor.</field>
+            <field name="document_type">IRSALIYE</field>
+        </record>
+        
+        <record id="error_ei0005" model="mdx.efatura.hata.kodu">
+            <field name="code">EI0005</field>
+            <field name="category">DESPATCH</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Gelen irsaliye bulunamadı.</field>
+            <field name="solution_hint_tr">ETTN numarasını kontrol edin.</field>
+            <field name="document_type">IRSALIYE</field>
+        </record>
+        
+        <record id="error_ei0006" model="mdx.efatura.hata.kodu">
+            <field name="code">EI0006</field>
+            <field name="category">DESPATCH</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">İrsaliye yanıtı, geliş tarihinden itibaren 7 gün içerisinde verilmelidir.</field>
+            <field name="solution_hint_tr">7 günlük süre dolmuş. Yanıt verilemez.</field>
+            <field name="document_type">IRSALIYE</field>
+        </record>
+        
+        <record id="error_ei0010" model="mdx.efatura.hata.kodu">
+            <field name="code">EI0010</field>
+            <field name="category">DESPATCH</field>
+            <field name="severity">critical</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Bu irsaliye daha önce gönderilmiş.</field>
+            <field name="solution_hint_tr">Durum sorgulama yapın.</field>
+            <field name="document_type">IRSALIYE</field>
+        </record>
+        
+        <record id="error_ei0018" model="mdx.efatura.hata.kodu">
+            <field name="code">EI0018</field>
+            <field name="category">DESPATCH</field>
+            <field name="severity">critical</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Bu irsaliye numarası daha önce kullanılmış!</field>
+            <field name="solution_hint_tr">Seri senkronizasyonunu kontrol edin.</field>
+            <field name="document_type">IRSALIYE</field>
+        </record>
+        
+        <record id="error_ei0144" model="mdx.efatura.hata.kodu">
+            <field name="code">EI0144</field>
+            <field name="category">DESPATCH</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Alıcı etiketi e-irsaliye kayıtlı kullanıcılarında tanımlı değil.</field>
+            <field name="solution_hint_tr">Alıcı etiketini kontrol edin.</field>
+            <field name="document_type">IRSALIYE</field>
+        </record>
+        
+        <record id="error_ei0145" model="mdx.efatura.hata.kodu">
+            <field name="code">EI0145</field>
+            <field name="category">DESPATCH</field>
+            <field name="severity">warning</field>
+            <field name="is_retryable">True</field>
+            <field name="user_message_tr">Alıcı e-irsaliye sistemine kayıtlı değil.</field>
+            <field name="solution_hint_tr">Alıcının e-irsaliye mükellefi olup olmadığını kontrol edin.</field>
+            <field name="document_type">IRSALIYE</field>
+        </record>
+        
+        <record id="error_ei0155" model="mdx.efatura.hata.kodu">
+            <field name="code">EI0155</field>
+            <field name="category">DESPATCH</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Bu seri numarası ile ilk irsaliyedir. Numarayı 1'den başlatın.</field>
+            <field name="solution_hint_tr">Yeni seri için numarayı 1'den başlatın.</field>
+            <field name="document_type">IRSALIYE</field>
+        </record>
+        
+        <record id="error_ei0164" model="mdx.efatura.hata.kodu">
+            <field name="code">EI0164</field>
+            <field name="category">DESPATCH</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Sevk İrsaliyesinde Sevk Tarihi, İrsaliye Tarihinden önce olamaz.</field>
+            <field name="solution_hint_tr">Sevk tarihini düzeltin.</field>
+            <field name="document_type">IRSALIYE</field>
+        </record>
+        
+        <record id="error_ei0165" model="mdx.efatura.hata.kodu">
+            <field name="code">EI0165</field>
+            <field name="category">DESPATCH</field>
+            <field name="severity">error</field>
+            <field name="is_retryable">False</field>
+            <field name="user_message_tr">Sevk İrsaliyesinde İrsaliye Tarihi geçmiş bir tarih olamaz.</field>
+            <field name="solution_hint_tr">İrsaliye tarihini bugün veya ileri tarih yapın.</field>
+            <field name="document_type">IRSALIYE</field>
+        </record>
+        
+    </data>
+</odoo>

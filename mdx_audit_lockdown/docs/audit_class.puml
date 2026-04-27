@@ -1,0 +1,88 @@
+@startuml
+title MDX Audit Lockdown - Class Diagram
+
+skinparam classAttributeIconSize 0
+hide empty methods
+hide empty fields
+
+package "mdx_audit_lockdown" {
+
+  class BaseAuditPatch <<AbstractModel>> {
+    +MAX_TEXT: int = 200
+    +_mdx_audit_get_rules()
+    +_mdx_audit_format_value(field, value)
+    +_mdx_audit_create_log(operation, record, field=None, old=None, new=None)
+    +create(vals_list)
+    +write(vals)
+    +unlink()
+  }
+
+  class MdxAuditLog <<Model>> {
+    +event_datetime: Datetime
+    +user_id: Many2one(res.users)
+    +operation: Selection(create|write|unlink)
+    +model_id: Many2one(ir.model)
+    +model: Char
+    +res_id: Integer
+    +field_id: Many2one(ir.model.fields)
+    +field_name: Char
+    +field_type: Char
+    +old_value: Text
+    +new_value: Text
+    +request_uid: Char
+    +action_open_target()
+  }
+
+  class MdxAuditRule <<Model>> {
+    +active: Boolean
+    +model: Char
+    +track_create: Boolean
+    +track_write: Boolean
+    +track_unlink: Boolean
+    +field_ids: Many2many(ir.model.fields)
+  }
+}
+
+package "Odoo Core" {
+  class "odoo.models.Model" as OdooModel
+  class "odoo.models.AbstractModel" as OdooAbstractModel
+  class "res.users" as ResUsers
+  class "ir.model" as IrModel
+  class "ir.model.fields" as IrModelFields
+}
+
+' Inheritance
+BaseAuditPatch --|> OdooAbstractModel
+MdxAuditLog --|> OdooModel
+MdxAuditRule --|> OdooModel
+
+' Relations (data)
+MdxAuditLog --> ResUsers : user_id
+MdxAuditLog --> IrModel : model_id
+MdxAuditLog --> IrModelFields : field_id
+MdxAuditRule --> IrModelFields : field_ids (*)
+
+' Runtime interactions (flow-ish in class diagram)
+BaseAuditPatch ..> MdxAuditRule : reads rules\n(_mdx_audit_get_rules)
+BaseAuditPatch ..> MdxAuditLog : creates logs\n(_mdx_audit_create_log)
+
+note right of BaseAuditPatch
+Intercepts ORM:
+- create()
+- write()
+- unlink()
+
+Key ideas:
+- mdx_audit_disable prevents recursion
+- write(): snapshot old values before super().write()
+- format_value(): binary/text/m2o readable
+- skip log if old == new
+end note
+
+note right of MdxAuditLog
+action_open_target():
+- uses model + res_id
+- returns act_window to open target record form
+end note
+
+@enduml

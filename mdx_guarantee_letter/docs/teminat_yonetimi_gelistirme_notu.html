@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <title>Teminat Yönetimi Geliştirme Notu</title>
+  <style>
+    body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; color: #1f2937; line-height: 1.5; margin: 36pt; }
+    h1 { font-size: 20pt; margin-bottom: 4pt; color: #0f172a; }
+    h2 { font-size: 14pt; margin-top: 18pt; margin-bottom: 8pt; color: #0f172a; border-bottom: 1px solid #d1d5db; padding-bottom: 4pt; }
+    h3 { font-size: 12pt; margin-top: 12pt; margin-bottom: 6pt; color: #111827; }
+    .meta { margin-bottom: 18pt; }
+    .meta p { margin: 2pt 0; }
+    .label { font-weight: 700; min-width: 140pt; display: inline-block; }
+    ul { margin-top: 4pt; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8pt; }
+    th, td { border: 1px solid #d1d5db; padding: 6pt; text-align: left; vertical-align: top; }
+    th { background: #f3f4f6; }
+    .footer { margin-top: 24pt; font-size: 10pt; color: #4b5563; }
+  </style>
+</head>
+<body>
+  <h1>Teminat Yönetimi Modülü Geliştirme Notu</h1>
+  <div class="meta">
+    <p><span class="label">Doküman No:</span> MINDDX-TYM-DEV-2026-03</p>
+    <p><span class="label">Yayın Tarihi:</span> 17.03.2026</p>
+    <p><span class="label">Sürüm:</span> v1.0</p>
+    <p><span class="label">Hazırlayan:</span> MindDX Dijital Dönüşüm Teknolojileri A.Ş.</p>
+    <p><span class="label">Kapsam:</span> Odoo 18 / Teminat Mektubu Süreçleri</p>
+  </div>
+
+  <h2>1. Amaç ve Kapsam</h2>
+  <p>
+    Bu doküman, teminat yönetimi süreçlerinde gerçekleştirilen geliştirmelerin kurumsal gerekçesini,
+    teknik içeriğini ve sürüm bazlı değişiklik özetini kayıt altına almak amacıyla hazırlanmıştır.
+    Çözüm, Odoo 18 altyapısında teminat mektubu yaşam döngüsünün muhasebe, operasyon ve bildirim
+    adımlarını uçtan uca kapsayacak şekilde tasarlanmıştır.
+  </p>
+
+  <h2>2. Neden Geliştirmeye İhtiyaç Duyuldu?</h2>
+  <ul>
+    <li>Teminat kayıtlarında olay bazlı muhasebe hareketleri manuel takip edildiği için hata riski oluşuyordu.</li>
+    <li>Alınan/Verilen teminat ayrımında nazım hesap yönlendirmesi standart bir kurala bağlanmamıştı.</li>
+    <li>Vade ve sorumluluk takipleri kullanıcı inisiyatifine kaldığından operasyonel gecikmeler yaşanıyordu.</li>
+    <li>E-Defter/E-Dönüşüm entegrasyonuna uygun belge tip alanlarında tutarlılık ihtiyacı vardı.</li>
+    <li>Hesap kodlarının firma bazlı alt kırılımlarda (örn. 102xxx, 780xxx) çalışması gerekiyordu.</li>
+  </ul>
+
+  <h2>3. Geliştirme İçeriği</h2>
+  <h3>3.1 Muhasebe Kurgusu</h3>
+  <ul>
+    <li>Alınan/Verilen teminat türüne göre nazım hesap eşlemesi (900/901 ve 902/903) otomatikleştirildi.</li>
+    <li>Onay, iade ve tazmin adımlarında otomatik yevmiye üretimi devreye alındı.</li>
+    <li>Komisyon, blokaj ve tazmin hareketleri için ayrı finansal kayıt üretim mekanizması eklendi.</li>
+    <li>Nazım hesaplarda 9 ile başlayan hesap kodu doğrulaması zorunlu hale getirildi.</li>
+  </ul>
+
+  <h3>3.2 Hesap Bulma ve Uyum</h3>
+  <ul>
+    <li>Hesap seçimi, tam kod yanında ön-ek (prefix) ile aramayı destekleyecek şekilde genişletildi.</li>
+    <li>Deprecated hesapların seçilmesi engellenerek hatalı kayıt riski azaltıldı.</li>
+  </ul>
+
+  <h3>3.3 Bildirim ve Takip</h3>
+  <ul>
+    <li>Hatırlatma sorumlusu ve e-posta alıcısı zorunlu alan olarak tanımlandı.</li>
+    <li>7/15/30 gün bazlı hatırlatma seçenekleri eklendi.</li>
+    <li>İlk atama bilgilendirmesi ve vade yaklaşımı bildirimleri için e-posta akışı kurgulandı.</li>
+  </ul>
+
+  <h3>3.4 Stabilite ve Kullanıcı Deneyimi</h3>
+  <ul>
+    <li>Gönderilen e-postalarda sistem kaydı erişim hatasını önlemek için mail saklama davranışı güncellendi.</li>
+    <li>Menü aksiyon kimlikleri güncellenerek kurulum sonrası açılış hataları giderildi.</li>
+  </ul>
+
+  <h2>4. Sürüm ve Tarihçe</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Tarih</th>
+        <th>Sürüm</th>
+        <th>Değişiklik Özeti</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>13.03.2026</td>
+        <td>v0.9</td>
+        <td>E-Dönüşüm uyumu için belge tipi düzeltmeleri ve temel hata giderimleri.</td>
+      </tr>
+      <tr>
+        <td>16.03.2026</td>
+        <td>v1.0-rc</td>
+        <td>Nazım hesap kurgusu, alınan/verilen ayrımı, finansal event kayıtları ve prefix hesap desteği.</td>
+      </tr>
+      <tr>
+        <td>17.03.2026</td>
+        <td>v1.0</td>
+        <td>Bildirim akışı, mail gönderim güvenilirliği, menü düzeltmeleri ve üretim stabilizasyonu.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>5. Beklenen Kurumsal Kazanımlar</h2>
+  <ul>
+    <li>Denetlenebilir ve standartlaştırılmış teminat yaşam döngüsü yönetimi</li>
+    <li>Muhasebe kayıtlarında manuel işlem kaynaklı operasyonel risklerin azaltılması</li>
+    <li>Vade takibi ve sorumluluk yönetiminde görünürlük artışı</li>
+    <li>Uyumluluk gereksinimlerine (e-dönüşüm/e-defter) daha güvenli entegrasyon</li>
+  </ul>
+
+  <h2>6. Onay ve Dağıtım</h2>
+  <p>
+    Doküman, Teminat Yönetimi modülü kapsamında canlı ortamda devreye alınan geliştirmelerin
+    kurumsal kayıt altına alınması amacıyla hazırlanmıştır. İlgili ekipler tarafından sürüm geçişi,
+    test ve üretim doğrulama adımları tamamlandıktan sonra referans doküman olarak kullanılacaktır.
+  </p>
+
+  <p class="footer">
+    Bu doküman MindDX Dijital Dönüşüm Teknolojileri A.Ş. iç kullanımına yöneliktir.
+  </p>
+</body>
+</html>

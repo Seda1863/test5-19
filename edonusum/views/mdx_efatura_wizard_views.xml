@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- E-Fatura Tekrar Gönderim Sihirbazı -->
+        <record id="mdx_efatura_retry_wizard_view_form" model="ir.ui.view">
+            <field name="name">mdx.efatura.retry.wizard.form</field>
+            <field name="model">mdx.efatura.retry.wizard</field>
+            <field name="arch" type="xml">
+                <form string="E-Fatura/E-İrsaliye Tekrar Gönderim">
+                    <group>
+                        <field name="invoice_id" readonly="1" invisible="not invoice_id"/>
+                        <field name="picking_id" readonly="1" invisible="not picking_id"/>
+                        <field name="transaction_id" readonly="1"/>
+                        <field name="retry_count" readonly="1"/>
+                    </group>
+                    <group string="Son Hata">
+                        <field name="error_display" widget="html" nolabel="1" colspan="2"/>
+                    </group>
+                    <group string="Seçenekler">
+                        <field name="force_new_uuid"/>
+                        <field name="force_new_series"/>
+                    </group>
+                    <footer>
+                        <button name="action_retry" type="object" string="Tekrar Gönder" class="btn-primary" invisible="not can_retry"/>
+                        <button name="action_retry" type="object" string="Zorla Gönder" class="btn-warning" invisible="can_retry"/>
+                        <button string="İptal" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!-- Wizard Action -->
+        <record id="action_mdx_efatura_retry_wizard" model="ir.actions.act_window">
+            <field name="name">E-Fatura Tekrar Gönder</field>
+            <field name="res_model">mdx.efatura.retry.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="mdx_efatura_retry_wizard_view_form"/>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="account.model_account_move"/>
+        </record>
+    </data>
+</odoo>

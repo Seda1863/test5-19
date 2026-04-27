@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_mdx_mutabakat_document">
+        <t t-call="web.external_layout">
+        <div class="page" style="font-family: Arial, sans-serif; font-size: 12px;">
+
+            <!-- Tarih -->
+            <div style="text-align: right; margin-bottom: 30px;">
+                <strong>Tarih : </strong> <span t-field="doc.date" t-options='{"format": "dd.MM.yyyy"}'/>
+            </div>
+
+            <!-- Başlık -->
+            <h2 style="text-align: center; font-weight: bold; margin-bottom: 30px;">
+                Mutabakat Mektubu
+            </h2>
+
+            <!-- Hitap & Açıklama -->
+            <p><strong>Sayın <span t-field="doc.partner_id.name"/>,</strong></p>
+            <p style="line-height: 1.8;">
+                <span t-field="doc.period_start" t-options='{"format": "dd.MM.yyyy"}'/> —
+                <span t-field="doc.period_end" t-options='{"format": "dd.MM.yyyy"}'/> Dönemi Formlarına ilişkin
+                cari hesap hareketlerine ait borç, alacak ve bakiye bilgileri aşağıda yer almaktadır.
+                Mutabık olup olmadığınızı bildirmenizi rica ederiz.
+            </p>
+            <p style="margin-bottom: 30px;">Saygılarımızla</p>
+
+            <!-- Firma Bilgileri - Yan Yana -->
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
+                <tr>
+                    <td style="width: 50%; vertical-align: top; padding-right: 15px;">
+                        <h4 style="border-bottom: 2px solid #333; padding-bottom: 5px; margin-bottom: 10px;">Gönderen</h4>
+                        <table style="width: 100%; font-size: 12px;">
+                            <tr><td style="padding: 4px 0; width: 130px;">Firma</td><td style="padding: 4px 0;">: <span t-field="doc.company_id.name"/></td></tr>
+                            <tr><td style="padding: 4px 0;">Vergi Dairesi</td><td style="padding: 4px 0;">: <span t-esc="doc.company_id.company_registry or '-'"/></td></tr>
+                            <tr><td style="padding: 4px 0;">Vergi Numarası</td><td style="padding: 4px 0;">: <span t-esc="doc.company_vat or '-'"/></td></tr>
+                            <tr><td style="padding: 4px 0;">Telefon</td><td style="padding: 4px 0;">: <span t-esc="doc.company_phone or '-'"/></td></tr>
+                            <tr><td style="padding: 4px 0;">Yetkili</td><td style="padding: 4px 0;">: <span t-esc="doc.sender_id.name or '-'"/></td></tr>
+                            <tr><td style="padding: 4px 0;">E-Posta</td><td style="padding: 4px 0;">: <span t-esc="doc.sender_email or '-'"/></td></tr>
+                        </table>
+                    </td>
+                    <td style="width: 50%; vertical-align: top; padding-left: 15px;">
+                        <h4 style="border-bottom: 2px solid #333; padding-bottom: 5px; margin-bottom: 10px;">Cari Hesap Bilgileriniz</h4>
+                        <table style="width: 100%; font-size: 12px;">
+                            <tr><td style="padding: 4px 0; width: 130px;">Firma</td><td style="padding: 4px 0;">: <span t-field="doc.partner_id.name"/></td></tr>
+                            <tr><td style="padding: 4px 0;">Vergi Dairesi</td><td style="padding: 4px 0;">: <span t-esc="doc.partner_id.company_registry or '-'"/></td></tr>
+                            <tr><td style="padding: 4px 0;">Vergi Numarası</td><td style="padding: 4px 0;">: <span t-esc="doc.partner_vat or '-'"/></td></tr>
+                            <tr><td style="padding: 4px 0;">Telefon</td><td style="padding: 4px 0;">: <span t-esc="doc.partner_phone or '-'"/></td></tr>
+                            <tr><td style="padding: 4px 0;">Yetkili</td><td style="padding: 4px 0;">: <span t-esc="doc.partner_id.name or '-'"/></td></tr>
+                            <tr><td style="padding: 4px 0;">E-Posta</td><td style="padding: 4px 0;">: <span t-esc="doc.partner_email or '-'"/></td></tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- Mutabakat Detay Tablosu -->
+            <table style="width: 100%; border-collapse: collapse; margin: 25px 0;" border="1">
+                <thead>
+                    <tr style="background: #f0f0f0;">
+                        <th style="padding: 8px; text-align: left; font-weight: bold;">Mutabakat</th>
+                        <th style="padding: 8px; text-align: left; font-weight: bold;">Dönem</th>
+                        <th style="padding: 8px; text-align: center; font-weight: bold;">Belge Sayısı</th>
+                        <th style="padding: 8px; text-align: right; font-weight: bold;">Tutar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="doc.line_ids" t-as="line">
+                        <td style="padding: 8px;">
+                            <t t-if="line.mutabakat_type == 'opening'">Başlangıç Bakiyesi</t>
+                            <t t-if="line.mutabakat_type == 'alacak'">Alacak</t>
+                            <t t-if="line.mutabakat_type == 'borc'">Borç</t>
+                        </td>
+                        <td style="padding: 8px;"><span t-field="line.period"/></td>
+                        <td style="padding: 8px; text-align: center;"><span t-field="line.invoice_count"/></td>
+                        <td style="padding: 8px; text-align: right;">
+                            <span t-field="line.amount" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                        </td>
+                    </tr>
+                    <tr t-if="not doc.line_ids">
+                        <td style="padding: 8px;" colspan="4"> </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr style="font-weight: bold;">
+                        <td style="padding: 8px;" colspan="2">TOPLAM</td>
+                        <td style="padding: 8px; text-align: center;"><span t-field="doc.total_invoice_count"/></td>
+                        <td style="padding: 8px; text-align: right;">
+                            <span t-field="doc.total_amount" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                        </td>
+                    </tr>
+                    <tr style="font-weight: bold; background: #e8f4e8;">
+                        <td style="padding: 8px;" colspan="3">BAKİYE (Borç - Alacak)</td>
+                        <td style="padding: 8px; text-align: right;">
+                            <span t-field="doc.partner_balance" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <!-- Notlar -->
+            <div style="margin-top: 15px;">
+                <strong>Notlar</strong>
+                <t t-if="doc.notes">
+                    <p><span t-field="doc.notes"/></p>
+                </t>
+            </div>
+
+            <!-- Kaşe / İmza -->
+            <div style="margin-top: 60px;">
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 50%; text-align: center; padding-top: 40px;">
+                            <p>Kaşe / İmza</p>
+                        </td>
+                        <td style="width: 50%; text-align: center; padding-top: 40px;">
+                            <p>Kaşe / İmza</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+        </t>
+    </template>
+
+    <template id="report_mdx_mutabakat">
+        <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="doc">
+            <t t-call="mdx_mutabakat.report_mdx_mutabakat_document"/>
+        </t>
+        </t>
+    </template>
+</odoo>

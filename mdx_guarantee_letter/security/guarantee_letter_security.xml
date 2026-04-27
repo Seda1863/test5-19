@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Modül Kategorisi -->
+    <record id="module_category_guarantee" model="ir.module.category">
+        <field name="name">Teminat Yönetimi</field>
+        <field name="sequence">50</field>
+    </record>
+
+    <!-- Teminat Kullanıcısı -->
+    <record id="group_guarantee_user" model="res.groups">
+        <field name="name">Teminat Kullanıcısı</field>
+        <field name="category_id" ref="module_category_guarantee"/>
+        <field name="comment">Teminat mektubu oluşturabilir ve görüntüleyebilir.</field>
+    </record>
+
+    <!-- Teminat Yöneticisi -->
+    <record id="group_guarantee_manager" model="res.groups">
+        <field name="name">Teminat Yöneticisi</field>
+        <field name="category_id" ref="module_category_guarantee"/>
+        <field name="implied_ids" eval="[(4, ref('group_guarantee_user'))]"/>
+        <field name="comment">Teminat mektuplarını onaylayabilir, iade edebilir ve iptal edebilir.</field>
+    </record>
+
+    <!-- Finans Yöneticisi -->
+    <record id="group_finance_manager" model="res.groups">
+        <field name="name">Finans Yöneticisi</field>
+        <field name="category_id" ref="module_category_guarantee"/>
+        <field name="implied_ids" eval="[(4, ref('group_guarantee_manager'))]"/>
+        <field name="comment">Banka limitlerini yönetebilir ve nakde çevirme işlemi yapabilir.</field>
+    </record>
+
+</odoo>

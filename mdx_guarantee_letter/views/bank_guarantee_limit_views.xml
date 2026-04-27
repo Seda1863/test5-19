@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ════════════════════════════════ -->
+    <!-- BANK GUARANTEE LIMIT - FORM VIEW -->
+    <!-- ════════════════════════════════ -->
+    <record id="bank_guarantee_limit_form_view" model="ir.ui.view">
+        <field name="name">bank.guarantee.limit.form</field>
+        <field name="model">bank.guarantee.limit</field>
+        <field name="arch" type="xml">
+            <form string="Banka Teminat Limiti">
+                <sheet>
+                    <group>
+                        <group string="Banka Bilgileri">
+                            <field name="bank_partner_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                        </group>
+                        <group string="Limit Bilgileri">
+                            <field name="limit_amount"/>
+                            <field name="used_amount"/>
+                            <field name="available_amount"
+                                   decoration-danger="available_amount &lt; 0"
+                                   decoration-success="available_amount &gt; 0"/>
+                            <field name="letter_count"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════ -->
+    <!-- BANK GUARANTEE LIMIT - LIST VIEW -->
+    <!-- ════════════════════════════════ -->
+    <record id="bank_guarantee_limit_list_view" model="ir.ui.view">
+        <field name="name">bank.guarantee.limit.list</field>
+        <field name="model">bank.guarantee.limit</field>
+        <field name="arch" type="xml">
+            <list string="Banka Teminat Limitleri"
+                  decoration-danger="available_amount &lt; 0">
+                <field name="bank_partner_id"/>
+                <field name="limit_amount" sum="Toplam Limit"/>
+                <field name="used_amount" sum="Toplam Kullanılan"/>
+                <field name="available_amount" sum="Toplam Kullanılabilir"/>
+                <field name="letter_count" sum="Toplam Mektup"/>
+                <field name="currency_id" column_invisible="1"/>
+                <button name="action_view_letters" type="object"
+                        string="Mektupları Gör" icon="fa-list"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ════════════════════════════════ -->
+    <!-- BANK GUARANTEE LIMIT - ACTION -->
+    <!-- ════════════════════════════════ -->
+    <record id="bank_guarantee_limit_action" model="ir.actions.act_window">
+        <field name="name">Banka Limitleri</field>
+        <field name="res_model">bank.guarantee.limit</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                İlk banka limitinizi tanımlayın
+            </p>
+            <p>
+                Her banka için teminat mektubu limitini buradan yönetebilirsiniz.
+            </p>
+        </field>
+    </record>
+
+</odoo>

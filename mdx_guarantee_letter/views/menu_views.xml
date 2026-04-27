@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Bağımsız uygulama: Teminat Yönetimi ana menüsü -->
+    <menuitem id="menu_guarantee_root"
+              name="Teminat Yönetimi"
+              web_icon="mdx_guarantee_letter,static/description/icon.png"
+              sequence="80"/>
+
+    <!-- Alt Menüler -->
+    <menuitem id="menu_guarantee_letters"
+              name="Teminat Mektupları"
+              parent="menu_guarantee_root"
+              action="guarantee_letter_action"
+              sequence="10"/>
+
+    <menuitem id="menu_bank_limits"
+              name="Banka Limitleri"
+              parent="menu_guarantee_root"
+              action="bank_guarantee_limit_action"
+              sequence="20"
+              groups="mdx_guarantee_letter.group_finance_manager"/>
+
+    <!-- Raporlama -->
+    <menuitem id="menu_guarantee_reporting"
+              name="Raporlama"
+              parent="menu_guarantee_root"
+              sequence="30"
+              groups="mdx_guarantee_letter.group_guarantee_manager"/>
+
+    <menuitem id="menu_guarantee_pivot"
+              name="Teminat Analizi"
+              parent="menu_guarantee_reporting"
+              action="guarantee_letter_action"
+              sequence="10"/>
+</odoo>

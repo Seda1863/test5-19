@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_dbs_contract_tree" model="ir.ui.view">
+        <field name="name">dbs.contract.tree</field>
+        <field name="model">dbs.contract</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="company_id"/>
+                <field name="contact_id"/>
+                <field name="limit_amount"/>
+                <field name="bank_id"/>
+                <field name="bank_account_id"/>
+                <field name="currency_id"/>
+                <field name="integration_type"/>
+                <field name="adapter_code"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_dbs_contract_form" model="ir.ui.view">
+        <field name="name">dbs.contract.form</field>
+        <field name="model">dbs.contract</field>
+        <field name="arch" type="xml">
+            <form string="DBS Sozlesmesi">
+                <header>
+                    <button name="action_test_connection" type="object" string="Test Baglanti" class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" name="action_open_dbs_partner" type="object" icon="fa-user" invisible="not contact_id">
+                            <field name="dbs_partner_count" string="DBS Müşterisi" widget="statinfo"/>
+                        </button>
+                        <button class="oe_stat_button" name="action_open_dbs_batches" type="object" icon="fa-list">
+                            <field name="dbs_batch_count" string="DBS Toplu İşlem" widget="statinfo"/>
+                        </button>
+                        <button class="oe_stat_button" name="action_open_dbs_lines" type="object" icon="fa-file-text-o">
+                            <field name="dbs_line_count" string="DBS Faturaları" widget="statinfo"/>
+                        </button>
+                        <button class="oe_stat_button" name="action_open_dbs_invoices" type="object" icon="fa-files-o">
+                            <field name="dbs_invoice_count" string="Kaynak Faturalar" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group string="Temel Bilgiler">
+                            <field name="name"/>
+                            <field name="company_id"/>
+                            <field name="currency_id"/>
+                            <field name="contact_id"/>
+                            <field name="limit_amount"/>
+                            <field name="bank_id" options="{'no_create_edit': True}"/>
+                            <field name="bank_account_id" options="{'no_create_edit': True}"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Muhasebe Parametreleri">
+                            <field name="settlement_bank_journal_id"/>
+                            <field name="commission_debit_account_id"/>
+                            <field name="suspense_account_id"/>
+                            <div class="text-muted">Banka entegrasyonu kullaniyorsa DBS takibi icin Ara Hesap doldurulur (orn: 136).</div>
+                            <field name="fee_type"/>
+                            <field name="fee_value" invisible="fee_type == 'none'"/>
+                            <field name="fee_account_id"/>
+                            <field name="tax_account_id"/>
+                        </group>
+                    </group>
+                    <group string="Entegrasyon">
+                        <group>
+                            <field name="integration_type"/>
+                            <field name="adapter_code" readonly="1"/>
+
+                            <field name="api_endpoint" invisible="integration_type != 'api'" placeholder="https://bank.example.com/api/dbs/ack"/>
+                            <field name="api_token" invisible="integration_type != 'api'" password="True"/>
+                            <field name="api_ack_method" invisible="integration_type != 'api'"/>
+                            <field name="api_ack_timeout" invisible="integration_type != 'api'"/>
+                            <field name="api_company_code" invisible="integration_type != 'api'"/>
+                            <field name="api_accept_header" invisible="integration_type != 'api'"/>
+
+                            <field name="sftp_host" invisible="integration_type != 'sftp'" placeholder="sftp.bank.example.com"/>
+                            <field name="sftp_port" invisible="integration_type != 'sftp'"/>
+                            <field name="sftp_username" invisible="integration_type != 'sftp'"/>
+                            <field name="sftp_password" invisible="integration_type != 'sftp'" password="True"/>
+                            <field name="sftp_path" invisible="integration_type != 'sftp'" placeholder="/incoming/ack"/>
+                            <field name="sftp_timeout" invisible="integration_type != 'sftp'"/>
+                            <field name="sftp_ack_filename_pattern" invisible="integration_type != 'sftp'"/>
+                            <field name="sftp_ack_archive_path" invisible="integration_type != 'sftp'"/>
+                            <field name="sftp_ack_delete_after_fetch" invisible="integration_type != 'sftp'"/>
+                        </group>
+                        <group>
+                            <field name="technical_params" readonly="1" widget="text"/>
+                        </group>
+                    </group>
+                    <group string="Yevmiye Kayitlari">
+                        <button name="action_open_dbs_lines" type="object" string="DBS Faturalari" class="btn-link"/>
+                        <button name="action_open_moves" type="object" string="Yevmiye Kayitlarini Aç" class="btn-link" invisible="not manual_fee_move_count"/>
+                        <field name="manual_fee_move_ids" nolabel="1" readonly="1">
+                            <list>
+                                <field name="name"/>
+                                <field name="date"/>
+                                <field name="dbs_entry_type" string="Yevmiye Tipi"/>
+                                <field name="dbs_source_move_id" string="Kaynak Fatura"/>
+                                <field name="journal_id"/>
+                                <field name="state"/>
+                                <field name="ref"/>
+                                <field name="amount_total" string="Toplam"/>
+                                <field name="dbs_fee_rate" string="Komisyon %"/>
+                                <field name="dbs_fee_amount" string="Komisyon Tutari"/>
+                            </list>
+                        </field>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_dbs_contract" model="ir.actions.act_window">
+        <field name="name">DBS Sozlesmeler</field>
+        <field name="res_model">dbs.contract</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

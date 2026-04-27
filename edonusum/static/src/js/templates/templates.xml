@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="assets_backend" inherit_id="web.assets_backend" name="Edonusum Backend Assets">
+        <script type="text/javascript" src="/edonusum/static/src/js/required_fields_warning.js"></script>
+    </template>
+</odoo>

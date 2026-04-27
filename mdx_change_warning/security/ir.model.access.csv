@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mdx_change_warning_rule_admin,mdx.change.warning.rule.admin,model_mdx_change_warning_rule,base.group_system,1,1,1,1
+access_mdx_change_warning_rule_user,mdx.change.warning.rule.user,model_mdx_change_warning_rule,base.group_user,1,0,0,0
+access_mdx_change_warning_log_admin,mdx.change.warning.log.admin,model_mdx_change_warning_log,base.group_system,1,1,1,1
+access_mdx_change_warning_log_user,mdx.change.warning.log.user,model_mdx_change_warning_log,base.group_user,1,0,1,0
