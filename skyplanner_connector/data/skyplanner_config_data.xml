@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Default config parameters — only set if not already present -->
+    <record id="skyplanner_base_url_param" model="ir.config_parameter">
+        <field name="key">skyplanner.base_url</field>
+        <field name="value">https://demo.skyplanner.app/production-planning/api/v3</field>
+    </record>
+    <record id="skyplanner_timeout_param" model="ir.config_parameter">
+        <field name="key">skyplanner.timeout</field>
+        <field name="value">30</field>
+    </record>
+    <record id="skyplanner_auto_export_param" model="ir.config_parameter">
+        <field name="key">skyplanner.auto_export</field>
+        <field name="value">False</field>
+    </record>
+</odoo>

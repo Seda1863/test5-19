@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_mrp_workcenter_form_skyplanner" model="ir.ui.view">
+        <field name="name">mrp.workcenter.form.skyplanner</field>
+        <field name="model">mrp.workcenter</field>
+        <field name="inherit_id" ref="mrp.mrp_workcenter_view"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_sync_to_skyplanner"
+                            type="object"
+                            string="Sync to APS"
+                            class="btn-primary"
+                            groups="skyplanner_connector.group_skyplanner_manager"
+                            invisible="skyplanner_ready"/>
+                    <button name="action_sync_to_skyplanner"
+                            type="object"
+                            string="Re-sync to APS"
+                            groups="skyplanner_connector.group_skyplanner_manager"
+                            invisible="not skyplanner_ready"/>
+                </header>
+            </xpath>
+
+            <xpath expr="//notebook" position="inside">
+                <page string="SkyPlanner APS"
+                      groups="skyplanner_connector.group_skyplanner_user">
+
+                    <!-- Status banner -->
+                    <div class="alert alert-danger mb-3" role="alert"
+                         invisible="skyplanner_ready">
+                        <i class="fa fa-exclamation-triangle me-2"/>
+                        <strong>Not ready for APS.</strong>
+                        Both workstation and workstage must be synced
+                        before this workcenter can be used in scheduling.
+                    </div>
+                    <div class="alert alert-success mb-3" role="alert"
+                         invisible="not skyplanner_ready">
+                        <i class="fa fa-check-circle me-2"/>
+                        <strong>APS Ready</strong> — Workstation ID: <field name="skyplanner_workstation_id" readonly="1" nolabel="1"/>
+                        &amp;nbsp;| Workstage ID: <field name="skyplanner_workstage_id" readonly="1" nolabel="1"/>
+                    </div>
+
+                    <group>
+                        <!-- Workstation -->
+                        <group string="Workstation (fiziksel kaynak)">
+                            <field name="skyplanner_workstation_id" readonly="1"/>
+                            <field name="skyplanner_external_id"/>
+                            <field name="skyplanner_scheduling_factor"/>
+                            <field name="skyplanner_workstation_synced" readonly="1"
+                                   widget="boolean_toggle"/>
+                        </group>
+
+                        <!-- Workstage -->
+                        <group string="Workstage (süreç tipi)">
+                            <field name="skyplanner_workstage_id" readonly="1"/>
+                            <field name="skyplanner_workstage_name"
+                                   placeholder="e.g. Welding (blank = workcenter name)"/>
+                            <field name="skyplanner_workstage_external_id"/>
+                            <field name="skyplanner_workstage_synced" readonly="1"
+                                   widget="boolean_toggle"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <field name="skyplanner_last_sync" readonly="1"/>
+                        <field name="skyplanner_ready" readonly="1"
+                               widget="boolean_toggle"/>
+                    </group>
+
+                    <!-- Step-by-step buttons -->
+                    <div class="o_field_widget mt-3"
+                         invisible="skyplanner_ready">
+                        <button name="action_sync_workstation"
+                                type="object"
+                                string="1. Sync Workstation"
+                                class="btn-secondary me-2"
+                                groups="skyplanner_connector.group_skyplanner_manager"
+                                invisible="skyplanner_workstation_synced"/>
+                        <button name="action_sync_workstage"
+                                type="object"
+                                string="2. Sync Workstage"
+                                class="btn-secondary"
+                                groups="skyplanner_connector.group_skyplanner_manager"
+                                invisible="not skyplanner_workstation_synced or skyplanner_workstage_synced"/>
+                    </div>
+
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- List view -->
+    <record id="view_mrp_workcenter_list_skyplanner" model="ir.ui.view">
+        <field name="name">mrp.workcenter.list.skyplanner</field>
+        <field name="model">mrp.workcenter</field>
+        <field name="inherit_id" ref="mrp.mrp_workcenter_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="inside">
+                <field name="skyplanner_workstation_id" optional="show"/>
+                <field name="skyplanner_workstage_id" optional="show"/>
+                <field name="skyplanner_ready" optional="show"
+                       widget="boolean_toggle" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Bulk sync action -->
+    <record id="action_sync_all_workcenters" model="ir.actions.server">
+        <field name="name">Sync All to SkyPlanner APS</field>
+        <field name="model_id" ref="mrp.model_mrp_workcenter"/>
+        <field name="binding_model_id" ref="mrp.model_mrp_workcenter"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">records.action_sync_all_workcenters()</field>
+        <field name="groups_id" eval="[(4, ref('skyplanner_connector.group_skyplanner_manager'))]"/>
+    </record>
+</odoo>

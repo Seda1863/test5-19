@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- mrp.production form — add APS buttons and status bar -->
+    <record id="view_mrp_production_form_skyplanner" model="ir.ui.view">
+        <field name="name">mrp.production.form.skyplanner</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+
+            <!-- Buttons in header -->
+            <xpath expr="//header" position="inside">
+                <button name="action_send_to_aps"
+                        type="object"
+                        string="Send to APS"
+                        class="btn-primary"
+                        groups="skyplanner_connector.group_skyplanner_user"
+                        invisible="skyplanner_sync_state in ('sent','exported','planned','applied')"/>
+                <button name="action_get_plan"
+                        type="object"
+                        string="Get Plan"
+                        groups="skyplanner_connector.group_skyplanner_user"
+                        invisible="skyplanner_sync_state == 'not_sent'"/>
+                <button name="action_apply_plan"
+                        type="object"
+                        string="Apply Plan"
+                        class="btn-warning"
+                        confirm="This will overwrite planned dates on unstarted work orders. Continue?"
+                        groups="skyplanner_connector.group_skyplanner_manager"
+                        invisible="skyplanner_sync_state not in ('planned',)"/>
+            </xpath>
+
+            <!-- APS status in statusbar -->
+            <xpath expr="//header/field[@name='state']" position="after">
+                <field name="skyplanner_sync_state"
+                       widget="statusbar"
+                       statusbar_visible="not_sent,sent,planned,applied"/>
+            </xpath>
+
+            <!-- APS info tab -->
+            <xpath expr="//notebook" position="inside">
+                <page string="APS / SkyPlanner"
+                      groups="skyplanner_connector.group_skyplanner_user">
+                    <group string="SkyPlanner Order">
+                        <field name="skyplanner_phaser_order_id" readonly="1"/>
+                        <field name="skyplanner_external_id" readonly="1"/>
+                        <field name="skyplanner_last_sync" readonly="1"/>
+                    </group>
+                    <group string="Status" invisible="not skyplanner_error">
+                        <field name="skyplanner_error" readonly="1" widget="text"/>
+                    </group>
+                    <separator string="Work Orders — APS Data"/>
+                    <field name="workorder_ids" nolabel="1" readonly="1">
+                        <list>
+                            <field name="name"/>
+                            <field name="workcenter_id"/>
+                            <field name="state"/>
+                            <field name="skyplanner_phaser_job_id"/>
+                            <field name="skyplanner_planning_job_id"/>
+                            <field name="skyplanner_planned_start"/>
+                            <field name="skyplanner_planned_end"/>
+                            <field name="skyplanner_plan_version"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

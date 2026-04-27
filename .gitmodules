@@ -1,0 +1,4 @@
+[submodule "queue"]
+	path = queue
+	url = https://github.com/OCA/queue.git
+	branch = 19.0
