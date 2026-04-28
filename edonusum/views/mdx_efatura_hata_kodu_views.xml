@@ -97,12 +97,11 @@
                 <filter name="filter_irsaliye" string="E-İrsaliye" domain="[('document_type', 'in', ['IRSALIYE', 'ALL'])]"/>
                 <separator/>
                 <filter name="filter_inactive" string="Arşivlenmiş" domain="[('active', '=', False)]"/>
-                <group string="Grupla">
-                    <filter name="group_by_category" string="Kategori" context="{'group_by': 'category'}"/>
-                    <filter name="group_by_severity" string="Önem Seviyesi" context="{'group_by': 'severity'}"/>
-                    <filter name="group_by_document_type" string="Belge Türü" context="{'group_by': 'document_type'}"/>
-                    <filter name="group_by_retryable" string="Yeniden Denenebilir" context="{'group_by': 'is_retryable'}"/>
-                </group>
+                <separator/>
+                <filter name="group_by_category" string="Kategori" context="{'group_by': 'category'}"/>
+                <filter name="group_by_severity" string="Önem Seviyesi" context="{'group_by': 'severity'}"/>
+                <filter name="group_by_document_type" string="Belge Türü" context="{'group_by': 'document_type'}"/>
+                <filter name="group_by_retryable" string="Yeniden Denenebilir" context="{'group_by': 'is_retryable'}"/>
             </search>
         </field>
     </record>

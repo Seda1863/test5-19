@@ -163,12 +163,11 @@
                 <filter name="confirmed" string="Onaylanan" domain="[('user_response', '=', 'confirmed')]"/>
                 <filter name="cancelled" string="İptal Edilen" domain="[('user_response', '=', 'cancelled')]"/>
                 <filter name="blocked" string="Engellenen" domain="[('user_response', '=', 'blocked')]"/>
-                <group string="Grupla">
-                    <filter string="Kural" name="group_rule" context="{'group_by': 'rule_id'}"/>
-                    <filter string="Kullanıcı" name="group_user" context="{'group_by': 'user_id'}"/>
-                    <filter string="İşlem Tipi" name="group_action" context="{'group_by': 'action_type'}"/>
-                    <filter string="Tarih" name="group_date" context="{'group_by': 'create_date:day'}"/>
-                </group>
+                <separator/>
+                <filter string="Kural" name="group_rule" context="{'group_by': 'rule_id'}"/>
+                <filter string="Kullanıcı" name="group_user" context="{'group_by': 'user_id'}"/>
+                <filter string="İşlem Tipi" name="group_action" context="{'group_by': 'action_type'}"/>
+                <filter string="Tarih" name="group_date" context="{'group_by': 'create_date:day'}"/>
             </search>
         </field>
     </record>

@@ -59,12 +59,11 @@
                 <filter name="filter_to_send" string="Gonderime Hazir" domain="[('state', '=', 'to_send')]"/>
                 <filter name="filter_rejected" string="Reddedilen" domain="[('state', '=', 'rejected')]"/>
                 <filter name="filter_settled" string="Kapatilan" domain="[('state', '=', 'settled')]"/>
-                <group string="Grupla">
-                    <filter name="group_partner" string="Musteri" context="{'group_by': 'partner_id'}"/>
-                    <filter name="group_contract" string="DBS Sozlesmesi" context="{'group_by': 'contract_id'}"/>
-                    <filter name="group_company" string="Sozlesme Sirketi" context="{'group_by': 'contract_company_id'}"/>
-                    <filter name="group_state" string="Durum" context="{'group_by': 'state'}"/>
-                </group>
+                <separator/>
+                <filter name="group_partner" string="Musteri" context="{'group_by': 'partner_id'}"/>
+                <filter name="group_contract" string="DBS Sozlesmesi" context="{'group_by': 'contract_id'}"/>
+                <filter name="group_company" string="Sozlesme Sirketi" context="{'group_by': 'contract_company_id'}"/>
+                <filter name="group_state" string="Durum" context="{'group_by': 'state'}"/>
             </search>
         </field>
     </record>

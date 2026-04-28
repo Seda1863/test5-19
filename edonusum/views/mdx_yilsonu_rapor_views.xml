@@ -70,20 +70,19 @@
                         domain="[('state', '=', 'posted')]"/>
 
                 <!-- Gruplandırma -->
-                <group string="Gruplandır">
-                    <filter name="group_by_period"
-                            string="Dönem"
-                            context="{'group_by': 'mdx_closing_period'}"/>
-                    <filter name="group_by_step"
-                            string="Kapanış Adımı"
-                            context="{'group_by': 'mdx_closing_step'}"/>
-                    <filter name="group_by_state"
-                            string="Durum"
-                            context="{'group_by': 'state'}"/>
-                    <filter name="group_by_journal"
-                            string="Yevmiye Defteri"
-                            context="{'group_by': 'journal_id'}"/>
-                </group>
+                <separator/>
+                <filter name="group_by_period"
+                        string="Dönem"
+                        context="{'group_by': 'mdx_closing_period'}"/>
+                <filter name="group_by_step"
+                        string="Kapanış Adımı"
+                        context="{'group_by': 'mdx_closing_step'}"/>
+                <filter name="group_by_state"
+                        string="Durum"
+                        context="{'group_by': 'state'}"/>
+                <filter name="group_by_journal"
+                        string="Yevmiye Defteri"
+                        context="{'group_by': 'journal_id'}"/>
             </search>
         </field>
     </record>
