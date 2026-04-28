@@ -1,6 +1,6 @@
 {
     'name': 'TR DBS Core (Dogrudan Borclandirma Sistemi)',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Accounting',
     'summary': 'Turkiye DBS cekirdek modul: sozlesme, batch, ACK ve statement esleme',
     'description': """

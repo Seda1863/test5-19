@@ -1,6 +1,6 @@
 {
     'name': 'MDX Mutabakat Sistemi',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Accounting',
     'summary': 'Tedarikçi mutabakat mektubu gönderme ve yanıt takip sistemi',
     'description': """

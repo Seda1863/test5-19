@@ -3,7 +3,7 @@
 # Werkzeug yardımcıları (Odoo 17 ve öncesinde gerekir)
 from werkzeug import urls
 try:
-    from werkzeug.urls import url_join as urljoin
+    from urllib.parse import urljoin
 except ImportError:
     from urllib.parse import urljoin
 

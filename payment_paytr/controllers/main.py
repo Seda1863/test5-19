@@ -17,7 +17,7 @@ class PaytrController(http.Controller):
     _return_url = '/payment/paytr/return'
     _callback_url = '/payment/paytr/callback'
 
-    @http.route('/payment/paytr/get_direct_form_data', type='json', auth='public', methods=['POST'])
+    @http.route('/payment/paytr/get_direct_form_data', type='jsonrpc', auth='public', methods=['POST'])
     def paytr_get_direct_form_data(self, reference, cc_owner, card_number,
                                    expiry_month, expiry_year, cvv, installments='1', **kwargs):
         """Compute PayTR Direct API token and return form fields for frontend submission."""

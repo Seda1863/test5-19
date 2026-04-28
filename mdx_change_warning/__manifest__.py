@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'MindDX Değişiklik Onay Sistemi',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'installable': True,
     'application': False,
     'author': 'MindDX Digital Dönüşüm Teknolojileri A.Ş.',

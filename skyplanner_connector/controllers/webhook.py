@@ -29,7 +29,7 @@ class SkyPlannerWebhookController(http.Controller):
 
     @http.route(
         '/skyplanner/webhook',
-        type='json',
+        type='jsonrpc',
         auth='none',
         methods=['POST'],
         csrf=False,
