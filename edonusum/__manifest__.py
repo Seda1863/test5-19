@@ -80,7 +80,7 @@
         'views/mdx_inh_account_menuitem.xml',
         'views/mdx_inh_stock_menuitem.xml',
         'data/cron_jobs.xml',
-        'data/partner_ledger.xml',
+        # 'data/partner_ledger.xml',  # v19: account_reports.partner_ledger_report external ID removed
         'views/mdx_yilsonu_kapanish_wizard_views.xml',
         'views/mdx_yilsonu_rapor_views.xml',
         'views/mdx_yilsonu_kapanish_run_views.xml',
