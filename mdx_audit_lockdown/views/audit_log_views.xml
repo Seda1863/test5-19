@@ -95,7 +95,7 @@
 
           <separator/>
 
-          <group expand="0" string="Group By">
+          <group string="Group By">
             <filter string="User" name="group_user" context="{'group_by':'user_id'}"/>
             <filter string="Operation" name="group_op" context="{'group_by':'operation'}"/>
             <filter string="Model" name="group_model" context="{'group_by':'model'}"/>

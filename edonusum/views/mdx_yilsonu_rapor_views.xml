@@ -70,7 +70,7 @@
                         domain="[('state', '=', 'posted')]"/>
 
                 <!-- Gruplandırma -->
-                <group expand="1" string="Gruplandır">
+                <group string="Gruplandır">
                     <filter name="group_by_period"
                             string="Dönem"
                             context="{'group_by': 'mdx_closing_period'}"/>

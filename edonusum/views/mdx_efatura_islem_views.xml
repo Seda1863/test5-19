@@ -93,7 +93,7 @@
                     <filter string="Tekrar Planlandı" name="filter_retry" domain="[('state', '=', 'retry_scheduled')]"/>
                     <separator/>
                     <filter string="Yeniden Denenebilir" name="filter_can_retry" domain="[('can_retry', '=', True)]"/>
-                    <group expand="0" string="Grupla">
+                    <group string="Grupla">
                         <filter string="Durum" name="group_state" context="{'group_by': 'state'}"/>
                         <filter string="Belge Türü" name="group_doc_type" context="{'group_by': 'document_type'}"/>
                         <filter string="Hata Kodu" name="group_error" context="{'group_by': 'error_code_id'}"/>
