@@ -194,7 +194,7 @@
                 <filter name="filter_expired" string="Vadesi Geçen"
                         domain="[('remaining_days', '&lt;', 0), ('state', '=', 'active')]"/>
                 <separator/>
-                <group expand="0" string="Grupla">
+                <group string="Grupla">
                     <filter name="group_bank" string="Banka" context="{'group_by': 'bank_partner_id'}"/>
                     <filter name="group_lehdar" string="Lehdar" context="{'group_by': 'lehdar_partner_id'}"/>
                     <filter name="group_beneficiary" string="Muhatap" context="{'group_by': 'beneficiary_partner_id'}"/>
