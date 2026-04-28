@@ -23,7 +23,7 @@ class IyzicoController(http.Controller):
     # === 1️⃣ ÖDEME BAŞLATMA === #
     @http.route(
         '/payment/iyzico/initialize_checkout',
-        type='json', auth='public', csrf=False
+        type='jsonrpc', auth='public', csrf=False
     )
     def iyzico_initialize_checkout(self, reference=None, **kwargs):
         """

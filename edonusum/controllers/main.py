@@ -4,7 +4,7 @@ import requests
 
 class EdonusumController(http.Controller):
 
-    @http.route('/api/validate_license', type='json', auth='user')
+    @http.route('/api/validate_license', type='jsonrpc', auth='user')
     def validate_license(self, license_key):
         if not license_key:
             return {'valid': False, 'error': 'Lisans anahtarı eksik.'}

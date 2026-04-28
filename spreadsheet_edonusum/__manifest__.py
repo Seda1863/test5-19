@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Spreadsheet Dashboard - E-Dönüşüm Muhasebe',
-    'version': '18.0.1.0.10',
+    'version': '19.0.1.0.10',
     'category': 'Accounting/Localizations',
     'summary': 'E-Dönüşüm Muhasebe Dashboard - Çek Yönetimi, E-Fatura, E-İrsaliye Analizleri',
     'description': """

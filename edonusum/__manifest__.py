@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'MindDX Lokalizasyon',
-    'version': '18.18.38',
+    'version': '19.0.1.0.0',
     'installable': True,
     'application': True,
     'author': 'MindDX Digital Dönüşüm Teknolojileri A.Ş.',

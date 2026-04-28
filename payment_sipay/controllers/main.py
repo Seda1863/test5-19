@@ -15,7 +15,7 @@ _logger = logging.getLogger(__name__)
 class SipayController(http.Controller):
     _return_url = '/payment/sipay/return'
 
-    @http.route('/payment/sipay/get_3d_form_data', type='json', auth='public', methods=['POST'])
+    @http.route('/payment/sipay/get_3d_form_data', type='jsonrpc', auth='public', methods=['POST'])
     def sipay_get_3d_form_data(self, **data):
         """Prepare and return 3D Secure form data for Sipay payment."""
         try:
@@ -118,7 +118,7 @@ class SipayController(http.Controller):
         _logger.info("=== SIPAY 3D RETURN END ===")
         return request.redirect('/payment/status')
 
-    @http.route('/payment/sipay/webhook', type='json', auth='public', methods=['POST'], csrf=False)
+    @http.route('/payment/sipay/webhook', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def sipay_webhook(self, **data):
         """Handle webhook notifications from Sipay.
         

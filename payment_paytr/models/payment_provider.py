@@ -5,7 +5,7 @@ import logging
 import pprint
 
 import requests
-from werkzeug.urls import url_join
+from urllib.parse import urljoin
 
 from odoo import _, fields, models
 from odoo.exceptions import ValidationError

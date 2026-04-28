@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "MDX Audit Lockdown",
-    "version": "18.0.1.0.0",
+    "version": "19.0.1.0.0",
     "category": "Technical",
     "summary": "Restrict technical tracking/audit screens to system administrators only",
     "license": "LGPL-3",
