@@ -194,15 +194,14 @@
                 <filter name="filter_expired" string="Vadesi Geçen"
                         domain="[('remaining_days', '&lt;', 0), ('state', '=', 'active')]"/>
                 <separator/>
-                <group string="Grupla">
-                    <filter name="group_bank" string="Banka" context="{'group_by': 'bank_partner_id'}"/>
-                    <filter name="group_lehdar" string="Lehdar" context="{'group_by': 'lehdar_partner_id'}"/>
-                    <filter name="group_beneficiary" string="Muhatap" context="{'group_by': 'beneficiary_partner_id'}"/>
-                    <filter name="group_type" string="Tür" context="{'group_by': 'letter_type_id'}"/>
-                    <filter name="group_state" string="Durum" context="{'group_by': 'state'}"/>
-                    <filter name="group_project" string="Proje" context="{'group_by': 'project_id'}"/>
-                    <filter name="group_responsible" string="Sorumlu" context="{'group_by': 'responsible_id'}"/>
-                </group>
+                <separator/>
+                <filter name="group_bank" string="Banka" context="{'group_by': 'bank_partner_id'}"/>
+                <filter name="group_lehdar" string="Lehdar" context="{'group_by': 'lehdar_partner_id'}"/>
+                <filter name="group_beneficiary" string="Muhatap" context="{'group_by': 'beneficiary_partner_id'}"/>
+                <filter name="group_type" string="Tür" context="{'group_by': 'letter_type_id'}"/>
+                <filter name="group_state" string="Durum" context="{'group_by': 'state'}"/>
+                <filter name="group_project" string="Proje" context="{'group_by': 'project_id'}"/>
+                <filter name="group_responsible" string="Sorumlu" context="{'group_by': 'responsible_id'}"/>
             </search>
         </field>
     </record>
