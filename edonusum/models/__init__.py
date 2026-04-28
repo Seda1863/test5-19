@@ -37,8 +37,8 @@ from . import mdx_edefter
 from . import mdx_inh_account_payment
 from . import mdx_cheque_book
 from . import mdx_yilsonu_kapanish_run
-from . import mdx_inh_account_partner_ledger
-from . import mdx_inh_account_multicurrency_revaluation_report
+# from . import mdx_inh_account_partner_ledger  # v19: account.partner.ledger.report.handler removed
+# from . import mdx_inh_account_multicurrency_revaluation_report  # v19: account.multicurrency.revaluation.report.handler removed
 from . import mdx_prozon_api_test
 # from . import mdx_inh_hr_employee
 from . import mdx_work_type
