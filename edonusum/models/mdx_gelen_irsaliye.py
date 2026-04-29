@@ -14,7 +14,6 @@ class MdxGelenIrsaliye(models.Model):
     _name = 'mdx.gelen.irsaliye'
     _description = 'Gelen İrsaliye'
     _order = 'create_date desc'
-    _check_company_auto = True
 
     company_id = fields.Many2one('res.company', string='Şirket', required=True, store=True, default=lambda self: self.env.company)
     # store=True alanlar

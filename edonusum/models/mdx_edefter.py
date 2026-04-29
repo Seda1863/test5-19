@@ -12,7 +12,6 @@ import json
 class MdxEDefter(models.Model):
     _name = 'mdx.edefter'
     _description = 'E-Defter'
-    _check_company_auto = True
 
     # store=True yapılacak alanlar
     owner_id = fields.Many2one('res.users', string='Sorumlu Kişi', related='company_id.owner_id')

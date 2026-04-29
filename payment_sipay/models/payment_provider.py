@@ -83,7 +83,7 @@ class PaymentProvider(models.Model):
     def _sipay_make_request(self, endpoint, payload=None, method='POST'):
         self.ensure_one()
 
-        url = url_join(self._sipay_get_api_url(), endpoint)
+        url = urljoin(self._sipay_get_api_url(), endpoint)
         headers = {'Content-Type': 'application/json'}
 
         # If we call a non-token endpoint, request a fresh token and add Authorization

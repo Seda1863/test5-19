@@ -15,7 +15,6 @@ class MdxGelenFatura(models.Model):
     _name = 'mdx.gelen.fatura'
     _description = 'Gelen Fatura'
     _order = 'belge_sira_no asc'
-    _check_company_auto = True
 
     company_id = fields.Many2one('res.company', string='Şirket', required=True, store=True, default=lambda self: self.env.company)
     # store=True alanlar
