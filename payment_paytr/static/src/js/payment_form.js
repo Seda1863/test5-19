@@ -1,6 +1,7 @@
 /** @odoo-module **/
 
-import paymentForm from '@payment/js/payment_form';
+import { patch } from "@web/core/utils/patch";
+import { PaymentForm } from "@payment/js/payment_form";
 import { rpc } from "@web/core/network/rpc";
 
 function _getPaytrInlineFormInputs(paymentOptionId) {
@@ -40,12 +41,11 @@ function _getPaytrInlineFormInputs(paymentOptionId) {
     };
 }
 
-paymentForm.include({
+patch(PaymentForm.prototype, {
 
     async _prepareInlineForm(providerId, providerCode, paymentOptionId, paymentMethodCode, flow) {
         if (providerCode !== 'paytr') {
-            this._super(...arguments);
-            return;
+            return super._prepareInlineForm(...arguments);
         }
         if (flow === 'token') {
             return;
@@ -55,8 +55,7 @@ paymentForm.include({
 
     async _processDirectFlow(providerCode, paymentOptionId, paymentMethodCode, processingValues) {
         if (providerCode !== 'paytr') {
-            this._super(...arguments);
-            return;
+            return super._processDirectFlow(...arguments);
         }
         await this._processPaytrPayment(paymentOptionId, processingValues);
     },
@@ -205,6 +204,6 @@ paymentForm.include({
         if (providerCode === 'paytr') {
             return _getPaytrInlineFormInputs(paymentOptionId);
         }
-        return this._super(...arguments);
+        return super._getInlineFormInputs(...arguments);
     },
 });

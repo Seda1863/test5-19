@@ -284,46 +284,42 @@ class MdxInhAccountPayment(models.Model):
         if self.payment_currency_inverse_rate:
             self.payment_currency_rate = 1.0 / self.payment_currency_inverse_rate
 
-    @api.model
-    def create(self, vals):
-        # Zorunlu alanları oluşturma anında dolduruyoruz
-        if not vals.get('document_number'):
-            move_id = vals.get('move_id')
-            vals['document_number'] = vals.get('name') or self.env['account.move'].browse(move_id).name
-        if not vals.get('document_date'):
-            vals['document_date'] = vals.get('date') or fields.Date.today()
-        # İlgili kur hesaplaması için; form üzerinden geçmese de default değerlerin yazılması sağlanır.
-        if vals.get('payment_transaction_id'):
-            payment_method_code = self.env['payment.transaction'].browse(vals.get('payment_transaction_id')).payment_method_id.code
-            if payment_method_code == 'card':
-                vals['payment_method'] = 'credit_card'
-                vals['document_type'] = 'invoice'
-
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            # Zorunlu alanları oluşturma anında dolduruyoruz
             if not vals.get('document_number'):
-                payment_method_reference = self.env['payment.transaction'].browse(vals.get('payment_transaction_id')).reference
-                vals['document_number'] = payment_method_reference or vals.get('name') or '/'
+                move_id = vals.get('move_id')
+                vals['document_number'] = vals.get('name') or self.env['account.move'].browse(move_id).name
+            if not vals.get('document_date'):
+                vals['document_date'] = vals.get('date') or fields.Date.today()
+            if vals.get('payment_transaction_id'):
+                tx = self.env['payment.transaction'].browse(vals['payment_transaction_id'])
+                if tx.payment_method_id.code == 'card':
+                    vals['payment_method'] = 'credit_card'
+                    vals['document_type'] = 'invoice'
+                if not vals.get('document_number'):
+                    vals['document_number'] = tx.reference or vals.get('name') or '/'
 
-        if vals.get('currency_id') and vals.get('date'):
-            # Simüle etmek için döviz nesnesini alıp context oluşturuyoruz
-            currency = self.env['res.currency'].browse(vals.get('currency_id'))
-            date = vals.get('date')
-            rate_obj = currency.with_context(date=date)
-            rate = rate_obj.rate
-            rate_type = vals.get('currency_rate_type', 'forexbuying')
-            if rate_type == 'forexbuying':
-                rate = 1 / rate_obj.forex_buying if rate_obj.forex_buying else rate
-            elif rate_type == 'forexselling':
-                rate = 1 / rate_obj.forex_selling if rate_obj.forex_selling else rate
-            elif rate_type == 'banknotebuying':
-                rate = 1 / rate_obj.banknote_buying if rate_obj.banknote_buying else rate
-            elif rate_type == 'banknoteselling':
-                rate = 1 / rate_obj.banknote_selling if rate_obj.banknote_selling else rate
-            elif rate_type == 'manualexchange':
-                rate = vals.get('payment_currency_rate') or rate
-            vals['payment_currency_rate'] = rate or 1.0
-            vals['payment_currency_inverse_rate'] = 1.0 / rate if rate else 1.0
+            if vals.get('currency_id') and vals.get('date'):
+                currency = self.env['res.currency'].browse(vals['currency_id'])
+                rate_obj = currency.with_context(date=vals['date'])
+                rate = rate_obj.rate
+                rate_type = vals.get('currency_rate_type', 'forexbuying')
+                if rate_type == 'forexbuying':
+                    rate = 1 / rate_obj.forex_buying if rate_obj.forex_buying else rate
+                elif rate_type == 'forexselling':
+                    rate = 1 / rate_obj.forex_selling if rate_obj.forex_selling else rate
+                elif rate_type == 'banknotebuying':
+                    rate = 1 / rate_obj.banknote_buying if rate_obj.banknote_buying else rate
+                elif rate_type == 'banknoteselling':
+                    rate = 1 / rate_obj.banknote_selling if rate_obj.banknote_selling else rate
+                elif rate_type == 'manualexchange':
+                    rate = vals.get('payment_currency_rate') or rate
+                vals['payment_currency_rate'] = rate or 1.0
+                vals['payment_currency_inverse_rate'] = 1.0 / rate if rate else 1.0
 
-        return super(MdxInhAccountPayment, self).create(vals)
+        return super().create(vals_list)
 
     def write(self, vals):
         _logger.warning(f"Writing values to account.payment: {vals}")
