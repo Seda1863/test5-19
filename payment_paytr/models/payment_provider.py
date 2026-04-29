@@ -75,7 +75,7 @@ class PaymentProvider(models.Model):
         """Send request to PayTR API (used for token creation and status checks)."""
         self.ensure_one()
 
-        url = url_join(self._paytr_get_api_url(), endpoint)
+        url = urljoin(self._paytr_get_api_url(), endpoint)
         _logger.info("Sending PayTR request to %s with payload:\n%s", url, pprint.pformat(payload))
 
         try:

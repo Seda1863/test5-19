@@ -10,7 +10,6 @@ import re
 class MdxChequeBook(models.Model):
     _name = 'mdx.cheque.book'
     _description = 'Çek Defteri'
-    _check_company_auto = True
 
     # code = fields.Char(string='Kod', required=True, store=True)
     name = fields.Char(string='Ad', required=True, store=True)
@@ -196,7 +195,6 @@ class MdxChequeLeaf(models.Model):
     _description = 'Çek Yaprağı'
     _rec_name = 'name'
     _order = 'cheque_number'
-    _check_company_auto = True
 
     created_with_cheque_book = fields.Boolean(
         string='Çek Defteri ile Oluşturuldu',
