@@ -92,7 +92,7 @@ class MdxAuditRule(models.Model):
             return False
             
         # If group_ids is set, user MUST belong to at least one group
-        if self.group_ids and not (user.groups_id & self.group_ids):
+        if self.group_ids and not any(user in g.users for g in self.group_ids):
             return False
             
         return True
