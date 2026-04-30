@@ -101,27 +101,25 @@ class MrpProduction(models.Model):
 
     def action_apply_plan(self):
         """
-        Write planned dates back to work orders — async via queue_job.
+        Write planned dates back to work orders.
         RULE: Never overwrites work orders in progress/done state.
         RULE: Default is simulate — this is the only explicit apply path.
         """
         self.ensure_one()
         if not self.skyplanner_phaser_order_id:
             raise UserError(_('This MO has not been sent to APS yet.'))
-        # Async — user must explicitly trigger, never via cron
-        self.env['skyplanner.planner'].with_delay().fetch_and_apply(
-            production_id=self.id,
-            mode='apply',
-        )
+        planner = self.env['skyplanner.planner']
+        result = planner.fetch_and_apply(production_id=self.id, mode='apply')
+        if result.get('error'):
+            raise UserError(_('APS Apply failed: %s') % result.get('message'))
+        applied = sum(1 for c in result.get('changes', []) if c.get('applied'))
+        skipped = sum(1 for c in result.get('changes', []) if c.get('protected'))
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': _('APS Apply queued'),
-                'message': _(
-                    'Plan will be applied asynchronously. '
-                    'Check APS Status for result.'
-                ),
+                'title': _('APS Plan Applied'),
+                'message': _('%d work order(s) updated, %d protected (in progress/done).') % (applied, skipped),
                 'type': 'success',
                 'sticky': False,
             },
