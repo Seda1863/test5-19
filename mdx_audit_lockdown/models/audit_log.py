@@ -158,12 +158,13 @@ class MdxAuditLog(models.Model):
         action["context"] = self._get_audit_log_action_context()
         return action
 
-    def fields_view_get(self, view_id=None, view_type="form", toolbar=False, submenu=False):
+    @api.model
+    def get_view(self, view_id=None, view_type="form", **options):
         """
-        Search view domain'lerinde context.get('mdx_last7_start') gibi değerler
+        Search view domain’lerinde context.get(‘mdx_last7_start’) gibi değerler
         kullanabilmek için context’e yardımcı datetime stringleri ekler.
         """
-        res = super().fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
+        res = super().get_view(view_id=view_id, view_type=view_type, **options)
 
         ctx = dict(self.env.context)
         ctx.update(self._get_audit_log_action_context())
