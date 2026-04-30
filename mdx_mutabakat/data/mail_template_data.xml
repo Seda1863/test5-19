@@ -6,7 +6,6 @@
             <field name="model_id" ref="model_mdx_mutabakat"/>
             <!-- TODO: Odoo 18 uyumluluğu - report_template alanı kaldırılmıştır -->
             <!-- <field name="report_template" ref="action_report_mdx_mutabakat"/> -->
-            <field name="report_name">Mutabakat_{{ object.name or 'dokuman' }}</field>
             <field name="email_from">{{ object.company_id.email or 'noreply@minddx.ai' }}</field>
             <field name="email_to">{{ object.partner_email }}</field>
             <field name="reply_to">{{ object.sender_email }}</field>
