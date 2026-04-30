@@ -21,76 +21,77 @@ class MdxProductProduct(models.Model):
         store=True,
     )
 
-    @api.model
-    def create(self, vals):
-        product = super(MdxProductProduct, self).create(vals)
-        if product.manually_created_from_gelen_fatura_line_id:
-            # İlgili fatura satırını alalım
-            fatura_line = product.manually_created_from_gelen_fatura_line_id
-            # Fatura satırındaki ürün alanını güncelleyelim
-            fatura_line.write({
-                'product_id': product.id,
-                'create_product': False,
-                'create_supplierinfo': False,
-                # 'create_service_card': False,
-            })
-            # Fatura satırının tedarikçi bilgisini fatura üzerinden alıyoruz
-            supplier = fatura_line.gelen_fatura_id.supplier_id
-            if supplier and fatura_line.create_supplierinfo:
-                supplierinfo = self.env['product.supplierinfo'].create({
-                    'partner_id': supplier.id,
+    @api.model_create_multi
+    def create(self, vals_list):
+        products = super().create(vals_list)
+        for product in products:
+            if product.manually_created_from_gelen_fatura_line_id:
+                # İlgili fatura satırını alalım
+                fatura_line = product.manually_created_from_gelen_fatura_line_id
+                # Fatura satırındaki ürün alanını güncelleyelim
+                fatura_line.write({
                     'product_id': product.id,
-                    'product_name': fatura_line.supplier_product_name,
-                    'product_code': fatura_line.supplier_product_code,
-                    'product_tmpl_id': product.product_tmpl_id.id,
-                    'product_uom': fatura_line.product_id.uom_id.id,
-                    'price': fatura_line.price_unit,
-                    'currency_id': fatura_line.gelen_fatura_id.odenecek_tutar_doviz_cinsi.id,
-                    'min_qty': fatura_line.quantity,
-                    'delay': 0,
-                    'sequence': 0,
+                    'create_product': False,
+                    'create_supplierinfo': False,
+                    # 'create_service_card': False,
                 })
-                # Fatura satırında supplierinfo varsa güncelleyelim (alan tanımınız varsa)
-                if hasattr(fatura_line, 'supplierinfo_id'):
-                    fatura_line.write({
-                        'supplierinfo_id': supplierinfo.id,
-                        'create_supplierinfo': False,
+                # Fatura satırının tedarikçi bilgisini fatura üzerinden alıyoruz
+                supplier = fatura_line.gelen_fatura_id.supplier_id
+                if supplier and fatura_line.create_supplierinfo:
+                    supplierinfo = self.env['product.supplierinfo'].create({
+                        'partner_id': supplier.id,
+                        'product_id': product.id,
+                        'product_name': fatura_line.supplier_product_name,
+                        'product_code': fatura_line.supplier_product_code,
+                        'product_tmpl_id': product.product_tmpl_id.id,
+                        'product_uom': fatura_line.product_id.uom_id.id,
+                        'price': fatura_line.price_unit,
+                        'currency_id': fatura_line.gelen_fatura_id.odenecek_tutar_doviz_cinsi.id,
+                        'min_qty': fatura_line.quantity,
+                        'delay': 0,
+                        'sequence': 0,
                     })
+                    # Fatura satırında supplierinfo varsa güncelleyelim (alan tanımınız varsa)
+                    if hasattr(fatura_line, 'supplierinfo_id'):
+                        fatura_line.write({
+                            'supplierinfo_id': supplierinfo.id,
+                            'create_supplierinfo': False,
+                        })
 
-        elif product.manually_created_from_gelen_irsaliye_line_id:
-            # İlgili irsaliye satırını alalım
-            irsaliye_line = product.manually_created_from_gelen_irsaliye_line_id
-            # irsaliye satırındaki ürün alanını güncelleyelim
-            irsaliye_line.write({
-                'product_id': product.id,
-                'create_product': False,
-                'create_supplierinfo': False,
-                # 'create_service_card': False,
-            })
-            # irsaliye satırının tedarikçi bilgisini irsaliye üzerinden alıyoruz
-            supplier = irsaliye_line.gelen_irsaliye_id.supplier_id
-            if supplier and fatura_line.create_supplierinfo:
-                supplierinfo = self.env['product.supplierinfo'].create({
-                    'partner_id': supplier.id,
+            elif product.manually_created_from_gelen_irsaliye_line_id:
+                # İlgili irsaliye satırını alalım
+                irsaliye_line = product.manually_created_from_gelen_irsaliye_line_id
+                # irsaliye satırındaki ürün alanını güncelleyelim
+                irsaliye_line.write({
                     'product_id': product.id,
-                    'product_name': irsaliye_line.supplier_product_name,
-                    'product_code': irsaliye_line.supplier_product_code,
-                    'product_tmpl_id': product.product_tmpl_id.id,
-                    'product_uom': irsaliye_line.product_id.uom_id.id,
-                    # 'price': irsaliye_line.price_unit,
-                    # 'currency_id': irsaliye_line.gelen_irsaliye_id.odenecek_tutar_doviz_cinsi.id,
-                    'min_qty': irsaliye_line.quantity,
-                    'delay': 0,
-                    'sequence': 0,
+                    'create_product': False,
+                    'create_supplierinfo': False,
+                    # 'create_service_card': False,
                 })
-                # irsaliye satırında supplierinfo varsa güncelleyelim (alan tanımınız varsa)
-                if hasattr(irsaliye_line, 'supplierinfo_id'):
-                    irsaliye_line.write({
-                        'supplierinfo_id': supplierinfo.id,
-                        'create_supplierinfo': False,
+                # irsaliye satırının tedarikçi bilgisini irsaliye üzerinden alıyoruz
+                supplier = irsaliye_line.gelen_irsaliye_id.supplier_id
+                if supplier and fatura_line.create_supplierinfo:
+                    supplierinfo = self.env['product.supplierinfo'].create({
+                        'partner_id': supplier.id,
+                        'product_id': product.id,
+                        'product_name': irsaliye_line.supplier_product_name,
+                        'product_code': irsaliye_line.supplier_product_code,
+                        'product_tmpl_id': product.product_tmpl_id.id,
+                        'product_uom': irsaliye_line.product_id.uom_id.id,
+                        # 'price': irsaliye_line.price_unit,
+                        # 'currency_id': irsaliye_line.gelen_irsaliye_id.odenecek_tutar_doviz_cinsi.id,
+                        'min_qty': irsaliye_line.quantity,
+                        'delay': 0,
+                        'sequence': 0,
                     })
+                    # irsaliye satırında supplierinfo varsa güncelleyelim (alan tanımınız varsa)
+                    if hasattr(irsaliye_line, 'supplierinfo_id'):
+                        irsaliye_line.write({
+                            'supplierinfo_id': supplierinfo.id,
+                            'create_supplierinfo': False,
+                        })
 
-        return product
+        return products
     
     @api.ondelete(at_uninstall=True)
     def _unlink_except_manually_created(self):

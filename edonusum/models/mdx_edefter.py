@@ -74,41 +74,37 @@ class MdxEDefter(models.Model):
     journal_entry_line_ids = fields.One2many('account.move.line', string='Hesap Hareketi Satırları', compute='_compute_journal_entry_line_ids')
     active = fields.Boolean(string='Aktif', default=True)
     
-    @api.model
-    def create(self, vals):
-        # for key in ['entry_sequence_start_no', 'entry_sequence_end_no', 'line_sequence_start_no', 'line_sequence_end_no']:
-        #     if not vals.get(key) or vals.get(key) == 0:
-        #         raise UserError(_('Yevmiye kayıtları numaralandırılmamış.'))
-
-        existing_record = self.search([
-            ('company_id', '=', vals['company_id']),
-            ('month', '=', vals['month']),
-            ('year', '=', vals['year']),
-            # ('state', '=', 'posted'),
-        ])
-        if existing_record:
-            raise UserError(_('Bu döneme ait bir kayıt zaten var.'))
-
+    @api.model_create_multi
+    def create(self, vals_list):
         company = self.env.company
         fiscal_start_month = int(company.fiscal_year_start_month or 1)
-        current_month = int(vals['month'])
-        current_fiscal_order = current_month - fiscal_start_month
-        if current_fiscal_order < 0:
-            current_fiscal_order += 12
 
-        if current_fiscal_order > 0:
-            records = self.search([('company_id', '=', vals['company_id']), ('year', '=', vals['year'])])
-            def get_fiscal_order(rec):
-                m = int(rec.month)
-                order = m - fiscal_start_month
-                if order < 0:
-                    order += 12
-                return order
-            if not any(get_fiscal_order(rec) < current_fiscal_order for rec in records):
-                raise UserError(_('Önceki ayların kayıtları oluşturulmamış.'))
+        for vals in vals_list:
+            existing_record = self.search([
+                ('company_id', '=', vals['company_id']),
+                ('month', '=', vals['month']),
+                ('year', '=', vals['year']),
+            ])
+            if existing_record:
+                raise UserError(_('Bu döneme ait bir kayıt zaten var.'))
 
-        record = super(MdxEDefter, self).create(vals)
-        return record
+            current_month = int(vals['month'])
+            current_fiscal_order = current_month - fiscal_start_month
+            if current_fiscal_order < 0:
+                current_fiscal_order += 12
+
+            if current_fiscal_order > 0:
+                existing = self.search([('company_id', '=', vals['company_id']), ('year', '=', vals['year'])])
+                def get_fiscal_order(rec):
+                    m = int(rec.month)
+                    order = m - fiscal_start_month
+                    if order < 0:
+                        order += 12
+                    return order
+                if not any(get_fiscal_order(rec) < current_fiscal_order for rec in existing):
+                    raise UserError(_('Önceki ayların kayıtları oluşturulmamış.'))
+
+        return super().create(vals_list)
 
     @api.depends('company_id', 'month', 'year', 'journal_entry_ids.line_ids')
     def _compute_sequece(self):
