@@ -65,15 +65,12 @@ class MdxChequeBook(models.Model):
         string='Çek Yaprakları',
     )
 
-    @api.model
-    def create(self, vals):
-        """
-        Create a new cheque book and generate cheque leaves.
-        """
-        cheque_book = super(MdxChequeBook, self).create(vals)
-        cheque_book.generate_cheque_leaves()
-        cheque_book.cheque_book_status = 'created'
-        return cheque_book
+    @api.model_create_multi
+    def create(self, vals_list):
+        cheque_books = super().create(vals_list)
+        cheque_books.generate_cheque_leaves()
+        cheque_books.write({'cheque_book_status': 'created'})
+        return cheque_books
     
     def generate_cheque_leaves(self):
         """
@@ -364,67 +361,54 @@ class MdxChequeLeaf(models.Model):
             'target': 'current',
         }
     
-    @api.model
-    def create(self, vals):
-        """
-        Override create method to set the name based on the cheque number and prefix.
-        """
-        # If prefix exists in vals, use it directly
-        if vals.get('issuer_id') and not vals.get('first_owner_id'):
-            # Set first owner to issuer if not set
-            vals['first_owner_id'] = vals['issuer_id']
-        
-        if vals.get('prefix'):
-            if vals.get('cheque_number') is None and vals.get('name') is not None:
-                # Extract cheque number from name
-                cheque_str = str(vals['name'])
-                # Search existing prefix in name
-                match = re.match(str(f"^{vals['prefix']}(\d+)"), cheque_str)
-                if match:
-                    cheque_number = match.group(1)
-                    vals['cheque_number'] = int(cheque_number) if cheque_number.isdigit() else 0
-                else:
-                    raise UserError(_("Girilen ön ek ile çek adı uyuşmuyor. Lütfen kontrol edin."))
-            elif vals.get('cheque_number') is not None and vals.get('name') is None:
-                if vals['cheque_number'] < 0:
-                    raise UserError(_("Çek numarası negatif olamaz. Lütfen pozitif bir değer girin."))
-                # Set name using prefix and cheque number
-                vals['name'] = f"{vals['prefix']}{vals['cheque_number']}"
-        else:
-            if vals.get('cheque_number') is not None and vals.get('name') is None:
-                # Extract prefix using regex (letters at the beginning)
-                cheque_str = str(vals['cheque_number'])
-                prefix = ''
-                match = re.match(r"^([A-Za-z]+)", cheque_str)
-                if match:
-                    prefix = match.group(1)
-                    cheque_str = cheque_str[len(prefix):]
-                
-                # Set extracted values
-                vals['prefix'] = prefix
-                vals['name'] = prefix + cheque_str
-                vals['cheque_number'] = int(cheque_str) if cheque_str.isdigit() else 0
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('issuer_id') and not vals.get('first_owner_id'):
+                vals['first_owner_id'] = vals['issuer_id']
 
-            elif vals.get('cheque_number') is None and vals.get('name') is not None:
-                cheque_str = str(vals['name'])
-                prefix = ''
-                match = re.match(r"^([A-Za-z]+)", cheque_str)
-                if match:
-                    prefix = match.group(1)
-                    cheque_str = cheque_str[len(prefix):]
+            if vals.get('prefix'):
+                if vals.get('cheque_number') is None and vals.get('name') is not None:
+                    cheque_str = str(vals['name'])
+                    match = re.match(str(f"^{vals['prefix']}(\d+)"), cheque_str)
+                    if match:
+                        cheque_number = match.group(1)
+                        vals['cheque_number'] = int(cheque_number) if cheque_number.isdigit() else 0
+                    else:
+                        raise UserError(_("Girilen ön ek ile çek adı uyuşmuyor. Lütfen kontrol edin."))
+                elif vals.get('cheque_number') is not None and vals.get('name') is None:
+                    if vals['cheque_number'] < 0:
+                        raise UserError(_("Çek numarası negatif olamaz. Lütfen pozitif bir değer girin."))
+                    vals['name'] = f"{vals['prefix']}{vals['cheque_number']}"
+            else:
+                if vals.get('cheque_number') is not None and vals.get('name') is None:
+                    cheque_str = str(vals['cheque_number'])
+                    prefix = ''
+                    match = re.match(r"^([A-Za-z]+)", cheque_str)
+                    if match:
+                        prefix = match.group(1)
+                        cheque_str = cheque_str[len(prefix):]
+                    vals['prefix'] = prefix
+                    vals['name'] = prefix + cheque_str
+                    vals['cheque_number'] = int(cheque_str) if cheque_str.isdigit() else 0
 
-                vals['prefix'] = prefix
-                vals['cheque_number'] = int(cheque_str) if cheque_str.isdigit() else 0
-                vals['name'] = prefix + cheque_str
+                elif vals.get('cheque_number') is None and vals.get('name') is not None:
+                    cheque_str = str(vals['name'])
+                    prefix = ''
+                    match = re.match(r"^([A-Za-z]+)", cheque_str)
+                    if match:
+                        prefix = match.group(1)
+                        cheque_str = cheque_str[len(prefix):]
+                    vals['prefix'] = prefix
+                    vals['cheque_number'] = int(cheque_str) if cheque_str.isdigit() else 0
+                    vals['name'] = prefix + cheque_str
 
-            # Aynı isimle bir çek yaprağı oluşturulmasını engelle
-            existing_leaf = self.search([
-                ('name', '=', vals['name']),
-                ('cheque_book_id', '=', vals.get('cheque_book_id')),
-                ('active', '=', True)
-            ], limit=1)
+                existing_leaf = self.search([
+                    ('name', '=', vals.get('name')),
+                    ('cheque_book_id', '=', vals.get('cheque_book_id')),
+                    ('active', '=', True)
+                ], limit=1)
+                if existing_leaf:
+                    raise UserError(_('%s isimli bir çek yaprağı zaten mevcut. Lütfen farklı bir isim kullanın.') % vals.get('name'))
 
-            if existing_leaf:
-                raise UserError(_('%s' ' isimli bir çek yaprağı zaten mevcut. Lütfen farklı bir isim kullanın.') % vals['name'])
-        
-        return super(MdxChequeLeaf, self).create(vals)
+        return super().create(vals_list)

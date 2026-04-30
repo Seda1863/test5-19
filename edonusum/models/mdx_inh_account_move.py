@@ -605,148 +605,147 @@ class MdxInhAccountMove(models.Model):
                     'invoice_creation_date_time': False,
                 })
 
-    @api.model
-    def create(self, vals):
-        # Zorunlu alanlar güncellenmiyorsa, ilgili alanları dolduruyoruz
-        if vals.get('move_type') in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund']:
-            vals['document_type'] = 'invoice'
-        if not vals.get('document_number') and 'name' in vals:
-            vals['document_number'] = vals.get('name')
-        if not vals.get('document_date') and 'invoice_date' in vals:
-            vals['document_date'] = vals.get('invoice_date')
-        elif not vals.get('document_date') and 'date' in vals:
-            vals['document_date'] = vals.get('date')
-        # Eğer döviz alanı veya tarih güncellendiyse, kur hesaplamasını da güncelliyoruz
-        if vals.get('currency_id') or vals.get('invoice_date') or vals.get('currency_rate_type') or vals.get('invoice_currency_rate'):
-            currency = self.env['res.currency'].browse(vals.get('currency_id', self.currency_id.id))
-            date = vals.get('invoice_date', self.date) or vals.get('date', self.date)
-            rate_obj = self.env['res.currency.rate'].search([
-                ('currency_id', '=', currency.id),
-                ('name', '=', date)
-            ], limit=1)
-            # Eğer belirlenen tarihte rate bulunamazsa, o tarihten önceki en yakın tarihi alıyoruz
-            if not rate_obj:
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            # Zorunlu alanlar güncellenmiyorsa, ilgili alanları dolduruyoruz
+            if vals.get('move_type') in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund']:
+                vals['document_type'] = 'invoice'
+            if not vals.get('document_number') and 'name' in vals:
+                vals['document_number'] = vals.get('name')
+            if not vals.get('document_date') and 'invoice_date' in vals:
+                vals['document_date'] = vals.get('invoice_date')
+            elif not vals.get('document_date') and 'date' in vals:
+                vals['document_date'] = vals.get('date')
+            # Eğer döviz alanı veya tarih güncellendiyse, kur hesaplamasını da güncelliyoruz
+            if vals.get('currency_id') or vals.get('invoice_date') or vals.get('currency_rate_type') or vals.get('invoice_currency_rate'):
+                currency = self.env['res.currency'].browse(vals.get('currency_id', self.currency_id.id))
+                date = vals.get('invoice_date', self.date) or vals.get('date', self.date)
                 rate_obj = self.env['res.currency.rate'].search([
                     ('currency_id', '=', currency.id),
-                    ('name', '<', date)
-                ], order='name desc', limit=1)
-            rate_type = vals.get('currency_rate_type', self.currency_rate_type) or 'forexbuying'
-            rate = 1.0
-            try:
-                if rate_type == 'forexbuying':
-                    rate = 1 / rate_obj.forex_buying if rate_obj and rate_obj.forex_buying and rate_obj.forex_buying != 0 else 1.0
-                elif rate_type == 'forexselling':
-                    rate = 1 / rate_obj.forex_selling if rate_obj and rate_obj.forex_selling and rate_obj.forex_selling != 0 else 1.0
-                elif rate_type == 'banknotebuying':
-                    rate = 1 / rate_obj.banknote_buying if rate_obj and rate_obj.banknote_buying and rate_obj.banknote_buying != 0 else 1.0
-                elif rate_type == 'banknoteselling':
-                    rate = 1 / rate_obj.banknote_selling if rate_obj and rate_obj.banknote_selling and rate_obj.banknote_selling != 0 else 1.0
-                elif rate_type == 'manualexchange':
-                    rate = vals.get('invoice_currency_rate', self.invoice_currency_rate) or 1.0
-            except ZeroDivisionError:
+                    ('name', '=', date)
+                ], limit=1)
+                # Eğer belirlenen tarihte rate bulunamazsa, o tarihten önceki en yakın tarihi alıyoruz
+                if not rate_obj:
+                    rate_obj = self.env['res.currency.rate'].search([
+                        ('currency_id', '=', currency.id),
+                        ('name', '<', date)
+                    ], order='name desc', limit=1)
+                rate_type = vals.get('currency_rate_type', self.currency_rate_type) or 'forexbuying'
                 rate = 1.0
-                _logger.warning(f"Zero division error in create method. Using default rate 1.0")
-            # Güvenli değerler: 0 veya None ise 1.0 kullan
-            if not rate or rate == 0:
-                rate = 1.0
-            vals['invoice_currency_rate'] = rate
-            vals['invoice_currency_inverse_rate'] = 1.0 / rate if rate and rate != 0 else 1.0
+                try:
+                    if rate_type == 'forexbuying':
+                        rate = 1 / rate_obj.forex_buying if rate_obj and rate_obj.forex_buying and rate_obj.forex_buying != 0 else 1.0
+                    elif rate_type == 'forexselling':
+                        rate = 1 / rate_obj.forex_selling if rate_obj and rate_obj.forex_selling and rate_obj.forex_selling != 0 else 1.0
+                    elif rate_type == 'banknotebuying':
+                        rate = 1 / rate_obj.banknote_buying if rate_obj and rate_obj.banknote_buying and rate_obj.banknote_buying != 0 else 1.0
+                    elif rate_type == 'banknoteselling':
+                        rate = 1 / rate_obj.banknote_selling if rate_obj and rate_obj.banknote_selling and rate_obj.banknote_selling != 0 else 1.0
+                    elif rate_type == 'manualexchange':
+                        rate = vals.get('invoice_currency_rate', self.invoice_currency_rate) or 1.0
+                except ZeroDivisionError:
+                    rate = 1.0
+                    _logger.warning(f"Zero division error in create method. Using default rate 1.0")
+                # Güvenli değerler: 0 veya None ise 1.0 kullan
+                if not rate or rate == 0:
+                    rate = 1.0
+                vals['invoice_currency_rate'] = rate
+                vals['invoice_currency_inverse_rate'] = 1.0 / rate if rate and rate != 0 else 1.0
 
-        # Partner bilgisi varsa, partner'e göre alanları doldur
-        if 'partner_id' in vals:
-            partner = self.env['res.partner'].browse(vals['partner_id'])
+            # Partner bilgisi varsa, partner'e göre alanları doldur
+            if 'partner_id' in vals:
+                partner = self.env['res.partner'].browse(vals['partner_id'])
 
-            if partner:
-                if partner.parent_id and (partner.type == 'invoice' or partner.type == 'delivery'):
-                    vals = self._update_fields_from_partner(partner.parent_id, vals)
-                else:
-                    vals = self._update_fields_from_partner(partner, vals)
+                if partner:
+                    if partner.parent_id and (partner.type == 'invoice' or partner.type == 'delivery'):
+                        vals = self._update_fields_from_partner(partner.parent_id, vals)
+                    else:
+                        vals = self._update_fields_from_partner(partner, vals)
 
-        # İade faturası için reversed_entry_id varsa, iade edilen fatura bilgilerini doldur
-        if vals.get('reversed_entry_id'):
-            reversed_entry = self.env['account.move'].browse(vals['reversed_entry_id'])
-            if reversed_entry:
-                if not vals.get('iade_edilen_fatura_no') and reversed_entry.fatura_no:
-                    vals['iade_edilen_fatura_no'] = reversed_entry.fatura_no
-                if not vals.get('iade_edilen_fatura_tarihi') and reversed_entry.invoice_date:
-                    vals['iade_edilen_fatura_tarihi'] = reversed_entry.invoice_date
+            # İade faturası için reversed_entry_id varsa, iade edilen fatura bilgilerini doldur
+            if vals.get('reversed_entry_id'):
+                reversed_entry = self.env['account.move'].browse(vals['reversed_entry_id'])
+                if reversed_entry:
+                    if not vals.get('iade_edilen_fatura_no') and reversed_entry.fatura_no:
+                        vals['iade_edilen_fatura_no'] = reversed_entry.fatura_no
+                    if not vals.get('iade_edilen_fatura_tarihi') and reversed_entry.invoice_date:
+                        vals['iade_edilen_fatura_tarihi'] = reversed_entry.invoice_date
 
-        if not vals.get('fatura_seri_id') and vals.get('efatura_turu_id'):
-            efatura_turu_id = vals['efatura_turu_id']
-            efatura_turu = self.env['mdx.ebelge.turu'].browse(efatura_turu_id)  # İlgili kaydı bul
-            efatura_turu_code = efatura_turu.code if efatura_turu else None  # Code değerini al
+            if not vals.get('fatura_seri_id') and vals.get('efatura_turu_id'):
+                efatura_turu_id = vals['efatura_turu_id']
+                efatura_turu = self.env['mdx.ebelge.turu'].browse(efatura_turu_id)  # İlgili kaydı bul
+                efatura_turu_code = efatura_turu.code if efatura_turu else None  # Code değerini al
 
-            if efatura_turu_code:
-                fatura_seri = self.env['mdx.fatura.seri'].search(
-                    [('ebelge_turu_id.code', '=', efatura_turu_code)],
-                    limit=1
-                )
-                if fatura_seri:
-                    vals['fatura_seri_id'] = fatura_seri.id
-            # TODO: TEST
-            if 'move_type' in vals and vals['move_type'] == 'in_refund':
-                vals['fatura_tipi_id'] = self.env['mdx.ebelge.tipi'].search([('code', '=', 'IADE')], limit=1).id
-                # E-Fatura Senaryo: EFATURA -> TEMELFATURA, EARSIV -> EARSIVFATURA
-                efatura_turu_id = vals.get('efatura_turu_id')
-                if efatura_turu_id:
-                    efatura_turu = self.env['mdx.ebelge.turu'].browse(efatura_turu_id)
-                    if efatura_turu.code == 'EFATURA':
-                        vals['efatura_senaryo_id'] = self.env['mdx.ebelge.senaryo'].search([('code', '=', 'TEMELFATURA')], limit=1).id
-                    elif efatura_turu.code == 'EARSIV':
-                        vals['efatura_senaryo_id'] = self.env['mdx.ebelge.senaryo'].search([('code', '=', 'EARSIVFATURA')], limit=1).id
+                if efatura_turu_code:
+                    fatura_seri = self.env['mdx.fatura.seri'].search(
+                        [('ebelge_turu_id.code', '=', efatura_turu_code)],
+                        limit=1
+                    )
+                    if fatura_seri:
+                        vals['fatura_seri_id'] = fatura_seri.id
+                # TODO: TEST
+                if 'move_type' in vals and vals['move_type'] == 'in_refund':
+                    vals['fatura_tipi_id'] = self.env['mdx.ebelge.tipi'].search([('code', '=', 'IADE')], limit=1).id
+                    # E-Fatura Senaryo: EFATURA -> TEMELFATURA, EARSIV -> EARSIVFATURA
+                    efatura_turu_id = vals.get('efatura_turu_id')
+                    if efatura_turu_id:
+                        efatura_turu = self.env['mdx.ebelge.turu'].browse(efatura_turu_id)
+                        if efatura_turu.code == 'EFATURA':
+                            vals['efatura_senaryo_id'] = self.env['mdx.ebelge.senaryo'].search([('code', '=', 'TEMELFATURA')], limit=1).id
+                        elif efatura_turu.code == 'EARSIV':
+                            vals['efatura_senaryo_id'] = self.env['mdx.ebelge.senaryo'].search([('code', '=', 'EARSIVFATURA')], limit=1).id
 
-            if not vals.get('document_date'):
-                if vals.get('invoice_date'):
-                    vals['document_date'] = vals['invoice_date']
-                elif 'date' in vals:
-                    vals['document_date'] = vals['date']
-                else:
-                    vals['document_date'] = self and self[0].date or False
+                if not vals.get('document_date'):
+                    if vals.get('invoice_date'):
+                        vals['document_date'] = vals['invoice_date']
+                    elif 'date' in vals:
+                        vals['document_date'] = vals['date']
+                    else:
+                        vals['document_date'] = self and self[0].date or False
 
-            if vals.get('origin_payment_id'):
-                payment = self.env['account.payment'].browse(vals['origin_payment_id'])
-                if payment.exists():
-                    # Ödeme bilgilerini ana kayda aktar
-                    vals.update({
-                        'currency_rate_type': payment.currency_rate_type,
-                        'invoice_currency_inverse_rate': payment.payment_currency_inverse_rate,
-                        'invoice_currency_rate': payment.payment_currency_rate,
-                    })
-                    # Satırları güncelle (invoice_line_ids komut formatında olduğu için işlem yapılmalı)
-                    # new_invoice_lines = []
-                    # for line_command in vals.get('invoice_line_ids', []):
-                    #     # Her bir satır komutunu işle (genellikle (0, 0, {values}) formatında)
-                    #     if line_command[0] == 0:  # Yeni satır oluşturma komutu
-                    #         line_vals = line_command[2].copy() 
-                    #         line_vals.update({
-                    #             'currency_rate': payment.payment_currency_rate,
-                    #             'debit': line_vals.get('debit', 0.0) * payment.payment_currency_rate,
-                    #             'credit': line_vals.get('credit', 0.0) * payment.payment_currency_rate,
-                    #         })
-                    #         new_invoice_lines.append((0, 0, line_vals))
-                    #     else:
-                    #         new_invoice_lines.append(line_command)
-                    # vals['invoice_line_ids'] = new_invoice_lines  # Güncellenmiş satırları ata,
+                if vals.get('origin_payment_id'):
+                    payment = self.env['account.payment'].browse(vals['origin_payment_id'])
+                    if payment.exists():
+                        # Ödeme bilgilerini ana kayda aktar
+                        vals.update({
+                            'currency_rate_type': payment.currency_rate_type,
+                            'invoice_currency_inverse_rate': payment.payment_currency_inverse_rate,
+                            'invoice_currency_rate': payment.payment_currency_rate,
+                        })
+                        # Satırları güncelle (invoice_line_ids komut formatında olduğu için işlem yapılmalı)
+                        # new_invoice_lines = []
+                        # for line_command in vals.get('invoice_line_ids', []):
+                        #     # Her bir satır komutunu işle (genellikle (0, 0, {values}) formatında)
+                        #     if line_command[0] == 0:  # Yeni satır oluşturma komutu
+                        #         line_vals = line_command[2].copy() 
+                        #         line_vals.update({
+                        #             'currency_rate': payment.payment_currency_rate,
+                        #             'debit': line_vals.get('debit', 0.0) * payment.payment_currency_rate,
+                        #             'credit': line_vals.get('credit', 0.0) * payment.payment_currency_rate,
+                        #         })
+                        #         new_invoice_lines.append((0, 0, line_vals))
+                        #     else:
+                        #         new_invoice_lines.append(line_command)
+                        # vals['invoice_line_ids'] = new_invoice_lines  # Güncellenmiş satırları ata,
 
-            # if vals.get('cheque_status') and vals.get('cheque_leaf_id'):
-                # cheque_leaf_record = self.env['mdx.cheque.leaf'].browse(vals['cheque_leaf_id'])
-                # if cheque_leaf_record and cheque_leaf_record.account_move_id and cheque_leaf_record.account_move_id != self:
-                #     return {'warning': {
-                #         'title': _("Uyarı"),
-                #         'message': _("Seçilen çek yaprağı zaten başka bir muhasebe kaydı tarafından kullanılıyor. Lütfen farklı bir çek yaprağı seçin."),
-                #     }}
-                # cheque_status = self.env['mdx.sabit.kod'].browse(vals['cheque_status'])
-                # cheque_leaf_id = self.env['mdx.cheque.leaf'].browse(vals['cheque_leaf_id'])
-                # if cheque_status.code != cheque_leaf_id.cheque_status.code:
-                #     cheque_leaf_id.write({
-                #         'cheque_status': cheque_status.id,
-                        # 'account_move_id': self.id,
-                    # })
+                # if vals.get('cheque_status') and vals.get('cheque_leaf_id'):
+                    # cheque_leaf_record = self.env['mdx.cheque.leaf'].browse(vals['cheque_leaf_id'])
+                    # if cheque_leaf_record and cheque_leaf_record.account_move_id and cheque_leaf_record.account_move_id != self:
+                    #     return {'warning': {
+                    #         'title': _("Uyarı"),
+                    #         'message': _("Seçilen çek yaprağı zaten başka bir muhasebe kaydı tarafından kullanılıyor. Lütfen farklı bir çek yaprağı seçin."),
+                    #     }}
+                    # cheque_status = self.env['mdx.sabit.kod'].browse(vals['cheque_status'])
+                    # cheque_leaf_id = self.env['mdx.cheque.leaf'].browse(vals['cheque_leaf_id'])
+                    # if cheque_status.code != cheque_leaf_id.cheque_status.code:
+                    #     cheque_leaf_id.write({
+                    #         'cheque_status': cheque_status.id,
+                            # 'account_move_id': self.id,
+                        # })
 
-        move = super(MdxInhAccountMove, self).create(vals)
-        # GTIP validasyonu artık sadece action_post'ta yapılıyor.
-        # Taslak aşamasında GTIP olmadan kaydedilebilir.
-        return move
+        moves = super().create(vals_list)
+        return moves
 
     def write(self, vals):
         # Zorunlu alanlar güncellenmiyorsa, ilgili alanları dolduruyoruz

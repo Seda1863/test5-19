@@ -259,13 +259,14 @@ class MdxInhStockPicking(models.Model):
 
     #     return super(MdxInhStockPicking, self).create(vals)
 
-    @api.model
-    def create(self, vals):
-        # document_type other ise document_type_description_id alanı zorunlu
-        if vals.get('document_type') == 'other' and not vals.get('document_type_description_id'):
-            raise ValidationError("Belge Tipi 'Diğer' ise, Belge Tipi Açıklaması alanı zorunludur.")
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            # document_type other ise document_type_description_id alanı zorunlu
+            if vals.get('document_type') == 'other' and not vals.get('document_type_description_id'):
+                raise ValidationError("Belge Tipi 'Diğer' ise, Belge Tipi Açıklaması alanı zorunludur.")
 
-        return super(MdxInhStockPicking, self).create(vals)
+        return super().create(vals_list)
 
     def write(self, vals): # TODO: _download_waybill_pdf eklenecek
         # Partner bilgisi değişmişse, partner'e göre alanları doldur

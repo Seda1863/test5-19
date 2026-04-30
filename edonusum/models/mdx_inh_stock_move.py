@@ -10,13 +10,14 @@ from .mdx_utility_mixin import MdxUtilityMixin
 class MdxInhStockMove(models.Model):
     _inherit = 'stock.move'
     
-    @api.model
-    def create(self, vals):
-        for record in self:
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        for record in records:
             for line in record.move_line_ids:
                 if line.gelen_irsaliye_line_id:
                     line.move_id.purchase_line_id = line.gelen_irsaliye_line_id.ref_po_line_id
-        return super(MdxInhStockMove, self).create(vals)
+        return records
     
     invoice_line_ids = fields.Many2many(
         comodel_name="account.move.line",
