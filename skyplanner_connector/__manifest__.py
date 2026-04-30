@@ -27,13 +27,12 @@ Design rules (enforced in code):
   - Authentication: Authorization-Token header (not Bearer).
 
 Installation:
-  Requires: OCA queue_job, Python requests library.
+  Requires: Python requests library.
   """,
     'author': 'MindDX',
     'website': 'https://www.minddx.com',
     'depends': [
         'mrp',
-        'queue_job',
     ],
     'data': [
         # 1. Security first
