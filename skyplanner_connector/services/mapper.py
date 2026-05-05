@@ -49,7 +49,7 @@ class SkyPlannerMapper:
         """
         return {
             'production_planning_customer_id': self._resolve_customer_id(production),
-            'number': production.name,
+            'number': production.name.replace('/', '-'),
             'external_order_number': production.name,
             'status': 'new',
             'description': production.product_id.display_name or '',
