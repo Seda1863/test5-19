@@ -50,7 +50,7 @@ class SkyPlannerMapper:
         return {
             'production_planning_customer_id': self._resolve_customer_id(production),
             'number': production.name.replace('/', '-'),
-            'external_order_number': production.name,
+            'external_order_number': production.name.replace('/', '-'),
             'status': 'new',
             'description': production.product_id.display_name or '',
             'delivery_date': _fmt_dt(production.date_deadline),
