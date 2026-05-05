@@ -59,27 +59,15 @@ class SkyPlannerMapper:
 
     def _resolve_customer_id(self, production):
         """
-        Resolve SkyPlanner customer ID:
-          1. From skyplanner.mapping (res.partner)
-          2. Default customer ID from config
-          3. Raise ValueError (not UserError — caller handles)
+        Resolve SkyPlanner customer ID from default config.
+        mrp.production has no partner_id in Odoo 19.
         """
-        if production.partner_id:
-            mapping = self.env['skyplanner.mapping'].search([
-                ('odoo_model', '=', 'res.partner'),
-                ('odoo_id', '=', production.partner_id.id),
-                ('mapping_type', '=', 'phaser_order'),
-            ], limit=1)
-            if mapping:
-                return mapping.skyplanner_id
-
         if self._default_customer_id:
             return self._default_customer_id
 
         raise ValueError(
             f'No SkyPlanner customer ID for MO "{production.name}". '
-            'Configure a Default Customer ID in Settings → SkyPlanner APS, '
-            'or add a partner mapping.'
+            'Configure a Default Customer ID in Settings → SkyPlanner APS.'
         )
 
     # =========================================================================

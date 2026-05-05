@@ -46,10 +46,10 @@
                     </group>
                     <notebook>
                         <page string="Request">
-                            <field name="payload" widget="ace" options="{'mode': 'json'}"/>
+                            <field name="payload" widget="ace"/>
                         </page>
                         <page string="Response">
-                            <field name="response" widget="ace" options="{'mode': 'json'}"/>
+                            <field name="response" widget="ace"/>
                         </page>
                         <page string="Error" invisible="not error_message">
                             <field name="error_message" widget="text"/>
