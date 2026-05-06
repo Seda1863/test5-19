@@ -59,7 +59,7 @@
 
             <!-- Invisible helper field -->
             <field name="state" position="after">
-                <field name="is_entegra_order" invisible="1"/>
+                <field name="is_entegra_order" invisible="True"/>
             </field>
 
         </field>

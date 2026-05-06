@@ -70,8 +70,7 @@
                 <field name="entegra_ref"/>
                 <filter name="filter_error" string="Hatalar" domain="[('status', '=', 'error')]"/>
                 <filter name="filter_success" string="Başarılı" domain="[('status', '=', 'success')]"/>
-                <filter name="filter_today" string="Bugün"
-                        domain="[('create_date', '&gt;=', context_today().strftime('%Y-%m-%d 00:00:00'))]"/>
+                <filter name="filter_by_date" string="Tarihe Göre" date="create_date"/>
                 <group expand="0" string="Grupla">
                     <filter name="group_by_operation" string="İşlem" context="{'group_by': 'operation'}"/>
                     <filter name="group_by_status" string="Durum" context="{'group_by': 'status'}"/>
