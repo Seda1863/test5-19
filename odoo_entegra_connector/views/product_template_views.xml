@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- product.template — Entegra tab eklentisi -->
+    <record id="view_product_template_entegra_form" model="ir.ui.view">
+        <field name="name">product.template.entegra.form</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page string="Entegra" name="entegra_tab">
+                    <group>
+                        <field name="entegra_exclude"/>
+                    </group>
+                    <field name="entegra_mapping_ids">
+                        <list editable="bottom">
+                            <field name="backend_id"/>
+                            <field name="entegra_product_code"/>
+                            <field name="entegra_product_id"/>
+                            <field name="sync_status" widget="badge"
+                                   decoration-success="sync_status == 'synced'"
+                                   decoration-danger="sync_status == 'error'"
+                                   decoration-warning="sync_status == 'pending'"/>
+                            <field name="last_sync_date"/>
+                            <field name="sync_error" optional="show"/>
+                        </list>
+                    </field>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_entegra_push_wizard_form" model="ir.ui.view">
+        <field name="name">entegra.push.wizard.form</field>
+        <field name="model">entegra.push.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Entegra'ya Gönder">
+                <group invisible="state == 'done'">
+                    <group string="Seçim">
+                        <field name="backend_id"/>
+                        <field name="force_update"/>
+                        <field name="push_images"/>
+                    </group>
+                    <group string="Ürünler">
+                        <field name="product_ids" widget="many2many_tags"/>
+                    </group>
+                </group>
+
+                <!-- Sonuç Paneli -->
+                <group invisible="state != 'done'">
+                    <group string="Sonuç">
+                        <field name="result_success" string="Başarılı"/>
+                        <field name="result_error" string="Hata"/>
+                    </group>
+                    <group string="Detaylar" invisible="result_error == 0">
+                        <field name="result_details" nolabel="1" widget="text"/>
+                    </group>
+                </group>
+
+                <footer invisible="state == 'done'">
+                    <button name="action_push"
+                            string="Ürünleri Gönder"
+                            type="object"
+                            class="btn-primary"/>
+                    <button name="action_push_stock_only"
+                            string="Sadece Stok Güncelle"
+                            type="object"
+                            class="btn-secondary"/>
+                    <button name="action_push_prices_only"
+                            string="Sadece Fiyat Güncelle"
+                            type="object"
+                            class="btn-secondary"/>
+                    <button string="Vazgeç" class="btn-secondary" special="cancel"/>
+                </footer>
+                <footer invisible="state != 'done'">
+                    <button string="Kapat" class="btn-primary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Server Action — Ürün listesinden toplu push -->
+    <record id="action_entegra_push_products" model="ir.actions.server">
+        <field name="name">Entegra'ya Gönder</field>
+        <field name="model_id" ref="product.model_product_template"/>
+        <field name="binding_model_id" ref="product.model_product_template"/>
+        <field name="state">code</field>
+        <field name="code">
+action = {
+    'type': 'ir.actions.act_window',
+    'name': "Entegra'ya Gönder",
+    'res_model': 'entegra.push.wizard',
+    'view_mode': 'form',
+    'target': 'new',
+    'context': {
+        'default_product_ids': [(6, 0, env.context.get('active_ids', []))],
+        'active_ids': env.context.get('active_ids', []),
+        'active_model': 'product.template',
+    },
+}
+        </field>
+    </record>
+
+</odoo>

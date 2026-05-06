@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Ana Menü -->
+    <menuitem id="menu_entegra_root"
+              name="Entegra"
+              sequence="95"
+              web_icon="odoo_entegra_connector,static/description/icon.png"
+              groups="base.group_user"/>
+
+    <!-- Konfigürasyon -->
+    <menuitem id="menu_entegra_config"
+              name="Konfigürasyon"
+              parent="menu_entegra_root"
+              sequence="90"
+              groups="base.group_system"/>
+
+    <menuitem id="menu_entegra_backend"
+              name="Bağlantılar"
+              parent="menu_entegra_config"
+              action="action_entegra_backend"
+              sequence="10"
+              groups="base.group_system"/>
+
+    <!-- Loglar -->
+    <menuitem id="menu_entegra_logs"
+              name="Sync Logları"
+              parent="menu_entegra_root"
+              action="action_entegra_sync_log"
+              sequence="80"
+              groups="base.group_system"/>
+
+    <!-- Sipariş Import -->
+    <menuitem id="menu_entegra_order_import"
+              name="Sipariş Import"
+              parent="menu_entegra_root"
+              action="action_entegra_order_import_wizard"
+              sequence="20"
+              groups="base.group_user"/>
+
+</odoo>

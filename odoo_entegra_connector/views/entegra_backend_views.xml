@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Backend Form View -->
+    <record id="view_entegra_backend_form" model="ir.ui.view">
+        <field name="name">entegra.backend.form</field>
+        <field name="model">entegra.backend</field>
+        <field name="arch" type="xml">
+            <form string="Entegra Bağlantısı">
+                <header>
+                    <button name="action_test_connection"
+                            string="Bağlantıyı Test Et"
+                            type="object"
+                            class="btn-primary"/>
+                    <button name="action_clear_token_cache"
+                            string="Token Cache Temizle"
+                            type="object"
+                            class="btn-secondary"
+                            groups="base.group_system"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,connected,error"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Örn: Entegra Üretim"/></h1>
+                    </div>
+
+                    <group>
+                        <group string="Bağlantı Bilgileri">
+                            <field name="api_url"/>
+                            <field name="api_email" groups="base.group_system"/>
+                            <field name="api_password" password="True" groups="base.group_system"/>
+                            <field name="company_id"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Entegra Ayarları">
+                            <field name="supplier_name"/>
+                            <field name="default_warehouse_id"/>
+                            <field name="entegra_store_id"/>
+                        </group>
+                    </group>
+
+                    <group string="Sipariş Ayarları">
+                        <group>
+                            <field name="order_import_sync_status"/>
+                            <field name="auto_confirm_orders"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Fiyat Eşlemeleri">
+                            <field name="price_mapping_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="marketplace"/>
+                                    <field name="entegra_price_code"/>
+                                    <field name="price_field"/>
+                                    <field name="pricelist_id"
+                                           invisible="price_field != 'pricelist'"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Token Bilgisi" groups="base.group_system">
+                            <group>
+                                <field name="token_expiry" readonly="1"/>
+                                <field name="refresh_expiry" readonly="1"/>
+                                <field name="last_token_refresh" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="last_error" readonly="1"
+                                       invisible="state != 'error'"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Backend Tree View -->
+    <record id="view_entegra_backend_tree" model="ir.ui.view">
+        <field name="name">entegra.backend.tree</field>
+        <field name="model">entegra.backend</field>
+        <field name="arch" type="xml">
+            <list string="Entegra Bağlantıları"
+                  decoration-danger="state == 'error'"
+                  decoration-success="state == 'connected'">
+                <field name="name"/>
+                <field name="api_url"/>
+                <field name="supplier_name"/>
+                <field name="company_id"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'connected'"
+                       decoration-warning="state == 'draft'"
+                       decoration-danger="state == 'error'"/>
+                <field name="last_token_refresh"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Backend Action -->
+    <record id="action_entegra_backend" model="ir.actions.act_window">
+        <field name="name">Entegra Bağlantıları</field>
+        <field name="res_model">entegra.backend</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_entegra_backend_manager,entegra.backend.manager,model_entegra_backend,base.group_system,1,1,1,1
+access_entegra_backend_user,entegra.backend.user,model_entegra_backend,base.group_user,1,0,0,0
+access_entegra_sync_log_manager,entegra.sync.log.manager,model_entegra_sync_log,base.group_system,1,1,1,1
+access_entegra_sync_log_user,entegra.sync.log.user,model_entegra_sync_log,base.group_user,1,0,0,0
+access_entegra_product_mapping_manager,entegra.product.mapping.manager,model_entegra_product_mapping,base.group_system,1,1,1,1
+access_entegra_product_mapping_user,entegra.product.mapping.user,model_entegra_product_mapping,base.group_user,1,0,0,0
+access_entegra_price_mapping_manager,entegra.price.mapping.manager,model_entegra_price_mapping,base.group_system,1,1,1,1
+access_entegra_price_mapping_user,entegra.price.mapping.user,model_entegra_price_mapping,base.group_user,1,0,0,0
+access_entegra_product_push_system,entegra.product.push.system,model_entegra_product_push,base.group_system,1,1,1,1
+access_entegra_product_push_user,entegra.product.push.user,model_entegra_product_push,base.group_user,1,0,0,0
+access_entegra_order_import_system,entegra.order.import.system,model_entegra_order_import,base.group_system,1,1,1,1
+access_entegra_order_import_user,entegra.order.import.user,model_entegra_order_import,base.group_user,1,0,0,0
+access_entegra_push_wizard,entegra.push.wizard,model_entegra_push_wizard,base.group_user,1,1,1,1
+access_entegra_order_import_wizard,entegra.order.import.wizard,model_entegra_order_import_wizard,base.group_user,1,1,1,1
