@@ -10,7 +10,6 @@
             <field name="code">model._cron_refresh_tokens()</field>
             <field name="interval_number">1</field>
             <field name="interval_type">days</field>
-            <field name="numbercall">-1</field>
             <field name="active">True</field>
             <field name="priority">5</field>
         </record>
@@ -23,7 +22,7 @@
             <field name="code">model._cron_import_orders()</field>
             <field name="interval_number">15</field>
             <field name="interval_type">minutes</field>
-            <field name="numbercall">-1</field>
+
             <field name="active">True</field>
             <field name="priority">10</field>
         </record>
@@ -36,7 +35,7 @@
             <field name="code">model._cron_push_stock()</field>
             <field name="interval_number">30</field>
             <field name="interval_type">minutes</field>
-            <field name="numbercall">-1</field>
+
             <field name="active">True</field>
             <field name="priority">10</field>
         </record>
@@ -49,7 +48,7 @@
             <field name="code">model._cron_push_prices()</field>
             <field name="interval_number">1</field>
             <field name="interval_type">hours</field>
-            <field name="numbercall">-1</field>
+
             <field name="active">True</field>
             <field name="priority">10</field>
         </record>
