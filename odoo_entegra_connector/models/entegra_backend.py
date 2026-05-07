@@ -586,6 +586,21 @@ class EntegraBackend(models.Model):
             return 0
         return ODOO_TAX_TO_KDV[rate]
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        for backend in records:
+            if not backend.price_mapping_ids:
+                self.env['entegra.price.mapping'].create({
+                    'backend_id': backend.id,
+                    'sequence': 10,
+                    'marketplace': 'general',
+                    'entegra_price_code': 'price1',
+                    'price_field': 'list_price',
+                    'active': True,
+                })
+        return records
+
     @api.model
     def _cron_refresh_tokens(self):
         """
@@ -637,8 +652,18 @@ class EntegraPriceMapping(models.Model):
         required=True,
         help='Örn: price1, trendyol_listPrice, hb_price, n11_price',
     )
-    marketplace = fields.Char(
+    marketplace = fields.Selection(
+        selection=[
+            ('general',      'Genel'),
+            ('trendyol',     'Trendyol'),
+            ('hepsiburada',  'Hepsiburada'),
+            ('n11',          'N11'),
+            ('amazon',       'Amazon'),
+            ('gittigidiyor', 'GittiGidiyor'),
+            ('ciceksepeti',  'ÇiçekSepeti'),
+            ('pazarama',     'Pazarama'),
+        ],
         string='Pazaryeri',
-        help='Bilgi amaçlı: Trendyol, Hepsiburada, N11...',
+        help='Bu fiyatın uygulanacağı pazaryeri.',
     )
     active = fields.Boolean(default=True)

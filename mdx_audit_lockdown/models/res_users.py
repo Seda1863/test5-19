@@ -13,8 +13,11 @@ class ResUsers(models.Model):
 
     def _compute_can_view_audit_logs(self):
         group = self.env.ref('mdx_audit_lockdown.group_audit_viewer', raise_if_not_found=False)
+        if not group:
+            self.can_view_audit_logs = False
+            return
         for user in self:
-            user.can_view_audit_logs = bool(group and user in group.users)
+            user.can_view_audit_logs = group in user.sudo().groups_id
 
     def _inverse_can_view_audit_logs(self):
         group = self.env.ref('mdx_audit_lockdown.group_audit_viewer', raise_if_not_found=False)
