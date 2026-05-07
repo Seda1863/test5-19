@@ -24,6 +24,7 @@ Kritik tasarım kararları:
     vergi Odoo'daki ürün vergisinden alınır.
 """
 
+import json
 import logging
 import time
 from datetime import datetime
@@ -90,6 +91,7 @@ class EntegraOrderImport(models.Model):
         results = {'imported': 0, 'skipped': 0, 'errors': []}
 
         # Parametreleri oluştur
+        endpoint = '/order/page={page}/'
         params = {'limit': 200}
         if not skip_sync_filter:
             params['api_sync'] = 0
@@ -98,23 +100,38 @@ class EntegraOrderImport(models.Model):
         if date_from:
             params['start_date'] = date_from
 
+        params_json = json.dumps(params, ensure_ascii=False)
+
         _logger.info(
-            '[Entegra:%s] Sipariş import başlıyor. Params: %s',
-            backend.name, params
+            '[Entegra:%s] Sipariş import başlıyor. Endpoint: %s  Params: %s',
+            backend.name, endpoint, params_json
         )
 
-        # Tüm sayfaları çek
-        all_orders = backend._get_paginated(
-            '/order/page={page}/', params=params
+        # Tüm sayfaları çek (süreyi ölç)
+        t0 = time.time()
+        all_orders = backend._get_paginated(endpoint, params=params)
+        duration_ms = int((time.time() - t0) * 1000)
+        order_count = len(all_orders) if all_orders else 0
+
+        _logger.info(
+            '[Entegra:%s] API yanıtı: %d sipariş döndü (%d ms)',
+            backend.name, order_count, duration_ms
         )
 
         if not all_orders:
             _logger.info('[Entegra:%s] Yeni sipariş bulunamadı.', backend.name)
+            self._write_log(
+                backend, 'order_import', 'success',
+                record_name='Sipariş bulunamadı (0 kayıt)',
+                request_data='Endpoint: %s\nParams: %s' % (endpoint, params_json),
+                response_data='API 0 sipariş döndürdü',
+                duration_ms=duration_ms,
+            )
             return results
 
         _logger.info(
             '[Entegra:%s] %d sipariş bulundu, işleniyor...',
-            backend.name, len(all_orders)
+            backend.name, order_count
         )
 
         for order_data in all_orders:
@@ -138,6 +155,9 @@ class EntegraOrderImport(models.Model):
             record_name='%d import, %d atlandı, %d hata' % (
                 results['imported'], results['skipped'], len(results['errors'])
             ),
+            request_data='Endpoint: %s\nParams: %s' % (endpoint, params_json),
+            response_data='API %d sipariş döndürdü' % order_count,
+            duration_ms=duration_ms,
         )
 
         _logger.info(
@@ -372,6 +392,8 @@ class EntegraOrderImport(models.Model):
             'date_order': order_date or fields.Datetime.now(),
             'warehouse_id': warehouse.id if warehouse else False,
             'currency_id': currency.id if currency else False,
+            # Pazaryeri sipariş numarasını standart referans alanına da yaz
+            'client_order_ref': str(order_number) if order_number else False,
             # Entegra alanları
             'entegra_order_id': entegra_id,
             'entegra_order_number': str(order_number),
@@ -437,9 +459,9 @@ class EntegraOrderImport(models.Model):
 
         for line_data in order_details:
             product_code = line_data.get('product_code', '').strip()
-            quantity = float(line_data.get('quantity', 1))
-            price = float(line_data.get('price', 0))
-            first_price = float(line_data.get('first_price', price))
+            quantity = float(line_data.get('quantity') or 1)
+            price = float(line_data.get('price') or 0)
+            first_price = float(line_data.get('first_price') or price)
 
             if not product_code:
                 _logger.warning('[Entegra:%s] Kalemsiz product_code — atlanıyor.', backend.name)
@@ -655,11 +677,9 @@ class EntegraOrderImport(models.Model):
         return email.lower()
 
     def _get_currency(self, order_data):
-        """Entegra para biriminden Odoo currency bul."""
-        # Entegra'da para birimi order_details > price'dan çıkarılabilir
-        # veya sipariş bazında geliyorsa buradan alınır
-        # Default: TRY
-        currency_name = 'TRY'
+        """Entegra para biriminden Odoo currency bul. Default: TRY."""
+        entegra_code = str(order_data.get('currency', '') or '').upper() or 'TRL'
+        currency_name = CURRENCY_CODE_MAP.get(entegra_code, 'TRY')
         odoo_currency = self.env['res.currency'].search([
             ('name', '=', currency_name),
             ('active', '=', True),
