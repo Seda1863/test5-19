@@ -561,6 +561,9 @@ class GuaranteeLetter(models.Model):
             base_domain.append(('company_ids', 'in', self.company_id.id))
         if 'deprecated' in account_model._fields:
             base_domain.append(('deprecated', '=', False))
+        else:
+            # Odoo 19+: deprecated field kaldırıldı, active kullan
+            base_domain.append(('active', '=', True))
 
         domain = [('code', '=', code), *base_domain]
 
