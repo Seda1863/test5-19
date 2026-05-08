@@ -14,6 +14,7 @@ Design rules (kırılamaz):
 """
 import json
 import logging
+from datetime import datetime, timezone
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
@@ -22,6 +23,37 @@ from .api_client import SkyPlannerClient, SkyPlannerAPIError
 from .mapper import SkyPlannerMapper
 
 _logger = logging.getLogger(__name__)
+
+_ODOO_DT_FORMAT = '%Y-%m-%d %H:%M:%S'
+
+
+def _to_odoo_dt(dt_str):
+    """
+    Convert SkyPlanner datetime string to naive UTC string for Odoo fields.Datetime.
+
+    Handles:
+      '2026-05-08T08:42:00+00:00'  ISO 8601 with timezone offset
+      '2026-05-08T08:42:00Z'       ISO 8601 UTC shorthand
+      '2026-05-08 08:42:00'        Already Odoo-format (pass-through)
+
+    Returns '%Y-%m-%d %H:%M:%S' string (naive UTC), or original value on failure.
+    """
+    if not dt_str:
+        return dt_str
+    s = str(dt_str).strip()
+    try:
+        from dateutil.parser import isoparse
+        dt = isoparse(s)
+    except Exception:
+        try:
+            # Python 3.11+ fromisoformat handles all ISO 8601 variants
+            dt = datetime.fromisoformat(s)
+        except Exception:
+            _logger.warning('SkyPlanner: could not parse datetime %r', s)
+            return dt_str
+    if dt.tzinfo is not None:
+        dt = dt.astimezone(timezone.utc).replace(tzinfo=None)
+    return dt.strftime(_ODOO_DT_FORMAT)
 
 
 class SkyPlannerPlanner(models.AbstractModel):
@@ -288,6 +320,9 @@ class SkyPlannerPlanner(models.AbstractModel):
                 if not start or not end:
                     errors.append(f'WO {wo.name}: no planned dates in response')
                     continue
+                # Normalize ISO 8601 → naive UTC '%Y-%m-%d %H:%M:%S'
+                start = _to_odoo_dt(start)
+                end = _to_odoo_dt(end)
 
                 protected = wo.state in ('progress', 'done')
                 change = {
