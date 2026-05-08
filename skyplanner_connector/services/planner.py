@@ -362,25 +362,18 @@ class SkyPlannerPlanner(models.AbstractModel):
         if mapping:
             return mapping.skyplanner_id
 
-        # Query SkyPlanner to find production_planning_job_id
+        # Direct GET /phaser-jobs/{id} — avoids imprecise list+filter approach
         try:
-            jobs_resp = client.get('/phaser-jobs', params={
-                'contain': 'jobs',
-                'limit': 1,
-            })
-            # phaser-jobs response: look for our phaser_job_id
-            phaser_jobs = jobs_resp.get('phaser-jobs', [])
-            for pj in phaser_jobs:
-                if pj.get('id') == wo.skyplanner_phaser_job_id:
-                    planning_job_id = pj.get('production_planning_job_id')
-                    if planning_job_id:
-                        # Cache in mapping table
-                        Mapping.set_mapping(
-                            'mrp.workorder', wo.id,
-                            'planning_job', planning_job_id,
-                        )
-                        wo.skyplanner_planning_job_id = planning_job_id
-                        return planning_job_id
+            pj_resp = client.get(f'/phaser-jobs/{wo.skyplanner_phaser_job_id}')
+            pj = pj_resp.get('phaser-job') or pj_resp
+            planning_job_id = pj.get('production_planning_job_id')
+            if planning_job_id:
+                Mapping.set_mapping(
+                    'mrp.workorder', wo.id,
+                    'planning_job', planning_job_id,
+                )
+                wo.skyplanner_planning_job_id = planning_job_id
+                return planning_job_id
         except SkyPlannerAPIError:
             pass
         return None

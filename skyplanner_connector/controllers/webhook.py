@@ -29,23 +29,29 @@ class SkyPlannerWebhookController(http.Controller):
 
     @http.route(
         '/skyplanner/webhook',
-        type='jsonrpc',
+        type='http',
         auth='none',
         methods=['POST'],
         csrf=False,
     )
-    def handle_webhook(self, **kwargs):
+    def handle_webhook(self):
         env = request.env(user=1)  # admin context — webhook has no user
 
-        # ---- Parse body ----
+        # ---- Parse plain JSON body (SkyPlanner sends raw HTTP POST, not JSON-RPC) ----
         try:
-            data = request.get_json_data()
-        except Exception:
-            data = kwargs or {}
+            body = request.httprequest.get_data(as_text=True)
+            data = json.loads(body) if body else {}
+        except (ValueError, TypeError):
+            _logger.warning('SkyPlanner webhook: invalid JSON body')
+            return request.make_json_response(
+                {'status': 'error', 'message': 'Invalid JSON'}, status=400
+            )
 
         if not isinstance(data, dict):
             _logger.warning('SkyPlanner webhook: unexpected payload type %s', type(data))
-            return {'status': 'error', 'message': 'Invalid payload'}
+            return request.make_json_response(
+                {'status': 'error', 'message': 'Invalid payload'}, status=400
+            )
 
         event = data.get('event', 'unknown')
         external_id = str(data.get('external_id') or data.get('id') or '')
@@ -64,10 +70,10 @@ class SkyPlannerWebhookController(http.Controller):
             request.httprequest.headers.get('X-Skyplanner-Token', '')
         )
         if expected_token and incoming_token != expected_token:
-            _logger.warning(
-                'SkyPlanner webhook: auth failed — token mismatch'
+            _logger.warning('SkyPlanner webhook: auth failed — token mismatch')
+            return request.make_json_response(
+                {'status': 'error', 'message': 'Unauthorized'}, status=401
             )
-            return {'status': 'error', 'message': 'Unauthorized'}
 
         # ---- Idempotency ----
         Log = env['skyplanner.sync.log']
@@ -75,7 +81,9 @@ class SkyPlannerWebhookController(http.Controller):
             _logger.info(
                 'SkyPlanner webhook: duplicate event %s — ignored', external_id
             )
-            return {'status': 'duplicate', 'message': 'Already processed'}
+            return request.make_json_response(
+                {'status': 'duplicate', 'message': 'Already processed'}
+            )
 
         # ---- Dispatch ----
         try:
@@ -90,7 +98,9 @@ class SkyPlannerWebhookController(http.Controller):
                 error=str(exc),
                 external_id=external_id or None,
             )
-            return {'status': 'error', 'message': str(exc)}
+            return request.make_json_response(
+                {'status': 'error', 'message': str(exc)}, status=500
+            )
 
         # ---- Log success ----
         Log.log(
@@ -100,7 +110,9 @@ class SkyPlannerWebhookController(http.Controller):
             payload=json.dumps(data),
             external_id=external_id or None,
         )
-        return {'status': 'ok', 'event': event, 'result': result}
+        return request.make_json_response(
+            {'status': 'ok', 'event': event, 'result': result}
+        )
 
     # =========================================================================
     # Event dispatchers

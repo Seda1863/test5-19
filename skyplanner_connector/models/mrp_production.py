@@ -125,6 +125,16 @@ class MrpProduction(models.Model):
             },
         }
 
+    def action_export_to_aps(self):
+        """POST /phaser-orders/export — makes MO visible on SkyPlanner Gantt."""
+        self.ensure_one()
+        if not self.skyplanner_phaser_order_id:
+            raise UserError(_('This MO has not been sent to APS yet.'))
+        from ..services.api_client import SkyPlannerClient
+        client = SkyPlannerClient.from_env(self.env)
+        planner = self.env['skyplanner.planner']
+        planner._export_and_log(client, self, self.skyplanner_phaser_order_id)
+
     def action_simulate_plan(self):
         """Open simulate wizard (alias for action_get_plan)."""
         return self.action_get_plan()

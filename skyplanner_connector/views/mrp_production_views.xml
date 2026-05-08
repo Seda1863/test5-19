@@ -20,6 +20,11 @@
                         string="Get Plan"
                         groups="skyplanner_connector.group_skyplanner_user"
                         invisible="skyplanner_sync_state == 'not_sent'"/>
+                <button name="action_export_to_aps"
+                        type="object"
+                        string="Export to Planning"
+                        groups="skyplanner_connector.group_skyplanner_user"
+                        invisible="skyplanner_sync_state != 'sent'"/>
                 <button name="action_apply_plan"
                         type="object"
                         string="Apply Plan"
