@@ -207,16 +207,31 @@ class EntegraOrderImport(models.Model):
         partner = self._get_or_create_partner(backend, order_data)
         shipping_partner = self._get_or_create_shipping_partner(order_data, partner)
 
-        # 4. Sale.order oluştur
+        # 4. Ürün pre-validate — herhangi biri eksikse SO oluşturma, sync=1 yapma
+        missing = self._check_missing_products(backend, order_data)
+        if missing:
+            msg = 'Eksik ürün kodları: ' + ', '.join(missing)
+            _logger.warning(
+                '[Entegra:%s] Sipariş %s atlandı — %s',
+                backend.name, order_number, msg
+            )
+            self._write_log(
+                backend, 'order_import', 'warning',
+                record_name='Atlandı (eksik ürün): %s' % order_number,
+                error_message=msg,
+            )
+            return 'skipped'
+
+        # 5. Sale.order oluştur
         so = self._create_sale_order(backend, order_data, partner, shipping_partner)
 
-        # 5. Satır kalemlerini ekle
+        # 6. Satır kalemlerini ekle
         missing_products = self._create_order_lines(backend, so, order_data)
 
-        # 6. Entegra'ya ERP sync bildir
+        # 7. Entegra'ya ERP sync bildir
         self._confirm_erp_sync(backend, entegra_id, so.name)
 
-        # 7. Otomatik onay
+        # 8. Otomatik onay
         if backend.auto_confirm_orders and not missing_products:
             try:
                 so.action_confirm()
@@ -552,6 +567,23 @@ class EntegraOrderImport(models.Model):
 
         return None
 
+    def _check_missing_products(self, backend, order_data):
+        """
+        Siparişteki tüm ürün kodlarını validate eder.
+
+        Returns:
+            list: Odoo'da bulunamayan ürün kodları. Boşsa tüm ürünler tamam.
+        """
+        missing = []
+        for line in order_data.get('order_details', []):
+            code = (line.get('product_code') or '').strip()
+            if not code:
+                missing.append('(boş kod)')
+                continue
+            if not self._find_product(backend, code):
+                missing.append(code)
+        return missing
+
     # ═══════════════════════════════════════════════════
     # ENTEGRA'YA ERP SYNC BİLDİRİMİ
     # ═══════════════════════════════════════════════════
@@ -562,7 +594,7 @@ class EntegraOrderImport(models.Model):
         PUT /order/update/ → sync=1, erp_order_number=SO.name
 
         Bu çağrı başarısız olsa bile SO oluşturulmuştur.
-        Hata log'a yazılır, exception fırlatılmaz.
+        Hata log'a ve Sync Log'a yazılır, exception fırlatılmaz.
         """
         try:
             payload = {'list': [{
@@ -571,15 +603,29 @@ class EntegraOrderImport(models.Model):
                 'erp_order_number': odoo_order_name,
             }]}
             backend.api_put('/order/update/', payload)
+            self._write_log(
+                backend, 'order_update', 'success',
+                record_name='ERP sync: %s' % odoo_order_name,
+                request_data=json.dumps(payload),
+                entegra_ref=str(entegra_order_id),
+            )
             _logger.debug(
                 '[Entegra:%s] ERP sync bildirimi OK: %s → %s',
                 backend.name, entegra_order_id, odoo_order_name
             )
+            return True
         except Exception as e:
+            self._write_log(
+                backend, 'order_update', 'error',
+                record_name='ERP sync FAILED: %s' % odoo_order_name,
+                error_message=str(e),
+                entegra_ref=str(entegra_order_id),
+            )
             _logger.warning(
                 '[Entegra:%s] ERP sync bildirimi başarısız (sipariş yine oluşturuldu): %s → %s',
                 backend.name, entegra_order_id, str(e)
             )
+            return False
 
     # ═══════════════════════════════════════════════════
     # KARGO BİLGİSİ GÜNCELLEME (Odoo → Entegra)
@@ -589,46 +635,69 @@ class EntegraOrderImport(models.Model):
     def push_shipment_info(self, backend, sale_order, cargo_company, cargo_code):
         """
         Kargo bilgisini Entegra'ya gönderir.
-        Odoo'da picking tamamlandığında çağrılır.
+        POST /order/sendShipment
 
         Args:
             backend:       entegra.backend
             sale_order:    sale.order kaydı
-            cargo_company: Kargo firması adı (aras, yurtici, mng...)
+            cargo_company: Kargo firması kodu (aras, yurtici, mng...)
             cargo_code:    Kargo takip numarası
+
+        Returns:
+            dict: {'ok': True} veya {'ok': False, 'message': '...'}
+
+        Phase 2 notları (kapsam dışı, müşteri tercihine göre eklenecek):
+            - İade/iptal akışı: /order/update ile status=9 (İade-İptal) veya ayrı endpoint
+            - Otomatik kargo bildirimi: stock.picking state done tetiklenince bu metod çağrılabilir.
+              Phase 1'de manuel "Kargo Bildir" butonu yeterli.
         """
         if not sale_order.entegra_order_id:
-            return  # Entegra'dan gelmemiş sipariş
+            return {'ok': False, 'message': "Entegra'dan gelmemiş sipariş."}
 
         try:
-            # Kargo statü güncelle — PUT /order/ ile status=3 (Kargolandı)
-            # NOT: Entegra'da /order/sendShipment ayrı bir endpoint olabilir.
-            # İlk canlı testte response loglanmalı; gerekirse ENTEGRA_ENDPOINTS
-            # 'order_shipment' anahtarına geçilmeli.
             from .entegra_backend import ENTEGRA_ENDPOINTS
-            payload = {'list': [{
+            endpoint = ENTEGRA_ENDPOINTS['order_shipment']  # /order/sendShipment
+            payload = {
                 'id': sale_order.entegra_order_id,
-                'status': 3,  # Kargolandı
-                'cargo_code2': cargo_code,
                 'cargo_company': cargo_company,
-            }]}
-            backend.api_put(ENTEGRA_ENDPOINTS['order_update'], payload)
+                'cargo_code': cargo_code,
+            }
+            result = backend.api_post(endpoint, payload)
 
-            # SO'daki kargo bilgilerini güncelle
             sale_order.write({
                 'entegra_cargo_company': cargo_company,
                 'entegra_cargo_code': cargo_code,
             })
 
+            self._write_log(
+                backend, 'send_shipment', 'success',
+                record_name='Kargo gönderildi: %s' % sale_order.name,
+                request_data=json.dumps(payload),
+                response_data=json.dumps(result) if isinstance(result, dict) else str(result),
+                model_name='sale.order',
+                record_id=sale_order.id,
+                entegra_ref=str(sale_order.entegra_order_id),
+            )
             _logger.info(
                 '[Entegra:%s] Kargo bilgisi gönderildi: SO=%s, Kargo=%s/%s',
                 backend.name, sale_order.name, cargo_company, cargo_code
             )
+            return {'ok': True}
+
         except Exception as e:
+            self._write_log(
+                backend, 'send_shipment', 'error',
+                record_name='Kargo FAILED: %s' % sale_order.name,
+                error_message=str(e),
+                model_name='sale.order',
+                record_id=sale_order.id,
+                entegra_ref=str(sale_order.entegra_order_id),
+            )
             _logger.error(
                 '[Entegra:%s] Kargo bilgisi gönderilemedi: %s → %s',
                 backend.name, sale_order.name, str(e)
             )
+            return {'ok': False, 'message': str(e)}
 
     # ═══════════════════════════════════════════════════
     # CRON METODU

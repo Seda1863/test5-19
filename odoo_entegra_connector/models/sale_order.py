@@ -8,6 +8,7 @@ Entegra kaynaklı siparişler için ek alanlar ve kargo push hook'u.
 
 import logging
 from odoo import _, api, fields, models
+from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -108,15 +109,7 @@ class SaleOrder(models.Model):
             }
 
         if not self.entegra_cargo_company or not self.entegra_cargo_code:
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': 'Eksik Bilgi',
-                    'message': "Kargo firmasi ve takip numarasi dolu olmali.",
-                    'type': 'warning',
-                },
-            }
+            raise UserError(_('Kargo bildirimi için kargo firması ve kargo takip numarası girilmelidir.'))
 
         backend = self.entegra_backend_id
         if not backend:
@@ -135,18 +128,30 @@ class SaleOrder(models.Model):
                 },
             }
 
-        self.env['entegra.order.import'].push_shipment_info(
+        result = self.env['entegra.order.import'].push_shipment_info(
             backend, self,
             self.entegra_cargo_company,
             self.entegra_cargo_code,
         )
 
+        if not result.get('ok'):
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Kargo Gönderilemedi'),
+                    'message': result.get('message', _('Bilinmeyen hata')),
+                    'type': 'danger',
+                    'sticky': True,
+                },
+            }
+
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': 'Kargo Gonderildi',
-                'message': "Kargo bilgisi Entegra'ya basariyla iletildi.",
+                'title': _('Kargo Gönderildi'),
+                'message': _("Kargo bilgisi Entegra'ya başarıyla iletildi."),
                 'type': 'success',
                 'sticky': False,
             },

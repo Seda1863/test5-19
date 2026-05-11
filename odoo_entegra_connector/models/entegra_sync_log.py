@@ -29,6 +29,7 @@ class EntegraSyncLog(models.Model):
             ('price_update',    'Fiyat Güncelleme'),
             ('order_import',    'Sipariş Import'),
             ('order_update',    'Sipariş Güncelleme'),
+            ('send_shipment',   'Kargo Bildirimi'),
             ('token_obtain',    'Token Alma'),
             ('token_refresh',   'Token Yenileme'),
         ],
