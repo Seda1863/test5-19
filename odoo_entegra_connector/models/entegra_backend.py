@@ -445,15 +445,36 @@ class EntegraBackend(models.Model):
             endpoint = endpoint_template.format(page=page)
             response = self.api_get(endpoint, params=params)
 
+            # Sayfa 1'de her zaman ham yanıt anahtarlarını logla (API format tespiti)
+            if page == 1 and isinstance(response, dict):
+                key_info = ', '.join(
+                    '%s=%s' % (k, len(v) if isinstance(v, list) else type(v).__name__)
+                    for k, v in response.items()
+                )
+                _logger.info(
+                    '[Entegra:%s] %s p=1 ham yanıt anahtarları: {%s}',
+                    self.name, endpoint_template, key_info
+                )
+
             # Entegra farklı endpoint'lerde farklı key kullanıyor
+            # Desteklenen keyler: results, orders, data, list
             results = (
                 response.get('results')
+                or response.get('orders')
                 or response.get('data')
                 or response.get('list')
                 or (response if isinstance(response, list) else [])
             )
 
             if not results:
+                # Boş gelince de key'leri logla (henüz page 1 değilse)
+                if page > 1 and isinstance(response, dict):
+                    _logger.info(
+                        '[Entegra:%s] %s p=%d boş — anahtarlar: {%s}',
+                        self.name, endpoint_template, page,
+                        ', '.join('%s=%s' % (k, len(v) if isinstance(v, list) else type(v).__name__)
+                                  for k, v in response.items())
+                    )
                 break
 
             all_results.extend(results)
@@ -464,8 +485,8 @@ class EntegraBackend(models.Model):
 
             page += 1
 
-        _logger.debug('[Entegra:%s] %s — toplam %d kayıt çekildi.',
-                      self.name, endpoint_template, len(all_results))
+        _logger.info('[Entegra:%s] %s — toplam %d kayıt çekildi.',
+                     self.name, endpoint_template, len(all_results))
         return all_results
 
     # ═══════════════════════════════════════════════════

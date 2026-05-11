@@ -94,7 +94,10 @@ class EntegraOrderImport(models.Model):
         endpoint = '/order/page={page}/'
         params = {'limit': 200}
         if not skip_sync_filter:
+            # Entegra versiyonuna göre 'api_sync' veya 'sync' kullanılıyor.
+            # Her ikisini birden göndermek güvenli: Entegra bilinmeyeni ignore eder.
             params['api_sync'] = 0
+            params['sync'] = 0
         if supplier:
             params['supplier'] = supplier
         if date_from:
