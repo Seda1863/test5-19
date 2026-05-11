@@ -94,9 +94,8 @@ class EntegraOrderImport(models.Model):
         endpoint = '/order/page={page}/'
         params = {'limit': 200}
         if not skip_sync_filter:
-            # Entegra versiyonuna göre 'api_sync' veya 'sync' kullanılıyor.
-            # Her ikisini birden göndermek güvenli: Entegra bilinmeyeni ignore eder.
-            params['api_sync'] = 0
+            # Sadece sync=0 gönder — api_sync=0 gönderilmez çünkü api_sync=1 olan
+            # siparişleri (POST ile yaratılan test siparişleri dahil) dışarıda bırakır.
             params['sync'] = 0
         if supplier:
             params['supplier'] = supplier
@@ -257,10 +256,14 @@ class EntegraOrderImport(models.Model):
                 '[Entegra:%s] Sipariş %s atlandı — %s',
                 backend.name, order_number, msg
             )
+            order_lines_raw = order_data.get('order_product') or order_data.get('order_details', [])
             self._write_log(
                 backend, 'order_import', 'warning',
                 record_name='Atlandı (eksik ürün): %s' % order_number,
                 error_message=msg,
+                request_data='order_product kalemleri:\n%s' % json.dumps(
+                    order_lines_raw, ensure_ascii=False, indent=2
+                ),
             )
             return 'skipped'
 
@@ -688,6 +691,11 @@ class EntegraOrderImport(models.Model):
         for line in order_lines:
             code = (line.get('product_code') or '').strip()
             if not code:
+                non_empty = {k: v for k, v in line.items() if v not in ('', None)}
+                _logger.warning(
+                    '[Entegra:%s] Sipariş %s — product_code boş kalem. Alanlar: %s',
+                    backend.name, order_ref, non_empty
+                )
                 missing.append('(boş kod)')
                 continue
             if not self._find_product(backend, code):
