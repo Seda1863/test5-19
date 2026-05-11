@@ -181,8 +181,32 @@ class EntegraOrderImport(models.Model):
             str: 'imported' | 'skipped'
         """
         entegra_id = order_data.get('id')
-        order_number = order_data.get('order_number')
-        order_status = order_data.get('status')
+        order_number = (
+            order_data.get('order_number')
+            or order_data.get('order_id', '?')
+        )
+        order_status_raw = order_data.get('status')
+        supplier = order_data.get('supplier', '')
+        sync_val = order_data.get('sync') if order_data.get('sync') is not None else order_data.get('api_sync')
+
+        # Entegra API bazen status'u string olarak gönderiyor ("1" yerine 1)
+        try:
+            order_status = int(order_status_raw) if order_status_raw is not None else None
+        except (TypeError, ValueError):
+            order_status = order_status_raw
+
+        # Sipariş kalemlerinin key'ini belirle: order_product veya order_details
+        order_lines = order_data.get('order_product') or order_data.get('order_details', [])
+        product_codes = [
+            l.get('product_code', '') for l in order_lines if l.get('product_code')
+        ]
+
+        _logger.info(
+            '[Entegra:%s] Sipariş işleniyor: id=%s no=%s supplier=%s '
+            'status=%s (raw=%s) sync=%s ürün_kodları=%s',
+            backend.name, entegra_id, order_number, supplier,
+            order_status, order_status_raw, sync_val, product_codes
+        )
 
         # 1. Duplicate kontrolü
         existing = self.env['sale.order'].search([
@@ -191,18 +215,33 @@ class EntegraOrderImport(models.Model):
         ], limit=1)
 
         if existing:
-            _logger.debug(
-                '[Entegra:%s] Sipariş zaten var: %s → %s',
-                backend.name, order_number, existing.name
+            msg = 'Duplicate: entegra_id=%s zaten mevcut → SO=%s (id=%s)' % (
+                entegra_id, existing.name, existing.id
+            )
+            _logger.info('[Entegra:%s] %s', backend.name, msg)
+            self._write_log(
+                backend, 'order_import', 'warning',
+                record_name='Atlandı (duplicate): %s' % order_number,
+                error_message=msg,
+                entegra_ref=str(entegra_id),
             )
             return 'skipped'
 
         # 2. İptal/hata statüsündeki siparişleri alma
-        if order_status and order_status not in IMPORTABLE_STATUSES:
+        if order_status is not None and order_status not in IMPORTABLE_STATUSES:
             status_label = ENTEGRA_ORDER_STATUS.get(order_status, str(order_status))
+            msg = 'Statü filtresi: status=%s (%s) — izin verilenler=%s' % (
+                order_status, status_label, sorted(IMPORTABLE_STATUSES)
+            )
             _logger.info(
-                '[Entegra:%s] Sipariş %s atlandı (statü: %s)',
-                backend.name, order_number, status_label
+                '[Entegra:%s] Sipariş %s atlandı — %s',
+                backend.name, order_number, msg
+            )
+            self._write_log(
+                backend, 'order_import', 'warning',
+                record_name='Atlandı (statü): %s' % order_number,
+                error_message=msg,
+                entegra_ref=str(entegra_id),
             )
             return 'skipped'
 
@@ -465,13 +504,15 @@ class EntegraOrderImport(models.Model):
         Returns:
             list: Bulunamayan ürün kodları listesi (boşsa tüm kalemler eşlendi)
         """
-        order_details = order_data.get('order_details', [])
+        # Entegra kalem key'i: 'order_product' veya 'order_details'
+        order_details = order_data.get('order_product') or order_data.get('order_details', [])
         missing_products = []
 
         if not order_details:
             _logger.warning(
-                '[Entegra:%s] Sipariş %s\'de ürün kalemi yok!',
-                backend.name, order_data.get('order_number')
+                '[Entegra:%s] Sipariş %s\'de ürün kalemi yok '
+                '(order_product ve order_details her ikisi de boş)',
+                backend.name, order_data.get('order_number') or order_data.get('order_id', '?')
             )
             return missing_products
 
@@ -524,61 +565,105 @@ class EntegraOrderImport(models.Model):
         product_code ile Odoo ürününü bulur.
 
         Öncelik sırası:
-          1. entegra.product.mapping (varyant kodu ile)
-          2. product.product.default_code ile direkt eşleşme
-          3. product.template.default_code ile eşleşme (tek varyantta)
+          1. entegra.product.mapping — varyant kodu (entegra_variation_code)
+          2. entegra.product.mapping — ana ürün kodu (entegra_product_code)
+          3. product.product.default_code direkt eşleşme
+          4. product.template.default_code eşleşme (tek varyantta)
         """
-        # 1. Entegra mapping tablosunda ara (varyant kodu)
+        _logger.info(
+            '[Entegra:%s] Ürün aranıyor: "%s"', backend.name, product_code
+        )
+
+        # 1. Entegra mapping — varyant kodu
         var_mapping = self.env['entegra.product.mapping'].search([
             ('backend_id', '=', backend.id),
             ('entegra_variation_code', '=', product_code),
             ('product_id', '!=', False),
         ], limit=1)
-
         if var_mapping and var_mapping.product_id:
+            _logger.info(
+                '[Entegra:%s] "%s" → mapping (variation) ile bulundu: %s',
+                backend.name, product_code, var_mapping.product_id.default_code
+            )
             return var_mapping.product_id
 
-        # 2. Ana ürün mapping'inde ara
+        # 2. Entegra mapping — ana ürün kodu
         main_mapping = self.env['entegra.product.mapping'].search([
             ('backend_id', '=', backend.id),
             ('entegra_product_code', '=', product_code),
             ('product_id', '=', False),
         ], limit=1)
-
         if main_mapping and main_mapping.product_tmpl_id:
             tmpl = main_mapping.product_tmpl_id
             if len(tmpl.product_variant_ids) == 1:
+                _logger.info(
+                    '[Entegra:%s] "%s" → mapping (template) ile bulundu: %s',
+                    backend.name, product_code, tmpl.default_code
+                )
                 return tmpl.product_variant_ids[0]
+        else:
+            _logger.info(
+                '[Entegra:%s] "%s" → entegra.product.mapping\'da bulunamadı',
+                backend.name, product_code
+            )
 
-        # 3. product.product.default_code ile direkt eşleşme
+        # 3. product.product.default_code
         product = self.env['product.product'].search([
             ('default_code', '=', product_code),
             ('active', '=', True),
         ], limit=1)
-
         if product:
+            _logger.info(
+                '[Entegra:%s] "%s" → product.product.default_code ile bulundu: id=%s',
+                backend.name, product_code, product.id
+            )
             return product
+        else:
+            _logger.info(
+                '[Entegra:%s] "%s" → product.product.default_code: bulunamadı',
+                backend.name, product_code
+            )
 
-        # 4. product.template.default_code ile eşleşme
+        # 4. product.template.default_code
         tmpl = self.env['product.template'].search([
             ('default_code', '=', product_code),
             ('active', '=', True),
         ], limit=1)
-
         if tmpl and len(tmpl.product_variant_ids) == 1:
+            _logger.info(
+                '[Entegra:%s] "%s" → product.template.default_code ile bulundu: id=%s',
+                backend.name, product_code, tmpl.id
+            )
             return tmpl.product_variant_ids[0]
+        else:
+            _logger.info(
+                '[Entegra:%s] "%s" → product.template.default_code: bulunamadı. '
+                'Tüm lookup\'lar başarısız.',
+                backend.name, product_code
+            )
 
         return None
 
     def _check_missing_products(self, backend, order_data):
         """
         Siparişteki tüm ürün kodlarını validate eder.
+        Entegra kalem key'i: 'order_product' veya 'order_details'.
 
         Returns:
             list: Odoo'da bulunamayan ürün kodları. Boşsa tüm ürünler tamam.
         """
+        order_lines = order_data.get('order_product') or order_data.get('order_details', [])
+        order_ref = order_data.get('order_number') or order_data.get('order_id', '?')
+
+        if not order_lines:
+            _logger.warning(
+                '[Entegra:%s] Sipariş %s\'de kalem bulunamadı '
+                '(order_product ve order_details her ikisi de boş)',
+                backend.name, order_ref
+            )
+
         missing = []
-        for line in order_data.get('order_details', []):
+        for line in order_lines:
             code = (line.get('product_code') or '').strip()
             if not code:
                 missing.append('(boş kod)')
