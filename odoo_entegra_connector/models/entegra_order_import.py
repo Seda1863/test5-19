@@ -295,6 +295,10 @@ class EntegraOrderImport(models.Model):
     # PARTNER YÖNETİMİ
     # ═══════════════════════════════════════════════════
 
+    def _partner_has_field(self, field_name):
+        """res.partner'da alan var mı? Odoo versiyonuna göre farklılık gösterebilir."""
+        return field_name in self.env['res.partner']._fields
+
     def _get_or_create_partner(self, backend, order_data):
         """
         Fatura partneri bul veya oluştur.
@@ -308,8 +312,14 @@ class EntegraOrderImport(models.Model):
         email = self._clean_email(order_data.get('email', ''))
         full_name = order_data.get('full_name') or order_data.get('invoice_fullname', '')
         company_name = order_data.get('company', '')
-        mobile = str(order_data.get('mobile_phone', '')).strip()
-        phone = str(order_data.get('phone', '')).strip()
+        # Entegra 'mobil_phone' (e'siz) veya 'mobile_phone' gönderebilir
+        mobile = str(
+            order_data.get('mobil_phone') or order_data.get('mobile_phone', '')
+        ).strip()
+        # Entegra 'telephone' veya 'phone' gönderebilir
+        phone = str(
+            order_data.get('telephone') or order_data.get('phone', '')
+        ).strip()
         city = order_data.get('invoice_city', '')
 
         partner = None
@@ -321,11 +331,16 @@ class EntegraOrderImport(models.Model):
                 ('type', 'in', ['contact', False]),
             ], limit=1)
 
-        # 2. Telefon ile ara
+        # 2. Telefon ile ara — mobile veya phone (Odoo versiyonuna göre)
         if not partner and mobile and len(mobile) >= 10:
-            partner = self.env['res.partner'].search([
-                ('mobile', '=', mobile),
-            ], limit=1)
+            if self._partner_has_field('mobile'):
+                partner = self.env['res.partner'].search(
+                    [('mobile', '=', mobile)], limit=1
+                )
+            if not partner and self._partner_has_field('phone'):
+                partner = self.env['res.partner'].search(
+                    [('phone', '=', mobile)], limit=1
+                )
 
         # 3. İsim + şehir ile ara
         if not partner and full_name and city:
@@ -351,19 +366,23 @@ class EntegraOrderImport(models.Model):
         return partner
 
     def _build_partner_vals(self, order_data, company_name, full_name, email, mobile, phone, city):
-        """Partner oluşturma değerleri."""
+        """Partner oluşturma değerleri. Sadece res.partner'da var olan alanlar eklenir."""
         country = self.env.ref('base.tr', raise_if_not_found=False)
 
         vals = {
             'name': company_name or full_name or 'Entegra Müşteri',
             'email': email or False,
-            'mobile': mobile or False,
-            'phone': phone or False,
             'street': order_data.get('invoice_address', ''),
             'city': city,
             'country_id': country.id if country else False,
             'customer_rank': 1,
         }
+
+        # Telefon alanları Odoo versiyonuna göre değişebilir — önce kontrol et
+        if self._partner_has_field('phone'):
+            vals['phone'] = phone or False
+        if self._partner_has_field('mobile'):
+            vals['mobile'] = mobile or False
 
         # Vergi/kurumsal bilgiler
         tax_office = order_data.get('tax_office', '')
@@ -405,16 +424,19 @@ class EntegraOrderImport(models.Model):
 
         if not shipping_partner:
             country = self.env.ref('base.tr', raise_if_not_found=False)
-            shipping_partner = self.env['res.partner'].create({
+            ship_vals = {
                 'name': ship_fullname,
                 'parent_id': invoice_partner.id,
                 'type': 'delivery',
                 'street': ship_address,
                 'city': ship_city,
-                'phone': ship_phone or False,
-                'mobile': ship_gsm or False,
                 'country_id': country.id if country else False,
-            })
+            }
+            if self._partner_has_field('phone'):
+                ship_vals['phone'] = ship_phone or False
+            if self._partner_has_field('mobile'):
+                ship_vals['mobile'] = ship_gsm or False
+            shipping_partner = self.env['res.partner'].create(ship_vals)
 
         return shipping_partner
 
