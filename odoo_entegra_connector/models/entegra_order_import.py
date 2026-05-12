@@ -75,7 +75,7 @@ class EntegraOrderImport(models.Model):
     # ═══════════════════════════════════════════════════
 
     @api.model
-    def import_new_orders(self, backend, supplier=None, date_from=None, skip_sync_filter=False):
+    def import_new_orders(self, backend, supplier=None, date_from=None, skip_sync_filter=False, order_id_filter=None):
         """
         Yeni siparişleri Entegra'dan çekip Odoo'ya aktarır.
 
@@ -83,7 +83,8 @@ class EntegraOrderImport(models.Model):
             backend:           entegra.backend kaydı
             supplier:          Belirli bir pazaryeri filtresi ('trendyol', 'hb', 'n11'...)
             date_from:         Bu tarihten sonraki siparişleri çek (YYYY-MM-DD)
-            skip_sync_filter:  True → api_sync=0 filtresi atlanır, tüm siparişler sorgulanır
+            skip_sync_filter:  True → sync=0 filtresi atlanır, tüm siparişler sorgulanır
+            order_id_filter:   Belirli bir siparişi hedefle (order_number veya Entegra ID)
 
         Returns:
             dict: {'imported': int, 'skipped': int, 'errors': list}
@@ -100,7 +101,22 @@ class EntegraOrderImport(models.Model):
         if supplier:
             params['supplier'] = supplier
         if date_from:
-            params['start_date'] = date_from
+            # Entegra response'larında tarih formatı DD/MM/YYYY (ör: "11/05/2026")
+            # API filtre parametresi de aynı formatı bekliyor olabilir — her iki isimle dene.
+            try:
+                from datetime import date as _date
+                d = _date.fromisoformat(date_from)
+                params['date_add'] = d.strftime('%d/%m/%Y')
+                _logger.info(
+                    '[Entegra:%s] Tarih filtresi: date_from=%s → date_add=%s',
+                    backend.name, date_from, params['date_add']
+                )
+            except (ValueError, TypeError):
+                params['start_date'] = date_from
+                _logger.warning(
+                    '[Entegra:%s] Tarih parse hatası, fallback: start_date=%s',
+                    backend.name, date_from
+                )
 
         params_json = json.dumps(params, ensure_ascii=False)
 
@@ -131,9 +147,53 @@ class EntegraOrderImport(models.Model):
             )
             return results
 
+        # Hedef sipariş filtresi (test/debug modu)
+        if order_id_filter:
+            target = str(order_id_filter).strip()
+            matched = [
+                o for o in all_orders
+                if target in (
+                    str(o.get('order_number', '')),
+                    str(o.get('no', '')),
+                    str(o.get('id', '')),
+                    str(o.get('supplier_id', '')),
+                )
+            ]
+            sample = [
+                '%s (id=%s)' % (o.get('order_number', '?'), o.get('id', '?'))
+                for o in all_orders[:5]
+            ]
+            if matched:
+                _logger.info(
+                    '[Entegra:%s] Hedef "%s" bulundu: %d eşleşme / %d toplam sipariş',
+                    backend.name, target, len(matched), order_count
+                )
+                self._write_log(
+                    backend, 'order_import', 'success',
+                    record_name='Hedef sipariş bulundu: %s' % target,
+                    request_data='Endpoint: %s\nParams: %s\nFiltre: %s' % (endpoint, params_json, target),
+                    response_data='%d eşleşme / %d toplam. İlk 5: %s' % (
+                        len(matched), order_count, ', '.join(sample)
+                    ),
+                )
+            else:
+                msg = 'Hedef "%s" bulunamadı. %d sipariş içinde arandı. İlk 5: %s' % (
+                    target, order_count, ', '.join(sample)
+                )
+                _logger.warning('[Entegra:%s] %s', backend.name, msg)
+                self._write_log(
+                    backend, 'order_import', 'warning',
+                    record_name='Hedef sipariş bulunamadı: %s' % target,
+                    request_data='Endpoint: %s\nParams: %s\nFiltre: %s' % (endpoint, params_json, target),
+                    response_data=msg,
+                    duration_ms=duration_ms,
+                )
+                return results
+            all_orders = matched
+
         _logger.info(
             '[Entegra:%s] %d sipariş bulundu, işleniyor...',
-            backend.name, order_count
+            backend.name, len(all_orders)
         )
 
         for order_data in all_orders:

@@ -90,6 +90,8 @@
                         <field name="backend_id"/>
                         <field name="supplier"/>
                         <field name="date_from"/>
+                        <field name="order_id_filter"
+                               placeholder="Örn: MINDDX-FURN-8220-003 veya 1519"/>
                     </group>
                     <group string="Seçenekler">
                         <field name="import_all"/>

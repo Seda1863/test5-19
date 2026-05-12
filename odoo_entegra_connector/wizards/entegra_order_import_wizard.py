@@ -36,10 +36,16 @@ class EntegraOrderImportWizard(models.TransientModel):
         help='Boş bırakılırsa tüm pazaryerlerinden import edilir.',
     )
     date_from = fields.Date(string='Baslangic Tarihi')
+    order_id_filter = fields.Char(
+        string='Sipariş No / ID Filtresi',
+        help='Belirli bir siparişi test etmek için girin.\n'
+             'Entegra order_number (örn: MINDDX-FURN-8220-003) veya Entegra ID (örn: 1519).\n'
+             'Boş bırakılırsa tüm siparişler işlenir.',
+    )
     import_all = fields.Boolean(
-        string='api_sync Filtresini Atla',
+        string='Sync Filtresini Atla',
         default=False,
-        help='Normalde sadece api_sync=0 (cikilmamis) siparisler alinir. '
+        help='Normalde sadece sync=0 (cikilmamis) siparisler alinir. '
              'Bu secenek ile tum siparisler sorgulanir — dikkatli kullan.',
     )
 
@@ -73,6 +79,7 @@ class EntegraOrderImportWizard(models.TransientModel):
             supplier=self.supplier or None,
             date_from=str(self.date_from) if self.date_from else None,
             skip_sync_filter=self.import_all,
+            order_id_filter=self.order_id_filter.strip() if self.order_id_filter else None,
         )
 
         details_lines = results.get('errors', [])
