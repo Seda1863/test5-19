@@ -437,15 +437,21 @@ class EntegraBackend(models.Model):
 
         Returns:
             list: Tüm sayfalardaki kayıtların birleştirilmiş listesi
+
+        Sayfalama durma koşulları (öncelik sırası):
+          1. response'da 'next' key varsa: next=False/None ise dur (DRF standart)
+          2. 'next' key yoksa: gelen kayıt sayısı < limit ise son sayfa
+          3. max_pages aşılırsa dur (güvenlik)
         """
         all_results = []
         page = 1
+        limit = int((params or {}).get('limit', 0))
 
         while page <= max_pages:
             endpoint = endpoint_template.format(page=page)
             response = self.api_get(endpoint, params=params)
 
-            # Sayfa 1'de her zaman ham yanıt anahtarlarını logla (API format tespiti)
+            # Sayfa 1'de ham yanıt anahtarlarını logla (API format tespiti)
             if page == 1 and isinstance(response, dict):
                 key_info = ', '.join(
                     '%s=%s' % (k, len(v) if isinstance(v, list) else type(v).__name__)
@@ -457,7 +463,6 @@ class EntegraBackend(models.Model):
                 )
 
             # Entegra farklı endpoint'lerde farklı key kullanıyor
-            # Desteklenen keyler: results, orders, data, list
             results = (
                 response.get('results')
                 or response.get('orders')
@@ -467,7 +472,6 @@ class EntegraBackend(models.Model):
             )
 
             if not results:
-                # Boş gelince de key'leri logla (henüz page 1 değilse)
                 if page > 1 and isinstance(response, dict):
                     _logger.info(
                         '[Entegra:%s] %s p=%d boş — anahtarlar: {%s}',
@@ -478,15 +482,24 @@ class EntegraBackend(models.Model):
                 break
 
             all_results.extend(results)
+            page_count = len(results)
 
-            # Bir sonraki sayfa var mı?
-            if not response.get('next'):
-                break
+            # Durma koşulu:
+            if isinstance(response, dict) and 'next' in response:
+                # DRF standart: 'next' key var → kullan
+                if not response['next']:
+                    break
+            else:
+                # Entegra'nın bazı endpoint'lerinde 'next' yok; limit karşılaştırması yap
+                if limit and page_count < limit:
+                    # Son sayfadayız (az kayıt geldi)
+                    break
+                # limit=0 veya tam limit geldiyse bir sonraki sayfaya geç
 
             page += 1
 
-        _logger.info('[Entegra:%s] %s — toplam %d kayıt çekildi.',
-                     self.name, endpoint_template, len(all_results))
+        _logger.info('[Entegra:%s] %s — toplam %d kayıt, %d sayfa.',
+                     self.name, endpoint_template, len(all_results), page)
         return all_results
 
     # ═══════════════════════════════════════════════════

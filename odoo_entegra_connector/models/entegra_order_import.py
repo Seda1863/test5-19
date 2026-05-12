@@ -125,74 +125,44 @@ class EntegraOrderImport(models.Model):
             backend.name, endpoint, params_json
         )
 
-        # Tüm sayfaları çek (süreyi ölç)
-        t0 = time.time()
-        all_orders = backend._get_paginated(endpoint, params=params)
-        duration_ms = int((time.time() - t0) * 1000)
-        order_count = len(all_orders) if all_orders else 0
+        duration_ms = 0
+        order_count = 0
 
-        _logger.info(
-            '[Entegra:%s] API yanıtı: %d sipariş döndü (%d ms)',
-            backend.name, order_count, duration_ms
-        )
-
-        if not all_orders:
-            _logger.info('[Entegra:%s] Yeni sipariş bulunamadı.', backend.name)
-            self._write_log(
-                backend, 'order_import', 'success',
-                record_name='Sipariş bulunamadı (0 kayıt)',
-                request_data='Endpoint: %s\nParams: %s' % (endpoint, params_json),
-                response_data='API 0 sipariş döndürdü',
-                duration_ms=duration_ms,
-            )
-            return results
-
-        # Hedef sipariş filtresi (test/debug modu)
+        # order_id_filter modu: _get_paginated kullanmaz, sayfa sayfa erken çıkış yapar
         if order_id_filter:
             target = str(order_id_filter).strip()
-            matched = [
-                o for o in all_orders
-                if target in (
-                    str(o.get('order_number', '')),
-                    str(o.get('no', '')),
-                    str(o.get('id', '')),
-                    str(o.get('supplier_id', '')),
-                )
-            ]
-            sample = [
-                '%s (id=%s)' % (o.get('order_number', '?'), o.get('id', '?'))
-                for o in all_orders[:5]
-            ]
-            if matched:
-                _logger.info(
-                    '[Entegra:%s] Hedef "%s" bulundu: %d eşleşme / %d toplam sipariş',
-                    backend.name, target, len(matched), order_count
-                )
+            target_order = self._find_target_order_paginated(
+                backend, target, params, params_json
+            )
+            if target_order:
+                all_orders = [target_order]
+            else:
+                return results  # Sync Log _find_target_order_paginated içinde yazıldı
+        else:
+            # Normal mod: _get_paginated ile tüm sayfaları çek
+            t0 = time.time()
+            all_orders = backend._get_paginated(endpoint, params=params)
+            duration_ms = int((time.time() - t0) * 1000)
+            order_count = len(all_orders) if all_orders else 0
+
+            _logger.info(
+                '[Entegra:%s] API yanıtı: %d sipariş döndü (%d ms)',
+                backend.name, order_count, duration_ms
+            )
+
+            if not all_orders:
+                _logger.info('[Entegra:%s] Yeni sipariş bulunamadı.', backend.name)
                 self._write_log(
                     backend, 'order_import', 'success',
-                    record_name='Hedef sipariş bulundu: %s' % target,
-                    request_data='Endpoint: %s\nParams: %s\nFiltre: %s' % (endpoint, params_json, target),
-                    response_data='%d eşleşme / %d toplam. İlk 5: %s' % (
-                        len(matched), order_count, ', '.join(sample)
-                    ),
-                )
-            else:
-                msg = 'Hedef "%s" bulunamadı. %d sipariş içinde arandı. İlk 5: %s' % (
-                    target, order_count, ', '.join(sample)
-                )
-                _logger.warning('[Entegra:%s] %s', backend.name, msg)
-                self._write_log(
-                    backend, 'order_import', 'warning',
-                    record_name='Hedef sipariş bulunamadı: %s' % target,
-                    request_data='Endpoint: %s\nParams: %s\nFiltre: %s' % (endpoint, params_json, target),
-                    response_data=msg,
+                    record_name='Sipariş bulunamadı (0 kayıt)',
+                    request_data='Endpoint: %s\nParams: %s' % (endpoint, params_json),
+                    response_data='API 0 sipariş döndürdü',
                     duration_ms=duration_ms,
                 )
                 return results
-            all_orders = matched
 
         _logger.info(
-            '[Entegra:%s] %d sipariş bulundu, işleniyor...',
+            '[Entegra:%s] %d sipariş işlenecek...',
             backend.name, len(all_orders)
         )
 
@@ -727,6 +697,102 @@ class EntegraOrderImport(models.Model):
                 backend.name, product_code
             )
 
+        return None
+
+    def _find_target_order_paginated(self, backend, target, params, params_json, max_pages=50):
+        """
+        Hedef siparişi sayfa sayfa arar. İlk eşleşmede durur.
+
+        Args:
+            backend:     entegra.backend
+            target:      Aranan order_number veya Entegra ID string
+            params:      API request parametreleri (sync=0 vb.)
+            params_json: Log için string
+            max_pages:   Maksimum sayfa limiti
+
+        Returns:
+            tuple: (order_data | None, found_page | None, pages_searched)
+        """
+        endpoint_template = '/order/page={page}/'
+        limit = int(params.get('limit', 200))
+        pages_searched = 0
+        sample_first = []
+        sample_last = []
+
+        for page in range(1, max_pages + 1):
+            pages_searched = page
+            page_endpoint = endpoint_template.format(page=page)
+            try:
+                response = backend.api_get(page_endpoint, params=params)
+            except Exception as e:
+                _logger.error('[Entegra:%s] Hedef arama p=%d hata: %s', backend.name, page, e)
+                break
+
+            orders = (
+                response.get('results')
+                or response.get('orders')
+                or response.get('data')
+                or response.get('list')
+                or (response if isinstance(response, list) else [])
+            )
+
+            if not orders:
+                _logger.info('[Entegra:%s] Hedef arama: p=%d boş — arama durdu', backend.name, page)
+                break
+
+            if page == 1:
+                sample_first = [
+                    '%s(id=%s)' % (o.get('order_number', '?'), o.get('id', '?'))
+                    for o in orders[:3]
+                ]
+            sample_last = [
+                '%s(id=%s)' % (o.get('order_number', '?'), o.get('id', '?'))
+                for o in orders[-3:]
+            ]
+
+            _logger.info(
+                '[Entegra:%s] Hedef arama: p=%d → %d sipariş, ilk: %s',
+                backend.name, page, len(orders),
+                orders[0].get('order_number', '?') if orders else '-'
+            )
+
+            for o in orders:
+                if target in (
+                    str(o.get('order_number', '')),
+                    str(o.get('no', '')),
+                    str(o.get('id', '')),
+                    str(o.get('supplier_id', '')),
+                ):
+                    _logger.info(
+                        '[Entegra:%s] Hedef "%s" sayfa %d\'de bulundu (id=%s)',
+                        backend.name, target, page, o.get('id')
+                    )
+                    self._write_log(
+                        backend, 'order_import', 'success',
+                        record_name='Hedef bulundu: %s (p=%d)' % (target, page),
+                        request_data='Params: %s\nFiltre: %s' % (params_json, target),
+                        response_data='Sayfa %d\'de bulundu. İlk sayfa örnek: %s' % (
+                            page, ', '.join(sample_first)
+                        ),
+                    )
+                    return o
+
+            # Son sayfa kontrolü (limit'ten az kayıt geldi)
+            if len(orders) < limit:
+                break
+
+        # Bulunamadı
+        msg = (
+            'Hedef "%s" bulunamadı. %d sayfa tarandı.\n'
+            'İlk sayfa örnek: %s\nSon sayfa örnek: %s'
+        ) % (target, pages_searched, ', '.join(sample_first), ', '.join(sample_last))
+        _logger.warning('[Entegra:%s] %s', backend.name, msg)
+        self._write_log(
+            backend, 'order_import', 'warning',
+            record_name='Hedef bulunamadı: %s' % target,
+            request_data='Params: %s\nFiltre: %s' % (params_json, target),
+            response_data=msg,
+        )
         return None
 
     def _check_missing_products(self, backend, order_data):
