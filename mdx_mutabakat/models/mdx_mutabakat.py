@@ -370,11 +370,6 @@ class MdxMutabakat(models.Model):
         period_balance = sum(period_amls.mapped('balance'))
         period_str = f"{self.period_start.strftime('%d.%m.%Y')} - {self.period_end.strftime('%d.%m.%Y')}"
 
-        if not period_amls and opening_balance == 0:
-            raise UserError(_(
-                "Seçilen dönemde %s için onaylanmış kayıt bulunamadı."
-            ) % self.partner_id.name)
-
         # Başlangıç bakiyesi her zaman oluşturulur (sıfır olsa bile)
         lines = [
             {
