@@ -188,11 +188,13 @@ class MdxMutabakat(models.Model):
     partner_vat = fields.Char(related='partner_id.vat', string='Vergi No (Alıcı)')
     partner_phone = fields.Char(related='partner_id.phone', string='Telefon (Alıcı)')
 
-    @api.depends('line_ids.invoice_count', 'line_ids.amount')
+    @api.depends('line_ids.invoice_count', 'line_ids.amount', 'line_ids.mutabakat_type')
     def _compute_totals(self):
         for rec in self:
-            rec.total_invoice_count = sum(rec.line_ids.mapped('invoice_count'))
-            rec.total_amount = sum(rec.line_ids.mapped('amount'))
+            # opening satırı TOPLAM'a dahil edilmez (opening bakiye ayrı bir kavram)
+            non_opening = rec.line_ids.filtered(lambda l: l.mutabakat_type != 'opening')
+            rec.total_invoice_count = sum(non_opening.mapped('invoice_count'))
+            rec.total_amount = sum(non_opening.mapped('amount'))
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -337,7 +339,7 @@ class MdxMutabakat(models.Model):
             _logger.info("Süresi geçen mutabakatlar: %s", expired.ids)
 
     def action_compute_lines(self):
-        """İş Ortağı Defteri mantığıyla bakiye hesapla (account.move.line)"""
+        """İş Ortağı Defteri mantığıyla bakiye hesapla (account.move.line.balance)"""
         self.ensure_one()
         self.line_ids.unlink()
 
@@ -346,44 +348,44 @@ class MdxMutabakat(models.Model):
 
         account_types = ('asset_receivable', 'liability_payable')
 
-        # ── 1) Başlangıç bakiyesi (period_start öncesi tüm geçmiş) ──
-        opening_domain = [
+        # 1) Başlangıç bakiyesi — balance kullan (debit - credit değil)
+        opening_amls = self.env['account.move.line'].search([
             ('partner_id', '=', self.partner_id.id),
             ('parent_state', '=', 'posted'),
             ('date', '<', self.period_start),
             ('account_id.account_type', 'in', account_types),
-        ]
-        opening_amls = self.env['account.move.line'].search(opening_domain)
-        opening_debit = sum(opening_amls.mapped('debit'))
-        opening_credit = sum(opening_amls.mapped('credit'))
-        opening_balance = opening_debit - opening_credit
+        ])
+        opening_balance = sum(opening_amls.mapped('balance'))
 
-        # ── 2) Dönem içi hareketler ──
-        period_domain = [
+        # 2) Dönem içi hareketler
+        period_amls = self.env['account.move.line'].search([
             ('partner_id', '=', self.partner_id.id),
             ('parent_state', '=', 'posted'),
             ('date', '>=', self.period_start),
             ('date', '<=', self.period_end),
             ('account_id.account_type', 'in', account_types),
-        ]
-        period_amls = self.env['account.move.line'].search(period_domain)
+        ])
         period_debit = sum(period_amls.mapped('debit'))
         period_credit = sum(period_amls.mapped('credit'))
+        period_balance = sum(period_amls.mapped('balance'))
         period_str = f"{self.period_start.strftime('%d.%m.%Y')} - {self.period_end.strftime('%d.%m.%Y')}"
 
-        lines = []
+        if not period_amls and opening_balance == 0:
+            raise UserError(_(
+                "Seçilen dönemde %s için onaylanmış kayıt bulunamadı."
+            ) % self.partner_id.name)
 
-        # Başlangıç bakiyesi satırı
-        if opening_balance:
-            lines.append({
+        # Başlangıç bakiyesi her zaman oluşturulur (sıfır olsa bile)
+        lines = [
+            {
                 'mutabakat_id': self.id,
                 'mutabakat_type': 'opening',
                 'period': f"{self.period_start.strftime('%d.%m.%Y')} öncesi",
                 'invoice_count': 0,
                 'amount': opening_balance,
-            })
+            },
+        ]
 
-        # Dönem Borç satırı
         debit_lines = period_amls.filtered(lambda l: l.debit > 0)
         if debit_lines:
             lines.append({
@@ -394,7 +396,6 @@ class MdxMutabakat(models.Model):
                 'amount': period_debit,
             })
 
-        # Dönem Alacak satırı
         credit_lines = period_amls.filtered(lambda l: l.credit > 0)
         if credit_lines:
             lines.append({
@@ -405,16 +406,8 @@ class MdxMutabakat(models.Model):
                 'amount': period_credit,
             })
 
-        # ── 3) Bakiye = Başlangıç + Dönem Borç - Dönem Alacak ──
-        # İş Ortağı Defteri ile birebir aynı
-        self.partner_balance = opening_balance + period_debit - period_credit
-
-        if lines:
-            self.env['mdx.mutabakat.line'].create(lines)
-        elif not opening_balance and not period_debit and not period_credit:
-            raise UserError(_(
-                "Seçilen dönemde %s için onaylanmış kayıt bulunamadı."
-            ) % self.partner_id.name)
+        self.partner_balance = opening_balance + period_balance
+        self.env['mdx.mutabakat.line'].create(lines)
 
     def get_response_url(self, action):
         """Mutabıkız / Mutabık Değiliz URL'i oluştur"""
@@ -430,7 +423,7 @@ class MdxMutabakat(models.Model):
 class MdxMutabakatLine(models.Model):
     _name = 'mdx.mutabakat.line'
     _description = 'Mutabakat Satırı'
-    _order = 'mutabakat_type, id'
+    _order = 'id'
 
     mutabakat_id = fields.Many2one(
         'mdx.mutabakat',
