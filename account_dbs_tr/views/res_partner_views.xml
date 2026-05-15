@@ -75,7 +75,6 @@
                     <group>
                         <group string="İletişim">
                             <field name="phone" readonly="1"/>
-                            <field name="mobile" readonly="1"/>
                             <field name="email" readonly="1"/>
                         </group>
                         <group string="DBS Sözleşme">
@@ -177,7 +176,6 @@
                         </group>
                         <group string="Iletisim">
                             <field name="phone" readonly="1"/>
-                            <field name="mobile" readonly="1"/>
                             <field name="email" readonly="1"/>
                             <field name="company_id" readonly="1" groups="base.group_multi_company"/>
                         </group>
